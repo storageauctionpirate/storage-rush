@@ -165,7 +165,7 @@ for(const V of VPS){
   if(V.full){
     s=await settleAfterWin('Unit 4');await until(x=>x.mode==='map'&&!(x.map&&x.map.walking),4000);
     for(let u=5;u<=20;u++){
-      s=await st();const name=(await txt('#bLadNext')).replace(/^Open /,'');
+      s=await until(async x=>x.mode==='map'&&!(x.map&&x.map.walking)&&await vis('#bLadNext'),6000);const name='Unit '+u;
       if(u%4===0){await tapSel('#bEmpire');await wait(300);const can=await pg.$$eval('#tasks button:not([disabled])',bs=>bs.map(b=>b.dataset.task)).catch(()=>[]);if(can.length&&await vis('#tasks')){await tapSel(`#tasks button[data-task="${can[0]}"]`);await wait(300);if((await st()).mode==='truck'){await pg.evaluate(()=>SR.finishTruck());await wait(300);}}await tapSel('#bEmpireBack');await wait(400);}
       await tapSel('#bLadNext');await wait(400);
       const tries=await playUnit(name);s=await st();
@@ -176,7 +176,7 @@ for(const V of VPS){
     ok(`${T} all 20 Sunnyvale levels cleared`, (await st()).save.unit>=20 || (await st()).mode==='locked');
     ok(`${T} Dolly / Bubble Wrap / Gavel all showed up`,['dolly','wrap','gavel'].every(k=>seen.specials.has(k)),[...seen.specials].join(','));
     ok(`${T} Scrapper teach near-miss played`,seen.teachScr);
-    if(!(await st()).mode==='locked'){await tapSel('#bLadNext').catch(()=>{});await wait(400);}
+    if((await st()).mode!=='locked'){await until(async x=>x.mode==='map'&&!(x.map&&x.map.walking)&&await vis('#bLadNext'),6000);ok(`${T} map offers Desert Gold after Unit 20`,/Desert Gold/.test(await txt('#bLadNext')));await tapSel('#bLadNext').catch(()=>{});await wait(400);}
     s=await until(x=>x.mode==='locked',4000);
     ok(`${T} Desert Gold is locked after unit 20`,s.mode==='locked'&&/Desert Gold/.test(await txt('#lockedUI h2'))&&await vis('#bUnlock')&&/Unlock coming soon/.test(await txt('#bUnlock')));
     await shot('desert-gold');

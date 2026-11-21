@@ -39,7 +39,7 @@ let bgCache={},sprites={};
 /* ---------------- layout ---------------- */
 function resize(){DPR=Math.min(3,window.devicePixelRatio||1);W=window.innerWidth;H=window.innerHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
   const top=H<700?164:194,bottom=H<700?102:132;const cell=Math.floor(Math.min((W-30)/7,(H-top-bottom)/7,78));
-  L.cell=cell;L.x=Math.round((W-cell*7)/2);L.y=Math.round(top+Math.max(0,(H-top-bottom-cell*7)/2)*.48);bgCache={};sprites={};}
+  L.cell=cell;L.x=Math.round((W-cell*7)/2);L.y=Math.round(top+Math.max(0,(H-top-bottom-cell*7)/2)*.85);bgCache={};sprites={};}
 function off(w,h){const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w*DPR));c.height=Math.max(1,Math.round(h*DPR));const x=c.getContext('2d');x.setTransform(DPR,0,0,DPR,0,0);return [c,x];}
 function bg(key,fn){if(!bgCache[key]){const [c,x]=off(W,H);fn(x);bgCache[key]=c;}return bgCache[key];}
 function sprite(key,fn){if(!sprites[key]){const s=L.cell;const [c,x]=off(s,s);x.translate(s/2,s/2);fn(x,s*.88);sprites[key]=c;}return sprites[key];}
@@ -84,7 +84,7 @@ function goMap(hopFrom){S.mode='map';S.build=null;show('ladderUI');
   $('ladH').textContent='Sunnyvale Storage';
   $('ladSub').textContent=save.unit===0?'Your first unit is waiting.':save.unit>=20?'20 / 20 · Sunnyvale cleared!':('Unit '+(save.unit+1)+' of 20 · '+(save.rung?'First Yard':'The Pickup'));$('mapBank').textContent=money(save.bank);
   $('ladBuilt').classList.add('hidden');
-  $('bLadNext').textContent='Open Unit';
+  $('bLadNext').textContent=save.unit>=UNITS.length?'Desert Gold':'Unit '+(save.unit+1)+' ▸';
   const from=hopFrom==null?save.unit:hopFrom;
   const walking=hopFrom!=null&&hopFrom<save.unit;
   S.map={from,to:save.unit,t0:performance.now(),walking};

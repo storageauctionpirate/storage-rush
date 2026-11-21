@@ -120,7 +120,7 @@ for(const V of VPS){
   { const m=await pg.evaluate(()=>SR.bestMove());const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c2=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await swipe(a,c2);await wait(100);await untilIdle();s=await st();ok(`${T} swipe swap spends one move`,s.used===1);}
   let r=await playBoard();ok(`${T} Unit 1 (tutorial) won`,r==='win');
   s=await st();ok(`${T} find collected onto the cart`,s.collected.length>=1);
-  ok(`${T} cleared card is a stamped work order with itemized lines`,(await txt('#msgStamp'))==='CLEARED'&&/Unit 1 cleared!/.test(await txt('#msgH'))&&/#msgP/.length>=0&&/Guitar|Cart/.test(await txt('#msgP')));
+  await wait(400);ok(`${T} cleared card is a stamped work order with itemized lines`,(await txt('#msgStamp'))==='CLEARED'&&/Unit 1 cleared!/.test(await txt('#msgH'))&&/Guitar|Cart/.test(await txt('#msgP')),JSON.stringify({stamp:await txt('#msgStamp'),h:await txt('#msgH'),p:await txt('#msgP')}));
   await shot('cleared');
   s=await settleAfterWin('Unit 1');
   ok(`${T} bank grew from the flip`,s.save.bank>0,'$'+s.save.bank);
@@ -183,15 +183,15 @@ for(const V of VPS){
   } else {
     await pg.evaluate(()=>{const s=JSON.parse(localStorage.getItem('storageRush.v3'));s.unit=19;s.rung=1;s.bank+=3000;localStorage.setItem('storageRush.v3',JSON.stringify(s));});
     await pg.reload({waitUntil:'load'});await wait(600);await tapSel('#bOpen');await wait(500);
-    ok(`${T} saved progress resumes on the map at Unit 20`,/Open Unit 20|The Big One/.test(await txt('#bLadNext')));
+    ok(`${T} saved progress resumes on the map at Unit 20`,/Unit 20|The Big One/.test(await txt('#bLadNext')));
     await tapSel('#bLadNext');await wait(400);await playUnit('Unit 20');s=await settleAfterWin('Unit 20');
-    s=await until(x=>x.mode==='locked'||x.mode==='map',4000);
+    s=await until(x=>x.mode==='locked'||((x.mode==='map'||x.mode==='ladder')&&!x.map?.walking),4000);
     if(s.mode!=='locked'){await tapSel('#bLadNext').catch(()=>{});await wait(400);s=await st();}
     ok(`${T} Desert Gold after the last unit`,s.mode==='locked'&&/Desert Gold/.test(await txt('#lockedUI h2')));
     await shot('desert-gold');
   }
   /* ---- Next world locked door ---- */
-  if((await st()).mode!=='locked'){await pg.evaluate(()=>{const s=JSON.parse(localStorage.getItem('storageRush.v3'));s.unit=20;s.rung=1;localStorage.setItem('storageRush.v3',JSON.stringify(s));});await pg.goto(BASE,{waitUntil:'load'});await wait(400);await tapSel('#bOpen');await wait(400);}
+  if((await st()).mode!=='locked'){await pg.evaluate(()=>{const s=JSON.parse(localStorage.getItem('storageRush.v3'));s.unit=20;s.rung=1;localStorage.setItem('storageRush.v3',JSON.stringify(s));});await pg.goto(BASE,{waitUntil:'load'});await wait(400);await tapSel('#bOpen');await wait(400);await tapSel('#bLadNext');await wait(400);}
   s=await st();
   const D=await pg.evaluate(()=>SR.lockedDoorXY());await tap(D.x,D.y);await wait(200);
   ok(`${T} tapping the locked Desert Gold door does not open a store`,s.mode==='locked'||(await st()).mode==='locked');

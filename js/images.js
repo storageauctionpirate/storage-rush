@@ -14,7 +14,7 @@ const FILES={
   'front-common':'assets/safes/front-common.png', 'front-rare':'assets/safes/front-rare.png', 'front-legendary':'assets/safes/front-legendary.png',
   'truck-before':'assets/chars/truck-before.png', 'truck-after':'assets/chars/truck-after.png',
   'ic-cut':'assets/ui/cutters.png', 'ic-flash':'assets/ui/flashlight.png', 'ic-free':'assets/ui/swap.png',
-  'bg-door':'assets/bg/unit-door.jpg', 'bg-map':'assets/bg/map-clean.jpg', 'bg-flea':'assets/bg/flea-clean.jpg',
+  'bg-door':'assets/bg/unit-door.jpg', 'bg-map':'assets/bg/map-clean.jpg', 'bg-flea':'assets/bg/flea-empty.jpg',
   'bg-truck':'assets/bg/truck-lot.jpg', 'bg-safe':'assets/bg/vault-room.jpg', 'bg-desert':'assets/bg/desert-gold.jpg'
 };
 const PIECE_KEYS=['tote','box','crate','lamp','toy','treasure'];

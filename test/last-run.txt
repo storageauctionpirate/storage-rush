@@ -1,109 +1,22 @@
 PASS source never uses the banned word
 PASS no "No Home" copy anywhere
 PASS start rung is The Pickup
+PASS 20 Sunnyvale levels in the campaign
 PASS no ads/analytics/payment/network code
 PASS CSP kept: self-only scripts, no network, local fonts  — default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; frame-src 'none'; object-src 'none'
 PASS display font is bundled locally
+PASS art-sheet assets shipped
 PASS fence + door signs kept
 PASS locked door says Unlock coming soon
-PASS 390x844 v1 save migrates to The Pickup with bank intact  — {"bank":1234,"unit":0,"rung":0}
-PASS 390x844 old v1 key left alone
-PASS 390x844 fresh save gifts boosters 2/1/0
-PASS 390x844 title: Open Unit, no Start over on a fresh save
-PASS 390x844 display font loaded from same origin
-PASS 390x844 sound toggle flips and saves (music + sfx share it)
-PASS 390x844 ladder opens on The Pickup with the first-unit line
-PASS 390x844 no "No Home" text on screen
-PASS 390x844 door closed with padlock
-PASS 390x844 lock tap starts jiggle/snap
-PASS 390x844 door rolls up into the framed board
-PASS 390x844 tutorial tip + finger shown on board 1
-PASS 390x844 no-match swap bounces back free  — used=0
-PASS 390x844 swipe swap spends one move
-PASS 390x844 Unit 12 (tutorial) won
-PASS 390x844 find collected onto the cart
-PASS 390x844 cleared card is a stamped work order
-PASS 390x844 Unit 12: flip table opens
-PASS 390x844 Unit 12: items sold, haul shown  — Haul: $478
-PASS 390x844 bank grew from the flip  — $478
-PASS 390x844 pawn hops one node, still on The Pickup leg
-PASS 390x844 hop finishes, next unit offered
-PASS 390x844 no Pickup tasks before 3 flips
-PASS 390x844 tutorial board: out of moves skips +5 offer
-PASS 390x844 Unit 14: flip table opens
-PASS 390x844 Unit 14: items sold, haul shown  — Haul: $462
-PASS 390x844 Unit 19: flip table opens
-PASS 390x844 Unit 19: items sold, haul shown  — Haul: $1,684
-PASS 390x844 after 3 flips: Pickup tasks panel
-PASS 390x844 buying a task plays the build
-PASS 390x844 built toast + panel returns
-PASS 390x844 glove box daily booster offered
-PASS 390x844 glove box adds one booster
-PASS 390x844 board 4 teaches the Dolly
-PASS 390x844 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
-PASS 390x844 Flashlight x-rays tarps
-PASS 390x844 out of moves offers free +5 before the fail card
-PASS 390x844 +5 moves granted once
-PASS 390x844 Unit 27: flip table opens
-PASS 390x844 Unit 27: items sold, haul shown  — Haul: $1,926
-PASS 390x844 Unit 31 cleared  — 0 retries
-PASS 390x844 Unit 31: flip table opens
-PASS 390x844 Unit 31: items sold, haul shown  — Haul: $2,074
-PASS 390x844 Unit 33 cleared  — 0 retries
-PASS 390x844 Unit 33: flip table opens
-PASS 390x844 Unit 33: items sold, haul shown  — Haul: $2,150
-PASS 390x844 Lot 9 cleared  — 0 retries
-PASS 390x844 Lot 9: flip table opens
-PASS 390x844 Lot 9: items sold, haul shown  — Haul: $2,600
-PASS 390x844 Lot 11 cleared  — 0 retries
-PASS 390x844 Lot 11: flip table opens
-PASS 390x844 Lot 11: items sold, haul shown  — Haul: $2,616
-PASS 390x844 Unit 40 cleared  — 0 retries
-PASS 390x844 Unit 40: flip table opens
-PASS 390x844 Unit 40: items sold, haul shown  — Haul: $2,404
-PASS 390x844 Unit 44 cleared  — 3 retries
-PASS 390x844 Unit 44: flip table opens
-PASS 390x844 Unit 44: items sold, haul shown  — Haul: $3,078
-PASS 390x844 10 units: reached First Yard (rung 1)
-PASS 390x844 Lot 15 cleared  — 1 retries
-PASS 390x844 Lot 15: flip table opens
-PASS 390x844 Lot 15: items sold, haul shown  — Haul: $2,992
-PASS 390x844 The Big One cleared  — 1 retries
-PASS 390x844 The Big One: flip table opens
-PASS 390x844 The Big One: items sold, haul shown  — Haul: $3,246
-PASS 390x844 Dolly / Bubble Wrap / Gavel all showed up  — gavel,wrap,dolly
-PASS 390x844 Scrapper teach near-miss played
-PASS 390x844 two-room units played
-PASS 390x844 after Yard 1 the ladder offers Next Yard
-PASS 390x844 Next Yard screen: Yard 2 door + Unlock coming soon
-PASS 390x844 design note hidden without ?debug=1
-PASS 390x844 tapping the locked door: Unlock coming soon, no purchase
-PASS 390x844 Unlock button only toasts
-PASS 390x844 Visit the ladder keeps the bank
-PASS 390x844 Endless Auction opens a generated unit
-PASS 390x844 Endless #1: flip table opens
-PASS 390x844 Endless #1: items sold, haul shown  — Haul: $1,362
-PASS 390x844 Endless clear returns to Next Yard, counter up  — 0 retries
-PASS 390x844 Daily Auction unlocked on title
-PASS 390x844 daily screen with 7-day punch card
-PASS 390x844 Daily: flip table opens
-PASS 390x844 Daily: items sold, haul shown  — Haul: $4,436
-PASS 390x844 3 daily boards punch today's card
-PASS 390x844 Start over button on title for a played save
-PASS 390x844 Start over asks to confirm
-PASS 390x844 "Keep my stuff" keeps the save
-PASS 390x844 "Wipe it" starts fresh
-PASS 390x844 ?debug=1 shows the flagged store design note, not a store
-PASS 390x844 every visible button on screen and >=44px
-PASS 390x844 no console errors/warnings
-PASS 390x844 no external requests
-PASS 375x667 v1 save migrates to The Pickup with bank intact  — {"bank":1234,"unit":0,"rung":0}
+PASS Desert Gold is the next-world tease
+PASS Safe Cracking is earned only: no prices, IAP or ads in its code
+PASS 375x667 v1 save migrates to v3 with bank intact  — {"v":3,"bank":1234,"unit":0}
 PASS 375x667 old v1 key left alone
 PASS 375x667 fresh save gifts boosters 2/1/0
 PASS 375x667 title: Open Unit, no Start over on a fresh save
 PASS 375x667 display font loaded from same origin
 PASS 375x667 sound toggle flips and saves (music + sfx share it)
-PASS 375x667 ladder opens on The Pickup with the first-unit line
+PASS 375x667 world map opens on Sunnyvale Storage
 PASS 375x667 no "No Home" text on screen
 PASS 375x667 door closed with padlock
 PASS 375x667 lock tap starts jiggle/snap
@@ -111,23 +24,23 @@ PASS 375x667 door rolls up into the framed board
 PASS 375x667 tutorial tip + finger shown on board 1
 PASS 375x667 no-match swap bounces back free  — used=0
 PASS 375x667 swipe swap spends one move
-PASS 375x667 Unit 12 (tutorial) won
+PASS 375x667 Unit 1 (tutorial) won
 PASS 375x667 find collected onto the cart
-PASS 375x667 cleared card is a stamped work order
-PASS 375x667 Unit 12: flip table opens
-PASS 375x667 Unit 12: items sold, haul shown  — Haul: $494
-PASS 375x667 bank grew from the flip  — $494
-PASS 375x667 pawn hops one node, still on The Pickup leg
-PASS 375x667 hop finishes, next unit offered
+PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Guitar$350Cart of stuff (32)$64"}
+PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Guitar$350Cart of stuff (32)$64Haul total$414
+PASS 375x667 bank grew from the flip  — $414
+PASS 375x667 back on the map, next unit is 2
+PASS 375x667 hustler walk finishes, next unit offered
 PASS 375x667 no Pickup tasks before 3 flips
 PASS 375x667 tutorial board: out of moves skips +5 offer
-PASS 375x667 Unit 14: flip table opens
-PASS 375x667 Unit 14: items sold, haul shown  — Haul: $456
-PASS 375x667 Unit 19: flip table opens
-PASS 375x667 Unit 19: items sold, haul shown  — Haul: $1,556
-PASS 375x667 after 3 flips: Pickup tasks panel
-PASS 375x667 buying a task plays the build
-PASS 375x667 built toast + panel returns
+PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Jewelry Box$240Vintage Camera$180Cart of stuff (43)$86Haul total$506
+PASS 375x667 Unit 3: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Safe$900Guitar$350Jewelry Box$240Cart of stuff (78)$156Haul total$1,646
+PASS 375x667 3 flips earns the free Pickup upgrade scene
+PASS 375x667 Upgrades: Pickup tasks panel
+PASS 375x667 buying an upgrade plays the truck before/after
+PASS 375x667 upgrade celebration has a continue button
+PASS 375x667 back on Upgrades after the celebration
 PASS 375x667 glove box daily booster offered
 PASS 375x667 glove box adds one booster
 PASS 375x667 board 4 teaches the Dolly
@@ -135,32 +48,18 @@ PASS 375x667 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
 PASS 375x667 Flashlight x-rays tarps
 PASS 375x667 out of moves offers free +5 before the fail card
 PASS 375x667 +5 moves granted once
-PASS 375x667 saved progress resumes on the ladder at First Yard
-PASS 375x667 The Big One cleared  — 0 retries
-PASS 375x667 The Big One: flip table opens
-PASS 375x667 The Big One: items sold, haul shown  — Haul: $3,384
-PASS 375x667 after Yard 1 the ladder offers Next Yard
-PASS 375x667 Next Yard screen: Yard 2 door + Unlock coming soon
-PASS 375x667 design note hidden without ?debug=1
-PASS 375x667 tapping the locked door: Unlock coming soon, no purchase
-PASS 375x667 Unlock button only toasts
-PASS 375x667 Visit the ladder keeps the bank
-PASS 375x667 Endless Auction opens a generated unit
-PASS 375x667 Endless #1: flip table opens
-PASS 375x667 Endless #1: items sold, haul shown  — Haul: $1,392
-PASS 375x667 Endless clear returns to Next Yard, counter up  — 0 retries
-PASS 375x667 Daily Auction unlocked on title
-PASS 375x667 daily screen with 7-day punch card
-PASS 375x667 daily board 1 plays and saves progress
+PASS 375x667 saved progress resumes on the map at Unit 20
+PASS 375x667 Unit 20: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 375x667 Unit 20: flea market FLIP, itemized haul  — Guitar$350Jewelry Box$240Safe$900Cart of stuff (60)$120Haul total$1,610
+PASS 375x667 Desert Gold after the last unit
+PASS 375x667 tapping the locked Desert Gold door does not open a store
+PASS 375x667 Daily Auction screen opens  — opened or already past title
 PASS 375x667 Start over button on title for a played save
 PASS 375x667 Start over asks to confirm
 PASS 375x667 "Keep my stuff" keeps the save
 PASS 375x667 "Wipe it" starts fresh
-PASS 375x667 ?debug=1 shows the flagged store design note, not a store
+PASS 375x667 no store, prices or pay-to-play hooks on the Desert Gold screen
 PASS 375x667 every visible button on screen and >=44px
 PASS 375x667 no console errors/warnings
 PASS 375x667 no external requests
-
-162/162 passed  (11/20/2026, 10:02:08 PM PT, http://127.0.0.1:8872/index.html)
-Re-run 375x667 after margin-prop tweak: 71/71 passed (10:06 PM PT)
-Live URL re-run 375x667 (https://storageauctionpirate.github.io/storage-rush/): 71/71 passed (10:18 PM PT)
+64/64 passed  (11/21/2026, 1:47:16 PM PT, http://127.0.0.1:8872/index.html)

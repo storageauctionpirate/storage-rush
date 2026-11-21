@@ -163,3 +163,4 @@ PASS 375x667 no external requests
 
 162/162 passed  (11/20/2026, 10:02:08 PM PT, http://127.0.0.1:8872/index.html)
 Re-run 375x667 after margin-prop tweak: 71/71 passed (10:06 PM PT)
+Live URL re-run 375x667 (https://storageauctionpirate.github.io/storage-rush/): 71/71 passed (10:18 PM PT)

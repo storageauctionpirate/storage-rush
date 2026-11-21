@@ -4,3 +4,15 @@ shots/*.png
 # internal team notes (pricing ideas etc.) stay off the public repo
 TEAM-REVIEW.md
 CHATGPT-REVIEW.md
+# planning notes, private convo, refs and the approval art sheet stay off the public repo
+*-REVIEW.md
+*-REREVIEW.md
+CHATGPT-*.md
+CHATGPT-*.txt
+DOC-EXPORT.md
+FULL-*.md
+Storage_Auction_Life_Game_Direction.md
+art-sheet/
+refs/
+convo-images/
+shots/sunnyvale/

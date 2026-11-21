@@ -93,3 +93,20 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 @keyframes stampIn{from{transform:rotate(14deg) scale(3);opacity:0}to{transform:rotate(14deg) scale(1);opacity:.9}}
 
 #bUnlock{font-size:26px;white-space:nowrap;padding-left:18px;padding-right:18px}
+
+#haul{font:16px var(--body);text-align:left;max-width:94vw;width:min(94vw,340px);padding:8px 12px 6px}
+#haul .line{display:flex;justify-content:space-between;border-bottom:2px dotted #c9b38a;padding:3px 4px;font-weight:800;font-size:15px;color:var(--ink)}
+#haul .line:last-child{border-bottom:0;font-family:var(--disp);font-size:18px;color:var(--orange);margin-top:4px}
+@media (max-height:700px){
+  #ticket b{font-size:26px}
+  #ticket{min-width:72px}
+  .tut{white-space:normal;max-width:92vw;text-align:center;top:calc(108px + env(safe-area-inset-top))}
+  h1{font-size:48px}
+  .head h2{font-size:20px}
+  #pbot{gap:5px}
+  .boost{width:48px;height:48px;flex-basis:48px}
+  .round{width:48px;height:48px;flex-basis:48px}
+  #goals{top:calc(58px + env(safe-area-inset-top))}
+  #bar{height:calc(56px + env(safe-area-inset-top))}
+  #bUnlock{font-size:22px;padding-left:12px;padding-right:12px}
+}

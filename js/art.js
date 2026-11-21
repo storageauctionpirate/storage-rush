@@ -396,6 +396,7 @@ function yardScene(c,W,H){sky(c,W,H,H*.42);lockerRow(c,W*.04,H*.3,W*.72,H*.2,3);
   c.save();c.translate(W*.83,H*.535);truck(c,Math.min(W*.38,H*.2),{});c.restore();
   fence(c,0,H*.6,W,H*.1);vignette(c,W,H,.35);}
 
+const PIECE_KEYS=['tote','box','crate','lamp','toy','treasure'];
 window.ART={rr,lg,rg,poly,cel,flat,line,comma,star,seeded,INK,DISPLAY,ITEMS,ITEM_COL,dollyOverlay,wrapOverlay,gavel,tarp,padlock,FINDS,rollDoor,THEMES,FLOORS,
-  yardScene,woodSign,vignette,DIORAMAS,LADDER,mascot,scrapper,grabber,truck,box,tote,crate,tire,lockerRow,sky,cloud,box3};
+  yardScene,woodSign,vignette,DIORAMAS,LADDER,mascot,scrapper,grabber,truck,box,tote,crate,tire,lockerRow,sky,cloud,box3,PIECE_KEYS};
 })();

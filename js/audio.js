@@ -64,7 +64,12 @@
     special(){const t=T(); [660,880,1320].forEach((f,i)=>tone(f,t+i*0.05,0.2,{type:'square',vol:0.05,filter:'lowpass',ff:3000}));},
     rip(){const t=T(); noise(t,0.18,{ff:2500,ffTo:900,q:1.5,vol:0.3});},
     jiggle(){const t=T(); [0,0.07,0.14].forEach(d=>noise(t+d,0.04,{ff:3000,q:4,vol:0.2}));},
-    locked(){const t=T(); noise(t,0.08,{ff:1200,q:3,vol:0.3}); tone(160,t,0.2,{type:'square',vol:0.06,filter:'lowpass',ff:500}); noise(t+0.1,0.08,{ff:1000,q:3,vol:0.25});}
+    locked(){const t=T(); noise(t,0.08,{ff:1200,q:3,vol:0.3}); tone(160,t,0.2,{type:'square',vol:0.06,filter:'lowpass',ff:500}); noise(t+0.1,0.08,{ff:1000,q:3,vol:0.25});},
+    dialClick(){const t=T(); noise(t,0.04,{ff:2400,q:4,vol:0.22}); tone(880,t,0.05,{type:'square',vol:0.05,filter:'lowpass',ff:2200});},
+    dialStop(){const t=T(); noise(t,0.06,{ff:1800,q:5,vol:0.3}); tone(520,t,0.1,{type:'triangle',vol:0.1}); tone(780,t+0.06,0.12,{type:'triangle',vol:0.08});},
+    safeOpen(){const t=T(); tone(180,t,0.4,{type:'sine',to:90,vol:0.2}); noise(t,0.5,{filter:'lowpass',ff:900,ffTo:200,vol:0.28}); [523,659,784,1046].forEach((f,i)=>tone(f,t+0.25+i*0.08,0.4,{type:'sine',vol:0.1}));},
+    cashPop(){const t=T(); tone(1318,t,0.08,{type:'square',vol:0.06}); tone(1760,t+0.06,0.2,{type:'triangle',vol:0.14}); noise(t+0.02,0.15,{ff:4000,q:1,vol:0.1});},
+    walk(){const t=T(); noise(t,0.06,{filter:'lowpass',ff:400,vol:0.12}); tone(180,t,0.08,{type:'sine',vol:0.05});}
   };
 
   /* ---- music bed: 'yard' (title / ladder), 'unit' (light beat in a unit), 'off' ---- */

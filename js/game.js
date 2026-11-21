@@ -605,7 +605,7 @@ function drawMap(now){const c=ctx,g=MG();if(!S.cam)S.cam={y:camTarget(stopW(Math
   const btn=$('bLadNext');if(!m.walking&&btn&&!btn.classList.contains('hidden')){const bw=btn.offsetWidth||130,bh=btn.offsetHeight||56;const sy=tok.y-cy;let bx=tok.x+W*.08,by=sy-bh*.5;if(bx+bw>W-8)bx=tok.x-hs-bw-4;bx=Math.max(8,Math.min(W-bw-8,bx));by=Math.max(150,Math.min(H-bh-118,by));btn.style.left=Math.round(bx)+'px';btn.style.top=Math.round(by)+'px';}
 }
 function drawLm(c,l,now){const q=lmW(l),built=lmBuilt(l),b=S.lmb&&S.lmb.id===l.id?S.lmb:null,el=b?now-b.t0:9e9;
-  let key=l.id==='truck'?(built?'truck-after':'truck-before'):'lm-'+l.id+(built&&el>1000?'':'-b');const im=IM.get(key);const s=q.s*(l.id==='truck'?1.05:1);
+  let key='lm-'+l.id+(built&&el>1000?'':'-b');const im=IM.get(key);const s=q.s*(l.id==='truck'?1.05:1);
   c.save();let sx=q.x,sy=q.y;if(b&&el<1000){sx+=Math.sin(el/30)*3;}
   if(b&&el>1000&&el<1500){const k=(el-1000)/500;c.translate(sx,sy);c.scale(1+.15*Math.sin(k*Math.PI),1+.15*Math.sin(k*Math.PI));c.translate(-sx,-sy);}
   c.fillStyle='rgba(0,0,0,.22)';c.beginPath();c.ellipse(sx,sy+s*.02,s*.42,s*.1,0,0,TAU);c.fill();

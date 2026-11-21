@@ -17,6 +17,7 @@ const FILES={
   'bg-door':'assets/bg/unit-door.jpg', 'bg-map':'assets/bg/map-clean.jpg', 'bg-flea':'assets/bg/flea-empty.jpg',
   'bg-truck':'assets/bg/truck-lot.jpg', 'bg-safe':'assets/bg/vault-room.jpg', 'bg-desert':'assets/bg/desert-gold.jpg',
   'bg-terrain':'assets/bg/terrain.jpg', 'bg-maptop':'assets/bg/map-top.png',
+  'lm-truck':'assets/landmarks/truck.png', 'lm-truck-b':'assets/landmarks/truck-b.png',
   'lm-sign':'assets/landmarks/sign.png', 'lm-sign-b':'assets/landmarks/sign-b.png',
   'lm-office':'assets/landmarks/office.png', 'lm-office-b':'assets/landmarks/office-b.png',
   'lm-units':'assets/landmarks/units.png', 'lm-units-b':'assets/landmarks/units-b.png',

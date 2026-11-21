@@ -29,20 +29,20 @@ PASS 375x667 no-match swap bounces back free  — used=0
 PASS 375x667 swipe swap spends one move
 PASS 375x667 Unit 1 (tutorial) won
 PASS 375x667 find collected onto the cart
-PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Guitar$350Cart of stuff (42)$84"}
-PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Guitar$350Cart of stuff (42)$84Haul total$434
-PASS 375x667 bank grew from the flip  — $434
+PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Guitar$350Cart of stuff (40)$80"}
+PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Guitar$350Cart of stuff (40)$80Haul total$430
+PASS 375x667 bank grew from the flip  — $430
 PASS 375x667 back on the map, next unit is 2
 PASS 375x667 hustler walk finishes, next unit offered
 PASS 375x667 no Pickup tasks before 3 flips
 PASS 375x667 tutorial board: out of moves skips +5 offer
-PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Jewelry Box$240Vintage Camera$180Cart of stuff (75)$150Haul total$570
-PASS 375x667 Unit 3: Safe Cracking Bonus pays earned game cash  — +$700
-PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Safe$900Guitar$350Jewelry Box$240Cart of stuff (51)$102Haul total$1,592
+PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Jewelry Box$240Vintage Camera$180Cart of stuff (137)$274Haul total$694
+PASS 375x667 Unit 3: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Safe$900Jewelry Box$240Guitar$350Cart of stuff (70)$140Haul total$1,630
 PASS 375x667 3 flips earns the free Pickup upgrade scene
 PASS 375x667 map: camera follows the hustler to stop 4  — y 400
 PASS 375x667 village: truck landmark upgraded by the Pickup milestone  — 11%
-PASS 375x667 village: earned cash fixes up the next landmark  — 22% · bank 3296→3046
+PASS 375x667 village: earned cash fixes up the next landmark  — 22% · bank 3054→2804
 PASS 375x667 Upgrades: Pickup tasks panel
 PASS 375x667 buying an upgrade plays the truck before/after
 PASS 375x667 upgrade celebration has a continue button
@@ -56,7 +56,7 @@ PASS 375x667 out of moves offers free +5 before the fail card
 PASS 375x667 +5 moves granted once
 PASS 375x667 saved progress resumes on the map at Unit 20
 PASS 375x667 Unit 20: Safe Cracking Bonus pays earned game cash  — +$300
-PASS 375x667 Unit 20: flea market FLIP, itemized haul  — Guitar$350Jewelry Box$240Safe$900Cart of stuff (72)$144Haul total$1,634
+PASS 375x667 Unit 20: flea market FLIP, itemized haul  — Safe$900Vintage Camera$180Guitar$350Cart of stuff (68)$136Haul total$1,566
 PASS 375x667 Desert Gold after the last unit
 PASS 375x667 tapping the locked Desert Gold door does not open a store
 PASS 375x667 Daily Auction screen opens  — opened or already past title
@@ -68,4 +68,4 @@ PASS 375x667 no store, prices or pay-to-play hooks on the Desert Gold screen
 PASS 375x667 every visible button on screen and >=44px
 PASS 375x667 no console errors/warnings
 PASS 375x667 no external requests
-70/70 passed  (11/21/2026, 3:01:11 PM PT, http://127.0.0.1:8872/index.html)
+70/70 passed  (11/21/2026, 3:25:31 PM PT, http://127.0.0.1:8872/index.html)

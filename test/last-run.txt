@@ -14,30 +14,30 @@ PASS 390x844 swipe swap spends a move  — used=1
 PASS 390x844 Replay restarts the unit
 PASS 390x844 no-match swap bounces back, no move spent
 PASS 390x844 tap-tap swap works
-PASS 390x844 unit 1 cleared (try 1, 13 moves used, 3 finds, cart 64)
+PASS 390x844 unit 1 cleared (try 1, 1 moves used, 3 finds, cart 18)
 PASS 390x844 unit 1 win card shows
 PASS 390x844 unit 1 flip table scene
-PASS 390x844 unit 1 finds sold, cash in bank  — bank 0 -> 1618
+PASS 390x844 unit 1 finds sold, cash in bank  — bank 0 -> 1526
 PASS 390x844 unit 1 ladder board, piece moving 0->1
 PASS 390x844 unit 1 build finishes: "Built: Storage Rental!"
 PASS 390x844 unit 1 completed  — attempts 1
 PASS 390x844 unit 2: door closed with lock
 PASS 390x844 unit 2 try 1: lock snaps, door rolls up to the board  — play
 PASS 390x844 unit 2 board: visible buttons on screen and >=44px
-PASS 390x844 unit 2 cleared (try 1, 3 moves used, 3 finds, cart 27)
+PASS 390x844 unit 2 cleared (try 1, 5 moves used, 3 finds, cart 26)
 PASS 390x844 unit 2 win card shows
 PASS 390x844 unit 2 flip table scene
-PASS 390x844 unit 2 finds sold, cash in bank  — bank 1618 -> 3102
+PASS 390x844 unit 2 finds sold, cash in bank  — bank 1526 -> 3008
 PASS 390x844 unit 2 ladder board, piece moving 1->2
 PASS 390x844 unit 2 build finishes: "Built: Apartment!"
 PASS 390x844 unit 2 completed  — attempts 1
 PASS 390x844 unit 3: door closed with lock
 PASS 390x844 unit 3 try 1: lock snaps, door rolls up to the board  — play
 PASS 390x844 unit 3 board: visible buttons on screen and >=44px
-PASS 390x844 unit 3 cleared (try 1, 7 moves used, 3 finds, cart 33)
+PASS 390x844 unit 3 cleared (try 1, 14 moves used, 3 finds, cart 70)
 PASS 390x844 unit 3 win card shows
 PASS 390x844 unit 3 flip table scene
-PASS 390x844 unit 3 finds sold, cash in bank  — bank 3102 -> 3938
+PASS 390x844 unit 3 finds sold, cash in bank  — bank 3008 -> 4578
 PASS 390x844 unit 3 ladder board, piece moving 2->3
 PASS 390x844 unit 3 build finishes: "Built: Home!"
 PASS 390x844 unit 3 completed  — attempts 1
@@ -46,8 +46,8 @@ PASS 390x844 locked orange door shows after unit 3
 PASS 390x844 tapping the door says Unlock coming soon
 PASS 390x844 locked door: visible buttons on screen and >=44px
 PASS 390x844 Home goes to title, says Keep Going
-PASS 390x844 progress + bank persist after reload  — bank 3938
-PASS 390x844 Scrapper warns first (countdown + hand), then snatches an untouched find  — snatched guitar,safe,jewelry
+PASS 390x844 progress + bank persist after reload  — bank 4578
+PASS 390x844 Scrapper warns first (countdown + hand), then snatches an untouched find  — snatched jewelry,safe,guitar
 PASS 390x844 snatched find shows as crossed out in goals
 PASS 390x844 no external requests
 PASS 390x844 no console errors/warnings
@@ -63,7 +63,7 @@ PASS 375x667 swipe swap spends a move  — used=1
 PASS 375x667 Replay restarts the unit
 PASS 375x667 no-match swap bounces back, no move spent
 PASS 375x667 tap-tap swap works
-PASS 375x667 unit 1 cleared (try 1, 2 moves used, 3 finds, cart 12)
+PASS 375x667 unit 1 cleared (try 1, 4 moves used, 3 finds, cart 12)
 PASS 375x667 unit 1 win card shows
 PASS 375x667 unit 1 flip table scene
 PASS 375x667 unit 1 finds sold, cash in bank  — bank 0 -> 1514
@@ -73,20 +73,20 @@ PASS 375x667 unit 1 completed  — attempts 1
 PASS 375x667 unit 2: door closed with lock
 PASS 375x667 unit 2 try 1: lock snaps, door rolls up to the board  — play
 PASS 375x667 unit 2 board: visible buttons on screen and >=44px
-PASS 375x667 unit 2 cleared (try 1, 16 moves used, 3 finds, cart 95)
+PASS 375x667 unit 2 cleared (try 1, 24 moves used, 3 finds, cart 113)
 PASS 375x667 unit 2 win card shows
 PASS 375x667 unit 2 flip table scene
-PASS 375x667 unit 2 finds sold, cash in bank  — bank 1514 -> 3134
+PASS 375x667 unit 2 finds sold, cash in bank  — bank 1514 -> 3170
 PASS 375x667 unit 2 ladder board, piece moving 1->2
 PASS 375x667 unit 2 build finishes: "Built: Apartment!"
 PASS 375x667 unit 2 completed  — attempts 1
 PASS 375x667 unit 3: door closed with lock
 PASS 375x667 unit 3 try 1: lock snaps, door rolls up to the board  — play
 PASS 375x667 unit 3 board: visible buttons on screen and >=44px
-PASS 375x667 unit 3 cleared (try 1, 5 moves used, 3 finds, cart 22)
+PASS 375x667 unit 3 cleared (try 1, 4 moves used, 3 finds, cart 12)
 PASS 375x667 unit 3 win card shows
 PASS 375x667 unit 3 flip table scene
-PASS 375x667 unit 3 finds sold, cash in bank  — bank 3134 -> 4608
+PASS 375x667 unit 3 finds sold, cash in bank  — bank 3170 -> 3964
 PASS 375x667 unit 3 ladder board, piece moving 2->3
 PASS 375x667 unit 3 build finishes: "Built: Home!"
 PASS 375x667 unit 3 completed  — attempts 1
@@ -95,8 +95,8 @@ PASS 375x667 locked orange door shows after unit 3
 PASS 375x667 tapping the door says Unlock coming soon
 PASS 375x667 locked door: visible buttons on screen and >=44px
 PASS 375x667 Home goes to title, says Keep Going
-PASS 375x667 progress + bank persist after reload  — bank 4608
-PASS 375x667 Scrapper warns first (countdown + hand), then snatches an untouched find  — snatched jewelry
+PASS 375x667 progress + bank persist after reload  — bank 3964
+PASS 375x667 Scrapper warns first (countdown + hand), then snatches an untouched find  — snatched guitar,jewelry
 PASS 375x667 snatched find shows as crossed out in goals
 PASS 375x667 no external requests
 PASS 375x667 no console errors/warnings

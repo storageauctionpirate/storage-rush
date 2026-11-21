@@ -110,3 +110,66 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
   #bar{height:calc(56px + env(safe-area-inset-top))}
   #bUnlock{font-size:22px;padding-left:12px;padding-right:12px}
 }
+
+/* ---- Sunnyvale art pass ---- */
+#sign{background:linear-gradient(#b8783c,#83491e 55%,#6b3816);border:3px solid #2b160c;border-radius:10px;padding:7px 14px 3px;font:16px/1 var(--disp);letter-spacing:.5px;color:#ffe2a4;text-shadow:0 2px 0 #2b160c;box-shadow:inset 0 2px 0 #e3a865,0 4px 0 #2b160c,0 8px 14px #0007;white-space:nowrap;max-width:calc(100vw - 140px);overflow:hidden;text-overflow:ellipsis}
+#hud{position:absolute;top:calc(66px + env(safe-area-inset-top));left:8px;right:8px;display:flex;gap:7px;align-items:stretch;pointer-events:none}
+#ticket{transform:none;min-width:76px;border-radius:12px;background:linear-gradient(#fff6df,#efd6a6);box-shadow:inset 0 2px 0 #fff,0 4px 0 var(--ink)}
+#ticket b{font-size:32px}
+#goalBox{flex:1;background:linear-gradient(#fff6df,#efd6a6);border:3px solid var(--ink);border-radius:12px;box-shadow:inset 0 2px 0 #fff,0 4px 0 var(--ink);display:flex;flex-direction:column;align-items:center;overflow:hidden}
+#goalBox small{display:block;width:100%;text-align:center;background:var(--orange);color:#fff;font:14px var(--disp);letter-spacing:1px;padding:2px 0 0}
+#goals{position:static;display:flex;gap:6px;justify-content:center;padding:4px 4px 3px}
+.goal{width:44px;height:44px}
+.goal canvas{width:38px;height:38px}
+.goal.buried canvas{opacity:.55;filter:brightness(0) drop-shadow(0 0 1px #fff8)}
+.goal.buried:after{content:none}
+#pal{width:64px;flex:0 0 64px;border-radius:14px;border:3px solid var(--ink);background:radial-gradient(circle at 50% 30%,#ffe7a8,#e08a2c 70%,#8a4515);box-shadow:0 4px 0 var(--ink);overflow:hidden;display:grid;place-items:end center}
+#pal img{width:118%;margin-bottom:-28%}
+.tut{top:calc(146px + env(safe-area-inset-top))}
+.boost{width:60px;height:60px;flex-basis:60px;border-radius:16px;background:linear-gradient(#c98a4a,#8a4f22);box-shadow:inset 0 2px 0 #f2be7c,0 4px 0 var(--ink)}
+.boost canvas{width:46px;height:46px;margin-top:-8px}
+.boost em{position:absolute;bottom:3px;left:0;right:0;font:10px/1 var(--disp);font-style:normal;color:#ffe9be;text-shadow:0 1px 0 var(--ink);letter-spacing:.4px}
+.boost.armed{background:linear-gradient(#ffe27a,#f0b020)}
+.chip{background:linear-gradient(#fff6df,#efd6a6)}
+.maphead{padding:6px 14px 4px;background:linear-gradient(#b8783c,#83491e);border-color:#2b160c;box-shadow:inset 0 2px 0 #e3a865,0 4px 0 #2b160c;margin-top:-60px}
+.maphead h2{color:#ffe2a4;text-shadow:0 2px 0 #2b160c;font-size:20px}
+.maphead p{color:#fff1d2;font-size:13px}
+.coin{margin-top:8px;align-self:flex-start;background:linear-gradient(#fff6df,#efd6a6);color:var(--ink);border:3px solid var(--ink);border-radius:20px;padding:5px 12px 3px 34px;box-shadow:0 3px 0 var(--ink);position:relative;font:18px var(--disp)}
+.coin:before{content:"$";position:absolute;left:5px;top:3px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3a6,#ffc21a 55%,#c27800);border:2px solid var(--ink);font:14px/22px var(--disp);text-align:center;color:#7a4500}
+.maprow{width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.maprow .big{min-width:168px;min-height:62px;font-size:24px;padding:12px 16px 6px}
+.maprow .mid{min-width:96px;font-size:17px}
+#empireUI .tasks{margin-bottom:10px}
+.big.go{background:linear-gradient(#a7ee6f,#46b43a 55%,#2b8a27)}
+.flea{padding:4px 14px 3px;background:linear-gradient(#e0442b,#a8251a);border-color:#2b160c;box-shadow:inset 0 2px 0 #ff9b78,0 4px 0 #2b160c}
+.flea h2{color:#ffe29b;text-shadow:0 2px 0 #2b160c}.flea p{color:#fff}
+.safehead,.truckhead{text-align:center;margin-top:-6px}
+.safehead small{font:14px var(--disp);letter-spacing:2px;color:#ffd77a}
+.safehead h2,.truckhead h2{margin:2px 0 0;font:40px/.95 var(--disp);color:#ffd255;-webkit-text-stroke:2px var(--ink);text-shadow:0 4px 0 #6b3a08,0 8px 18px #000}
+.safehead b{display:inline-block;margin-top:6px;font:18px var(--disp);letter-spacing:2px;background:#1c1410e0;border:2px solid currentColor;border-radius:999px;padding:5px 16px 1px}
+.truckhead p{margin:6px 0 0;font-weight:900;text-shadow:0 2px 4px #000}
+.pay{font:34px var(--disp);color:#ffde70;-webkit-text-stroke:1.5px var(--ink);text-shadow:0 4px 0 var(--ink);min-height:40px;margin-bottom:8px}
+.fine{margin:8px 0 0;font-size:12px;font-weight:800;color:#f5e5c6;text-shadow:0 1px 3px #000}
+#bSafeNext[disabled]{filter:saturate(.4) brightness(.9)}
+@media (max-height:700px){
+  #hud{top:calc(56px + env(safe-area-inset-top))}
+  #ticket b{font-size:26px}
+  .goal{width:38px;height:38px}.goal canvas{width:32px;height:32px}
+  #pal{width:54px;flex-basis:54px}
+  .tut{top:calc(124px + env(safe-area-inset-top))}
+  .boost{width:52px;height:52px;flex-basis:52px}.boost canvas{width:40px;height:40px}
+  .maphead{margin-top:-54px}.maprow .big{min-height:56px;font-size:21px;min-width:150px}
+  .safehead h2,.truckhead h2{font-size:32px}
+}
+
+#pal img{width:106%;margin-bottom:-50%}
+.maprow .big{min-width:144px;white-space:nowrap;font-size:24px}
+.maprow .mid{min-width:86px;font-size:16px;padding-left:10px;padding-right:10px}
+.safefind{font:18px var(--disp);color:#fff2d1;text-shadow:0 2px 3px #000;margin-bottom:6px;min-height:20px}
+body[data-scene="truck"] #bHome,body[data-scene="safe"] #bHome{display:none!important}
+@media(max-height:700px){.maprow .big{min-width:138px;font-size:21px}.maprow .mid{font-size:15px}.pay{font-size:30px}}
+
+.mapside{position:absolute;left:10px;top:calc(150px + env(safe-area-inset-top));display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.mapside .mid{min-width:96px;font-size:16px;padding:12px 10px 6px}
+.big.play{position:absolute;left:50%;top:60%;min-width:118px;min-height:56px;font-size:23px;padding:12px 16px 6px;white-space:nowrap;animation:pulse 1.2s ease-in-out infinite}
+@media(max-height:700px){.mapside{top:calc(132px + env(safe-area-inset-top))}.big.play{min-height:50px;font-size:20px;min-width:104px}}

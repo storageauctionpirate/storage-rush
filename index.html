@@ -18,12 +18,12 @@
 
   <div id="bar">
     <button id="bHome" class="round hidden" aria-label="Home"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg></button>
-    <div id="barMid"><div id="ticket" class="hidden"><small>MOVES</small><b id="movesN">0</b></div></div>
+    <div id="barMid"><div id="sign" class="hidden"><span id="unitLabel">SUNNYVALE</span></div></div>
     <button id="bSound" class="round snd" aria-label="Sound on/off"><svg viewBox="0 0 24 24"><path class="spk" d="M4 9.5h4l5-4v13l-5-4H4z"/><path class="wave" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/><path class="mute" d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button>
   </div>
 
   <section id="title" class="screen">
-    <div class="logo"><div class="kicker">Storage Auction Pirate</div><h1>STORAGE<br>RUSH</h1><p class="tag">Dig the unit. Pull the finds. Flip for cash.</p></div>
+    <div class="logo"><div class="kicker">Storage Auction Pirate</div><h1>STORAGE<br>RUSH</h1><p class="tag">Match. Find. Flip. Build.</p></div>
     <div class="grow"></div>
     <button id="bOpen" class="big"><span id="bOpenTxt">Open Unit</span></button>
     <div class="row2">
@@ -33,14 +33,23 @@
   </section>
 
   <section id="ladderUI" class="screen hidden">
-    <div class="head"><h2 id="ladH">Your Ladder</h2><p id="ladSub"></p></div>
+    <div class="head maphead"><h2 id="ladH">Sunnyvale Storage</h2><p id="ladSub"></p></div>
+    <div class="coin" aria-label="Bank"><b id="mapBank">$0</b></div>
     <div id="ladBuilt" class="built hidden"></div>
     <div class="grow"></div>
-    <div id="tasks" class="tasks hidden"></div>
-    <div class="row2">
+    <div class="mapside">
+      <button id="bEmpire" class="mid alt">Upgrades</button>
       <button id="bGlove" class="mid alt hidden">Glove box</button>
-      <button id="bLadNext" class="big">Open Unit</button>
     </div>
+    <button id="bLadNext" class="big play">Open Unit</button>
+  </section>
+
+  <section id="empireUI" class="screen hidden">
+    <div class="head"><h2 id="empireName">The Pickup</h2><p id="empireSub"></p></div>
+    <div class="coin"><b id="empireBank">$0</b></div>
+    <div class="grow"></div>
+    <div id="tasks" class="tasks hidden"></div>
+    <button id="bEmpireBack" class="mid">Back to map</button>
   </section>
 
   <section id="doorUI" class="screen hidden">
@@ -50,22 +59,40 @@
   </section>
 
   <section id="playUI" class="hidden">
-    <div id="goals"></div>
+    <div id="hud">
+      <div id="ticket"><small>MOVES</small><b id="movesN">0</b></div>
+      <div id="goalBox"><small id="goalLabel">FIND</small><div id="goals"></div></div>
+      <div id="pal"><img src="assets/chars/hustler-idle.png" alt=""></div>
+    </div>
     <div id="tut" class="tut hidden"></div>
     <div id="pbot">
       <button id="bReplay" class="round sm" aria-label="Replay"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v5h5"/></svg></button>
-      <button id="bCut" class="boost" aria-label="Bolt Cutters"><canvas width="96" height="96"></canvas><i>0</i></button>
-      <button id="bFlash" class="boost" aria-label="Flashlight"><canvas width="96" height="96"></canvas><i>0</i></button>
-      <button id="bFree" class="boost" aria-label="Free Swap"><canvas width="96" height="96"></canvas><i>0</i></button>
+      <button id="bCut" class="boost" aria-label="Bolt Cutters"><canvas width="96" height="96"></canvas><i>0</i><em>Cutters</em></button>
+      <button id="bFlash" class="boost" aria-label="Flashlight"><canvas width="96" height="96"></canvas><i>0</i><em>Light</em></button>
+      <button id="bFree" class="boost" aria-label="Free Swap"><canvas width="96" height="96"></canvas><i>0</i><em>Swap</em></button>
       <div class="chips"><div class="chip" id="cartChip">Cart <b id="cartN">0</b></div><div class="chip gold" id="bankChip">Bank <b id="bankN">$0</b></div></div>
     </div>
   </section>
 
   <section id="flipUI" class="screen hidden">
-    <div class="head"><h2>Flip Table</h2><p>Bank <b id="flipBank">$0</b></p></div>
+    <div class="head flea"><h2>Flea Market</h2><p>Bank <b id="flipBank">$0</b></p></div>
     <div class="grow"></div>
     <div id="haul" class="built hidden"></div>
-    <button id="bFlipNext" class="big hidden">Next</button>
+    <button id="bFlipNext" class="big go hidden">Flip</button>
+  </section>
+
+  <section id="safeUI" class="screen hidden">
+    <div class="safehead"><small>BONUS FIND</small><h2>Safe Cracking</h2><b id="safeRarity">RARE</b></div>
+    <div class="grow"></div>
+    <div id="safeFind" class="safefind"></div><div id="safePay" class="pay"></div>
+    <button id="bSafeNext" class="big go">Cracking…</button>
+    <p class="fine">Earned in play. Never sold. No real money.</p>
+  </section>
+
+  <section id="truckUI" class="screen hidden">
+    <div class="truckhead"><h2 id="truckTitle">The Pickup upgraded!</h2><p id="truckSub"></p></div>
+    <div class="grow"></div>
+    <button id="bTruckNext" class="big go hidden">Nice!</button>
   </section>
 
   <section id="dailyUI" class="screen hidden">
@@ -76,10 +103,10 @@
   </section>
 
   <section id="lockedUI" class="screen hidden">
-    <div class="head"><h2>Desert Gold</h2><p>Bank <b id="lockBank">$0</b></p></div>
+    <div class="head"><h2>Desert Gold</h2><p>Next world · Bank <b id="lockBank">$0</b></p></div>
     <div class="grow"></div>
     <button id="bUnlock" class="big">Unlock coming soon</button>
-    <div class="row2"><button id="bEndless" class="mid">Endless Auction</button><button id="bVisit" class="mid alt">Visit the ladder</button></div>
+    <div class="row2"><button id="bEndless" class="mid">Endless Auction</button><button id="bVisit" class="mid alt">Back to map</button></div>
     <div id="debugNote" class="debug hidden"></div>
   </section>
 

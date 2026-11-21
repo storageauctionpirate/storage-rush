@@ -5,14 +5,17 @@ const FILES={
   tote:'assets/pieces/tote.png', box:'assets/pieces/box.png', crate:'assets/pieces/crate.png',
   lamp:'assets/pieces/lamp.png', toy:'assets/pieces/toy.png', treasure:'assets/pieces/treasure.png',
   guitar:'assets/finds/guitar.png', jewelry:'assets/finds/jewelry.png', camera:'assets/finds/camera.png', tarp:'assets/finds/tarp.png',
+  safe:'assets/safes/rare.png',
   dolly:'assets/specials/dolly.png', gavel:'assets/specials/gavel.png',
   'hustler-idle':'assets/chars/hustler-idle.png', 'hustler-walk':'assets/chars/hustler-walk.png',
   'hustler-cheer':'assets/chars/hustler-cheer.png', 'hustler-token':'assets/chars/hustler-token.png',
-  'scrapper-bust':'assets/chars/scrapper-bust.png', 'scrapper-body':'assets/chars/scrapper-body.png',
+  'scrapper-bust':'assets/chars/scrapper-bust.png',
   'safe-common':'assets/safes/common.png', 'safe-rare':'assets/safes/rare.png', 'safe-legendary':'assets/safes/legendary.png',
-  'bg-door':'assets/bg/unit-door.png', 'bg-map':'assets/bg/map-sunnyvale.png',
-  'bg-flea':'assets/bg/flea-market.png', 'bg-truck':'assets/bg/truck-upgrade.png',
-  'bg-safe':'assets/bg/safe-cracking.png'
+  'front-common':'assets/safes/front-common.png', 'front-rare':'assets/safes/front-rare.png', 'front-legendary':'assets/safes/front-legendary.png',
+  'truck-before':'assets/chars/truck-before.png', 'truck-after':'assets/chars/truck-after.png',
+  'ic-cut':'assets/ui/cutters.png', 'ic-flash':'assets/ui/flashlight.png', 'ic-free':'assets/ui/swap.png',
+  'bg-door':'assets/bg/unit-door.jpg', 'bg-map':'assets/bg/map-clean.jpg', 'bg-flea':'assets/bg/flea-clean.jpg',
+  'bg-truck':'assets/bg/truck-lot.jpg', 'bg-safe':'assets/bg/vault-room.jpg', 'bg-desert':'assets/bg/desert-gold.jpg'
 };
 const PIECE_KEYS=['tote','box','crate','lamp','toy','treasure'];
 const cache={};

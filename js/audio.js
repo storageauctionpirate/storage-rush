@@ -78,7 +78,8 @@
   const mtof=m=>440*Math.pow(2,(m-69)/12);
   function sched(){const c=ac;if(!c||mode==='off')return;const spb=60/(mode==='unit'?104:84)/2;
     while(nextT<c.currentTime+0.25){const bar=Math.floor(step/16)%4,i=step%16,t=nextT;
-      if(on){const B=musicBus;
+      if(on&&mode==='safe'){const B=musicBus;if(i%8===0||i%8===2)tone(i%8===0?62:55,t,0.22,{type:'sine',to:40,vol:0.34,bus:B});if(i%4===0)tone(mtof(CH[0][0]-12),t,spb*3.5,{type:'triangle',vol:0.03,bus:B,filter:'lowpass',ff:600});}
+      else if(on){const B=musicBus;
         if(i===0)CH[bar].forEach(m=>tone(mtof(m),t,spb*15,{type:'triangle',vol:0.045,a:0.08,bus:B,filter:'lowpass',ff:1400}));
         if(mode==='unit'){if(i%4===0)tone(110,t,0.18,{type:'sine',to:45,vol:0.32,bus:B});
           if(i%2===1)noise(t,0.04,{ff:8000,q:0.8,vol:0.05,bus:B});

@@ -49,7 +49,7 @@ const YARD1={id:'sunnyvale',name:'Sunnyvale Storage',nextWorld:'Desert Gold',uni
 ]};
 const TUTORIAL={swap:'Swap two neighbors to make 3 in a row.',tarp:'Match right next to a tarp to rip it.',layers:'Chained tarps take 2 hits.',dummy:'Some tarps are just junk. Gold glint = a find!',
   dolly:'Match 4 to build a DOLLY!',wrap:'Match an L or T for BUBBLE WRAP!',gavel:'Match 5 in a row for the AUCTION GAVEL!'};
-const MAP_PATH=[{n:1,x:0.4861,y:0.9141},{n:2,x:0.5117,y:0.8771},{n:3,x:0.5362,y:0.8398},{n:4,x:0.5609,y:0.8026},{n:5,x:0.5726,y:0.7637},{n:6,x:0.5576,y:0.7251},{n:7,x:0.5284,y:0.689},{n:8,x:0.4965,y:0.6536},{n:9,x:0.4755,y:0.6158},{n:10,x:0.4702,y:0.5764},{n:11,x:0.484,y:0.5375},{n:12,x:0.5042,y:0.4994},{n:13,x:0.5289,y:0.4622},{n:14,x:0.5567,y:0.4258},{n:15,x:0.5875,y:0.39},{n:16,x:0.6184,y:0.3544},{n:17,x:0.6452,y:0.3176},{n:18,x:0.6823,y:0.284},{n:19,x:0.7353,y:0.2582},{n:20,x:0.7986,y:0.2406}];
+const MAP_PATH=[{n:1,x:0.47,y:0.926},{n:2,x:0.538,y:0.846},{n:3,x:0.574,y:0.774},{n:4,x:0.564,y:0.708},{n:5,x:0.514,y:0.656},{n:6,x:0.458,y:0.61},{n:7,x:0.395,y:0.57},{n:8,x:0.352,y:0.532},{n:9,x:0.336,y:0.497},{n:10,x:0.358,y:0.465},{n:11,x:0.408,y:0.436},{n:12,x:0.46,y:0.413},{n:13,x:0.512,y:0.393},{n:14,x:0.56,y:0.375},{n:15,x:0.596,y:0.354},{n:16,x:0.636,y:0.3375},{n:17,x:0.635,y:0.32},{n:18,x:0.608,y:0.305},{n:19,x:0.575,y:0.2935},{n:20,x:0.532,y:0.281}];
 const api={YARD1,TUTORIAL,MAP_PATH};
 if(typeof module!=='undefined')module.exports=api;else root.LEVELS=api;
 })(this);

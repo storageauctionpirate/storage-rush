@@ -1,2 +1,6 @@
 shots/*.png
 !shots/preview-*.png
+!shots/v2-*.png
+# internal team notes (pricing ideas etc.) stay off the public repo
+TEAM-REVIEW.md
+CHATGPT-REVIEW.md

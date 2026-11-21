@@ -1,104 +1,165 @@
-PASS source never says the banned word
-PASS no ads/analytics/payment code
-PASS fence sign text present
-PASS door sign text present
-PASS 390x844 title shows big Open Unit button
-PASS 390x844 title: visible buttons on screen and >=44px
-PASS 390x844 sound toggle flips and saves
-PASS 390x844 life ladder board shows first, piece on No Home
-PASS 390x844 ladder: visible buttons on screen and >=44px
-PASS 390x844 unit 1: door closed with lock
-PASS 390x844 unit 1 try 1: lock snaps, door rolls up to the board  — play
-PASS 390x844 unit 1 board: visible buttons on screen and >=44px
-PASS 390x844 swipe swap spends a move  — used=1
-PASS 390x844 Replay restarts the unit
-PASS 390x844 no-match swap bounces back, no move spent
-PASS 390x844 tap-tap swap works
-PASS 390x844 unit 1 cleared (try 1, 1 moves used, 3 finds, cart 18)
-PASS 390x844 unit 1 win card shows
-PASS 390x844 unit 1 flip table scene
-PASS 390x844 unit 1 finds sold, cash in bank  — bank 0 -> 1526
-PASS 390x844 unit 1 ladder board, piece moving 0->1
-PASS 390x844 unit 1 build finishes: "Built: Storage Rental!"
-PASS 390x844 unit 1 completed  — attempts 1
-PASS 390x844 unit 2: door closed with lock
-PASS 390x844 unit 2 try 1: lock snaps, door rolls up to the board  — play
-PASS 390x844 unit 2 board: visible buttons on screen and >=44px
-PASS 390x844 unit 2 cleared (try 1, 5 moves used, 3 finds, cart 26)
-PASS 390x844 unit 2 win card shows
-PASS 390x844 unit 2 flip table scene
-PASS 390x844 unit 2 finds sold, cash in bank  — bank 1526 -> 3008
-PASS 390x844 unit 2 ladder board, piece moving 1->2
-PASS 390x844 unit 2 build finishes: "Built: Apartment!"
-PASS 390x844 unit 2 completed  — attempts 1
-PASS 390x844 unit 3: door closed with lock
-PASS 390x844 unit 3 try 1: lock snaps, door rolls up to the board  — play
-PASS 390x844 unit 3 board: visible buttons on screen and >=44px
-PASS 390x844 unit 3 cleared (try 1, 14 moves used, 3 finds, cart 70)
-PASS 390x844 unit 3 win card shows
-PASS 390x844 unit 3 flip table scene
-PASS 390x844 unit 3 finds sold, cash in bank  — bank 3008 -> 4578
-PASS 390x844 unit 3 ladder board, piece moving 2->3
-PASS 390x844 unit 3 build finishes: "Built: Home!"
-PASS 390x844 unit 3 completed  — attempts 1
-PASS 390x844 ladder says Next Door after 3 units
-PASS 390x844 locked orange door shows after unit 3
-PASS 390x844 tapping the door says Unlock coming soon
-PASS 390x844 locked door: visible buttons on screen and >=44px
-PASS 390x844 Home goes to title, says Keep Going
-PASS 390x844 progress + bank persist after reload  — bank 4578
-PASS 390x844 Scrapper warns first (countdown + hand), then snatches an untouched find  — snatched jewelry,safe,guitar
-PASS 390x844 snatched find shows as crossed out in goals
-PASS 390x844 no external requests
+PASS source never uses the banned word
+PASS no "No Home" copy anywhere
+PASS start rung is The Pickup
+PASS no ads/analytics/payment/network code
+PASS CSP kept: self-only scripts, no network, local fonts  — default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; frame-src 'none'; object-src 'none'
+PASS display font is bundled locally
+PASS fence + door signs kept
+PASS locked door says Unlock coming soon
+PASS 390x844 v1 save migrates to The Pickup with bank intact  — {"bank":1234,"unit":0,"rung":0}
+PASS 390x844 old v1 key left alone
+PASS 390x844 fresh save gifts boosters 2/1/0
+PASS 390x844 title: Open Unit, no Start over on a fresh save
+PASS 390x844 display font loaded from same origin
+PASS 390x844 sound toggle flips and saves (music + sfx share it)
+PASS 390x844 ladder opens on The Pickup with the first-unit line
+PASS 390x844 no "No Home" text on screen
+PASS 390x844 door closed with padlock
+PASS 390x844 lock tap starts jiggle/snap
+PASS 390x844 door rolls up into the framed board
+PASS 390x844 tutorial tip + finger shown on board 1
+PASS 390x844 no-match swap bounces back free  — used=0
+PASS 390x844 swipe swap spends one move
+PASS 390x844 Unit 12 (tutorial) won
+PASS 390x844 find collected onto the cart
+PASS 390x844 cleared card is a stamped work order
+PASS 390x844 Unit 12: flip table opens
+PASS 390x844 Unit 12: items sold, haul shown  — Haul: $478
+PASS 390x844 bank grew from the flip  — $478
+PASS 390x844 pawn hops one node, still on The Pickup leg
+PASS 390x844 hop finishes, next unit offered
+PASS 390x844 no Pickup tasks before 3 flips
+PASS 390x844 tutorial board: out of moves skips +5 offer
+PASS 390x844 Unit 14: flip table opens
+PASS 390x844 Unit 14: items sold, haul shown  — Haul: $462
+PASS 390x844 Unit 19: flip table opens
+PASS 390x844 Unit 19: items sold, haul shown  — Haul: $1,684
+PASS 390x844 after 3 flips: Pickup tasks panel
+PASS 390x844 buying a task plays the build
+PASS 390x844 built toast + panel returns
+PASS 390x844 glove box daily booster offered
+PASS 390x844 glove box adds one booster
+PASS 390x844 board 4 teaches the Dolly
+PASS 390x844 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
+PASS 390x844 Flashlight x-rays tarps
+PASS 390x844 out of moves offers free +5 before the fail card
+PASS 390x844 +5 moves granted once
+PASS 390x844 Unit 27: flip table opens
+PASS 390x844 Unit 27: items sold, haul shown  — Haul: $1,926
+PASS 390x844 Unit 31 cleared  — 0 retries
+PASS 390x844 Unit 31: flip table opens
+PASS 390x844 Unit 31: items sold, haul shown  — Haul: $2,074
+PASS 390x844 Unit 33 cleared  — 0 retries
+PASS 390x844 Unit 33: flip table opens
+PASS 390x844 Unit 33: items sold, haul shown  — Haul: $2,150
+PASS 390x844 Lot 9 cleared  — 0 retries
+PASS 390x844 Lot 9: flip table opens
+PASS 390x844 Lot 9: items sold, haul shown  — Haul: $2,600
+PASS 390x844 Lot 11 cleared  — 0 retries
+PASS 390x844 Lot 11: flip table opens
+PASS 390x844 Lot 11: items sold, haul shown  — Haul: $2,616
+PASS 390x844 Unit 40 cleared  — 0 retries
+PASS 390x844 Unit 40: flip table opens
+PASS 390x844 Unit 40: items sold, haul shown  — Haul: $2,404
+PASS 390x844 Unit 44 cleared  — 3 retries
+PASS 390x844 Unit 44: flip table opens
+PASS 390x844 Unit 44: items sold, haul shown  — Haul: $3,078
+PASS 390x844 10 units: reached First Yard (rung 1)
+PASS 390x844 Lot 15 cleared  — 1 retries
+PASS 390x844 Lot 15: flip table opens
+PASS 390x844 Lot 15: items sold, haul shown  — Haul: $2,992
+PASS 390x844 The Big One cleared  — 1 retries
+PASS 390x844 The Big One: flip table opens
+PASS 390x844 The Big One: items sold, haul shown  — Haul: $3,246
+PASS 390x844 Dolly / Bubble Wrap / Gavel all showed up  — gavel,wrap,dolly
+PASS 390x844 Scrapper teach near-miss played
+PASS 390x844 two-room units played
+PASS 390x844 after Yard 1 the ladder offers Next Yard
+PASS 390x844 Next Yard screen: Yard 2 door + Unlock coming soon
+PASS 390x844 design note hidden without ?debug=1
+PASS 390x844 tapping the locked door: Unlock coming soon, no purchase
+PASS 390x844 Unlock button only toasts
+PASS 390x844 Visit the ladder keeps the bank
+PASS 390x844 Endless Auction opens a generated unit
+PASS 390x844 Endless #1: flip table opens
+PASS 390x844 Endless #1: items sold, haul shown  — Haul: $1,362
+PASS 390x844 Endless clear returns to Next Yard, counter up  — 0 retries
+PASS 390x844 Daily Auction unlocked on title
+PASS 390x844 daily screen with 7-day punch card
+PASS 390x844 Daily: flip table opens
+PASS 390x844 Daily: items sold, haul shown  — Haul: $4,436
+PASS 390x844 3 daily boards punch today's card
+PASS 390x844 Start over button on title for a played save
+PASS 390x844 Start over asks to confirm
+PASS 390x844 "Keep my stuff" keeps the save
+PASS 390x844 "Wipe it" starts fresh
+PASS 390x844 ?debug=1 shows the flagged store design note, not a store
+PASS 390x844 every visible button on screen and >=44px
 PASS 390x844 no console errors/warnings
-PASS 375x667 title shows big Open Unit button
-PASS 375x667 title: visible buttons on screen and >=44px
-PASS 375x667 sound toggle flips and saves
-PASS 375x667 life ladder board shows first, piece on No Home
-PASS 375x667 ladder: visible buttons on screen and >=44px
-PASS 375x667 unit 1: door closed with lock
-PASS 375x667 unit 1 try 1: lock snaps, door rolls up to the board  — play
-PASS 375x667 unit 1 board: visible buttons on screen and >=44px
-PASS 375x667 swipe swap spends a move  — used=1
-PASS 375x667 Replay restarts the unit
-PASS 375x667 no-match swap bounces back, no move spent
-PASS 375x667 tap-tap swap works
-PASS 375x667 unit 1 cleared (try 1, 4 moves used, 3 finds, cart 12)
-PASS 375x667 unit 1 win card shows
-PASS 375x667 unit 1 flip table scene
-PASS 375x667 unit 1 finds sold, cash in bank  — bank 0 -> 1514
-PASS 375x667 unit 1 ladder board, piece moving 0->1
-PASS 375x667 unit 1 build finishes: "Built: Storage Rental!"
-PASS 375x667 unit 1 completed  — attempts 1
-PASS 375x667 unit 2: door closed with lock
-PASS 375x667 unit 2 try 1: lock snaps, door rolls up to the board  — play
-PASS 375x667 unit 2 board: visible buttons on screen and >=44px
-PASS 375x667 unit 2 cleared (try 1, 24 moves used, 3 finds, cart 113)
-PASS 375x667 unit 2 win card shows
-PASS 375x667 unit 2 flip table scene
-PASS 375x667 unit 2 finds sold, cash in bank  — bank 1514 -> 3170
-PASS 375x667 unit 2 ladder board, piece moving 1->2
-PASS 375x667 unit 2 build finishes: "Built: Apartment!"
-PASS 375x667 unit 2 completed  — attempts 1
-PASS 375x667 unit 3: door closed with lock
-PASS 375x667 unit 3 try 1: lock snaps, door rolls up to the board  — play
-PASS 375x667 unit 3 board: visible buttons on screen and >=44px
-PASS 375x667 unit 3 cleared (try 1, 4 moves used, 3 finds, cart 12)
-PASS 375x667 unit 3 win card shows
-PASS 375x667 unit 3 flip table scene
-PASS 375x667 unit 3 finds sold, cash in bank  — bank 3170 -> 3964
-PASS 375x667 unit 3 ladder board, piece moving 2->3
-PASS 375x667 unit 3 build finishes: "Built: Home!"
-PASS 375x667 unit 3 completed  — attempts 1
-PASS 375x667 ladder says Next Door after 3 units
-PASS 375x667 locked orange door shows after unit 3
-PASS 375x667 tapping the door says Unlock coming soon
-PASS 375x667 locked door: visible buttons on screen and >=44px
-PASS 375x667 Home goes to title, says Keep Going
-PASS 375x667 progress + bank persist after reload  — bank 3964
-PASS 375x667 Scrapper warns first (countdown + hand), then snatches an untouched find  — snatched guitar,jewelry
-PASS 375x667 snatched find shows as crossed out in goals
-PASS 375x667 no external requests
+PASS 390x844 no external requests
+PASS 375x667 v1 save migrates to The Pickup with bank intact  — {"bank":1234,"unit":0,"rung":0}
+PASS 375x667 old v1 key left alone
+PASS 375x667 fresh save gifts boosters 2/1/0
+PASS 375x667 title: Open Unit, no Start over on a fresh save
+PASS 375x667 display font loaded from same origin
+PASS 375x667 sound toggle flips and saves (music + sfx share it)
+PASS 375x667 ladder opens on The Pickup with the first-unit line
+PASS 375x667 no "No Home" text on screen
+PASS 375x667 door closed with padlock
+PASS 375x667 lock tap starts jiggle/snap
+PASS 375x667 door rolls up into the framed board
+PASS 375x667 tutorial tip + finger shown on board 1
+PASS 375x667 no-match swap bounces back free  — used=0
+PASS 375x667 swipe swap spends one move
+PASS 375x667 Unit 12 (tutorial) won
+PASS 375x667 find collected onto the cart
+PASS 375x667 cleared card is a stamped work order
+PASS 375x667 Unit 12: flip table opens
+PASS 375x667 Unit 12: items sold, haul shown  — Haul: $494
+PASS 375x667 bank grew from the flip  — $494
+PASS 375x667 pawn hops one node, still on The Pickup leg
+PASS 375x667 hop finishes, next unit offered
+PASS 375x667 no Pickup tasks before 3 flips
+PASS 375x667 tutorial board: out of moves skips +5 offer
+PASS 375x667 Unit 14: flip table opens
+PASS 375x667 Unit 14: items sold, haul shown  — Haul: $456
+PASS 375x667 Unit 19: flip table opens
+PASS 375x667 Unit 19: items sold, haul shown  — Haul: $1,556
+PASS 375x667 after 3 flips: Pickup tasks panel
+PASS 375x667 buying a task plays the build
+PASS 375x667 built toast + panel returns
+PASS 375x667 glove box daily booster offered
+PASS 375x667 glove box adds one booster
+PASS 375x667 board 4 teaches the Dolly
+PASS 375x667 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
+PASS 375x667 Flashlight x-rays tarps
+PASS 375x667 out of moves offers free +5 before the fail card
+PASS 375x667 +5 moves granted once
+PASS 375x667 saved progress resumes on the ladder at First Yard
+PASS 375x667 The Big One cleared  — 0 retries
+PASS 375x667 The Big One: flip table opens
+PASS 375x667 The Big One: items sold, haul shown  — Haul: $3,384
+PASS 375x667 after Yard 1 the ladder offers Next Yard
+PASS 375x667 Next Yard screen: Yard 2 door + Unlock coming soon
+PASS 375x667 design note hidden without ?debug=1
+PASS 375x667 tapping the locked door: Unlock coming soon, no purchase
+PASS 375x667 Unlock button only toasts
+PASS 375x667 Visit the ladder keeps the bank
+PASS 375x667 Endless Auction opens a generated unit
+PASS 375x667 Endless #1: flip table opens
+PASS 375x667 Endless #1: items sold, haul shown  — Haul: $1,392
+PASS 375x667 Endless clear returns to Next Yard, counter up  — 0 retries
+PASS 375x667 Daily Auction unlocked on title
+PASS 375x667 daily screen with 7-day punch card
+PASS 375x667 daily board 1 plays and saves progress
+PASS 375x667 Start over button on title for a played save
+PASS 375x667 Start over asks to confirm
+PASS 375x667 "Keep my stuff" keeps the save
+PASS 375x667 "Wipe it" starts fresh
+PASS 375x667 ?debug=1 shows the flagged store design note, not a store
+PASS 375x667 every visible button on screen and >=44px
 PASS 375x667 no console errors/warnings
+PASS 375x667 no external requests
 
-102/102 passed
+162/162 passed  (11/20/2026, 10:02:08 PM PT, http://127.0.0.1:8872/index.html)
+Re-run 375x667 after margin-prop tweak: 71/71 passed (10:06 PM PT)

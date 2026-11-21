@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><style>@font-face{font-family:"Luckiest Guy";src:url(../fonts/LuckiestGuy-Regular.ttf)}body{margin:0;background:#ddd}</style></head><body><canvas id="c" width="1200" height="900"></canvas>
+<script src="../js/art.js"></script><script>
+document.fonts.load('20px "Luckiest Guy"').then(()=>{const c=document.getElementById('c').getContext('2d');const A=ART;
+c.fillStyle='#e6e1d6';c.fillRect(0,0,1200,900);
+A.ITEMS.forEach((f,i)=>{c.save();c.translate(60+i*100,60);f(c,84);c.restore();c.save();c.translate(60+i*40,170);f(c,32);c.restore();});
+c.save();c.translate(700,60);A.ITEMS[0](c,84);A.dollyOverlay(c,84,'h');c.restore();
+c.save();c.translate(800,60);A.ITEMS[3](c,84);A.wrapOverlay(c,84);c.restore();
+c.save();c.translate(900,60);A.gavel(c,84);c.restore();
+[1,2,3].forEach((l,i)=>{c.save();c.translate(60+i*100,280);A.tarp(c,84,l,true);c.restore();});c.save();c.translate(360,280);A.tarp(c,84,1,false);c.restore();
+Object.keys(A.FINDS).forEach((k,i)=>{c.save();c.translate(500+i*100,280);A.FINDS[k].draw(c,84);c.restore();});
+A.DIORAMAS.forEach((d,i)=>{c.save();c.translate(90+i*160,520);d(c,120,{});c.restore();});
+c.save();c.translate(90,520);c.restore();
+c.save();c.translate(100,760);A.DIORAMAS[0](c,150,{wash:1,fender:1,visor:1,hitch:1,table:1});c.restore();
+c.save();c.translate(300,860);A.mascot(c,180);c.restore();
+c.save();c.translate(520,760);A.scrapper(c,160,true);c.restore();
+c.save();c.translate(900,760);A.grabber(c,100,150);c.restore();
+c.save();A.padlock(c,1100,760,120,0);c.restore();
+});</script></body></html>

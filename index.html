@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#1b1410">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="description" content="Storage Rush test build. Dig out storage units, pull the finds, flip them for cash and climb the ladder. No ads, no accounts, no tracking.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'none'; frame-src 'none'; object-src 'none'">
+<meta name="description" content="Storage Rush test build. Cut the lock, dig the unit, pull the finds, flip for cash and build your place. No ads, no accounts, no tracking.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; frame-src 'none'; object-src 'none'">
 <title>Storage Rush</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23e8691a'/%3E%3Cpath d='M0 14h64M0 24h64M0 34h64M0 44h64' stroke='%23b94b0c' stroke-width='3'/%3E%3Crect x='24' y='46' width='16' height='13' rx='3' fill='%23f2c23a'/%3E%3C/svg%3E">
+<link rel="preload" href="fonts/LuckiestGuy-Regular.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +18,7 @@
 
   <div id="bar">
     <button id="bHome" class="round hidden" aria-label="Home"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg></button>
-    <div id="barMid"></div>
+    <div id="barMid"><div id="ticket" class="hidden"><small>MOVES</small><b id="movesN">0</b></div></div>
     <button id="bSound" class="round snd" aria-label="Sound on/off"><svg viewBox="0 0 24 24"><path class="spk" d="M4 9.5h4l5-4v13l-5-4H4z"/><path class="wave" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/><path class="mute" d="M16.5 9.5l5 5M21.5 9.5l-5 5"/></svg></button>
   </div>
 
@@ -25,14 +26,21 @@
     <div class="logo"><div class="kicker">Storage Auction Pirate</div><h1>STORAGE<br>RUSH</h1><p class="tag">Dig the unit. Pull the finds. Flip for cash.</p></div>
     <div class="grow"></div>
     <button id="bOpen" class="big"><span id="bOpenTxt">Open Unit</span></button>
+    <div class="row2">
+      <button id="bDaily" class="mid">Daily Auction</button>
+    </div>
     <button id="bReset" class="link hidden">Start over</button>
   </section>
 
   <section id="ladderUI" class="screen hidden">
-    <div class="head"><h2>Your Ladder</h2><p id="ladSub">Clear a unit to move up</p></div>
+    <div class="head"><h2 id="ladH">Your Ladder</h2><p id="ladSub"></p></div>
     <div id="ladBuilt" class="built hidden"></div>
     <div class="grow"></div>
-    <button id="bLadNext" class="big">Open Unit</button>
+    <div id="tasks" class="tasks hidden"></div>
+    <div class="row2">
+      <button id="bGlove" class="mid alt hidden">Glove box</button>
+      <button id="bLadNext" class="big">Open Unit</button>
+    </div>
   </section>
 
   <section id="doorUI" class="screen hidden">
@@ -43,31 +51,46 @@
 
   <section id="playUI" class="hidden">
     <div id="goals"></div>
+    <div id="tut" class="tut hidden"></div>
     <div id="pbot">
       <button id="bReplay" class="round sm" aria-label="Replay"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v5h5"/></svg></button>
-      <div class="chip" id="cartChip">Cart <b id="cartN">0</b></div>
-      <div class="chip gold">Bank <b id="bankN">$0</b></div>
+      <button id="bCut" class="boost" aria-label="Bolt Cutters"><canvas width="96" height="96"></canvas><i>0</i></button>
+      <button id="bFlash" class="boost" aria-label="Flashlight"><canvas width="96" height="96"></canvas><i>0</i></button>
+      <button id="bFree" class="boost" aria-label="Free Swap"><canvas width="96" height="96"></canvas><i>0</i></button>
+      <div class="chips"><div class="chip" id="cartChip">Cart <b id="cartN">0</b></div><div class="chip gold" id="bankChip">Bank <b id="bankN">$0</b></div></div>
     </div>
-    <div id="tapFind" class="tapme hidden">Tap the find!</div>
   </section>
 
   <section id="flipUI" class="screen hidden">
     <div class="head"><h2>Flip Table</h2><p>Bank <b id="flipBank">$0</b></p></div>
     <div class="grow"></div>
+    <div id="haul" class="built hidden"></div>
     <button id="bFlipNext" class="big hidden">Next</button>
   </section>
 
-  <section id="lockedUI" class="screen hidden">
-    <div class="head"><h2>Next Yard</h2><p>Bank <b id="lockBank">$0</b></p></div>
+  <section id="dailyUI" class="screen hidden">
+    <div class="head"><h2>Daily Auction</h2><p id="dailySub">3 boards a day. Punch your card.</p></div>
+    <div id="punch" class="punch"></div>
     <div class="grow"></div>
-    <button id="bAgain" class="big alt">Play again</button>
+    <div class="row2"><button id="bGlove2" class="mid alt hidden">Glove box</button><button id="bDailyGo" class="big">Play</button></div>
   </section>
 
-  <div id="msg" class="hidden"><div class="card"><h2 id="msgH"></h2><p id="msgP"></p><button id="msgB" class="big"></button></div></div>
+  <section id="lockedUI" class="screen hidden">
+    <div class="head"><h2>Yard 2: Barn Row</h2><p>Bank <b id="lockBank">$0</b></p></div>
+    <div class="grow"></div>
+    <button id="bUnlock" class="big">Unlock coming soon</button>
+    <div class="row2"><button id="bEndless" class="mid">Endless Auction</button><button id="bVisit" class="mid alt">Visit the ladder</button></div>
+    <div id="debugNote" class="debug hidden"></div>
+  </section>
+
+  <div id="banner" class="hidden"></div>
+  <div id="msg" class="hidden"><div class="card" id="card"><div id="msgStamp" class="stamp hidden"></div><h2 id="msgH"></h2><div id="msgP"></div><button id="msgB" class="big"></button><button id="msgB2" class="link hidden"></button></div></div>
   <div id="toast" class="hidden"></div>
 </div>
 <script src="js/audio.js"></script>
 <script src="js/art.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/levels.js"></script>
 <script src="js/game.js"></script>
 </body>
 </html>

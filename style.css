@@ -35,7 +35,7 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 .mid[disabled]{filter:grayscale(1) brightness(.8)}
 .row2{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:10px;flex-wrap:wrap}
 .link{margin-top:10px;background:rgba(0,0,0,.6);border-radius:14px;padding:10px 18px;font-weight:800;font-size:15px;min-height:44px}
-.head{text-align:center;background:#fff8e6;color:var(--ink);border:3px solid var(--ink);border-radius:18px;padding:8px 18px 6px;box-shadow:0 4px 0 var(--ink);max-width:94vw}
+.head{text-align:center;background:#fff8e6;color:var(--ink);border:3px solid var(--ink);border-radius:18px;padding:8px 18px 6px;box-shadow:0 4px 0 var(--ink);max-width:94%}
 .head h2{margin:0;font:24px/1.05 var(--disp);color:var(--orange);letter-spacing:.5px}
 .head p{margin:2px 0 0;font-weight:800;font-size:15px}
 .head.small h2{font-size:20px}
@@ -65,7 +65,7 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 .chip.gold b{color:#c97a00}
 .chip.punch{animation:punch .35s cubic-bezier(.2,1.8,.4,1)}
 .built{font:22px var(--disp);color:var(--orange);background:#fff8e6;border:3px solid var(--ink);border-radius:14px;padding:8px 16px 3px;margin-top:8px;box-shadow:0 4px 0 var(--ink);animation:pop .45s cubic-bezier(.2,1.6,.4,1);text-align:center}
-.tasks{width:min(94vw,380px);background:#fff8e6;color:var(--ink);border:3px solid var(--ink);border-radius:18px;padding:8px 10px;box-shadow:0 4px 0 var(--ink)}
+.tasks{width:min(94%,380px);background:#fff8e6;color:var(--ink);border:3px solid var(--ink);border-radius:18px;padding:8px 10px;box-shadow:0 4px 0 var(--ink)}
 .tasks h3{margin:0 0 6px;font:17px var(--disp);color:var(--orange);text-align:center}
 .task{display:flex;align-items:center;gap:8px;margin:5px 0}
 .task span{flex:1;font-weight:800;font-size:15px;line-height:1.15}
@@ -77,7 +77,7 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 .punch div.on{border:3px solid var(--ink);background:var(--orange);color:#fff}
 #banner{position:absolute;left:0;right:0;top:40%;text-align:center;font:42px/1 var(--disp);color:var(--gold);-webkit-text-stroke:2px var(--ink);text-shadow:0 4px 0 var(--ink),0 8px 18px rgba(0,0,0,.5);pointer-events:none;z-index:6;animation:slap .55s cubic-bezier(.2,1.8,.4,1)}
 #msg{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.45);z-index:8}
-.card{position:relative;width:min(88vw,340px);text-align:center;background:#fff8e6;color:var(--ink);border-radius:8px;padding:26px 16px 22px;border:3px solid var(--ink);box-shadow:0 8px 0 var(--ink),0 18px 40px rgba(0,0,0,.5);animation:pop .45s cubic-bezier(.2,1.6,.4,1);
+.card{position:relative;width:min(88%,340px);text-align:center;background:#fff8e6;color:var(--ink);border-radius:8px;padding:26px 16px 22px;border:3px solid var(--ink);box-shadow:0 8px 0 var(--ink),0 18px 40px rgba(0,0,0,.5);animation:pop .45s cubic-bezier(.2,1.6,.4,1);
   background-image:repeating-linear-gradient(#fff8e6 0 27px,#ead9b6 27px 28px)}
 .card:before{content:"";position:absolute;left:8px;right:8px;top:6px;height:8px;background:radial-gradient(circle,#1b1410 3px,transparent 3.5px) 0 0/16px 8px repeat-x}
 .card h2{margin:0;font:32px/1 var(--disp);color:var(--orange)}
@@ -85,7 +85,7 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 #msgP .line{display:flex;justify-content:space-between;border-bottom:2px dotted #c9b38a;padding:2px 4px}
 .stamp{position:absolute;right:8px;top:8px;transform:rotate(14deg);font:22px var(--disp);color:#d8261a;border:3px solid #d8261a;border-radius:8px;padding:5px 8px 1px;opacity:.9;animation:stampIn .45s cubic-bezier(.2,1.8,.4,1) .15s backwards}
 #toast{position:absolute;left:50%;top:21%;transform:translateX(-50%);background:#fff8e6;border:3px solid var(--ink);border-radius:18px;padding:14px 22px 8px;font:22px var(--disp);color:var(--orange);z-index:9;white-space:nowrap;box-shadow:0 4px 0 var(--ink)}
-.debug{margin-top:10px;max-width:94vw;background:rgba(0,0,0,.78);border:2px dashed #ffcf5a;border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.35;text-align:left}
+.debug{margin-top:10px;max-width:94%;background:rgba(0,0,0,.78);border:2px dashed #ffcf5a;border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.35;text-align:left}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes slap{0%{transform:scale(2.4) rotate(-6deg);opacity:0}60%{transform:scale(.92) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(-2deg)}}
@@ -94,13 +94,13 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 
 #bUnlock{font-size:26px;white-space:nowrap;padding-left:18px;padding-right:18px}
 
-#haul{font:16px var(--body);text-align:left;max-width:94vw;width:min(94vw,340px);padding:8px 12px 6px}
+#haul{font:16px var(--body);text-align:left;max-width:94%;width:min(94%,340px);padding:8px 12px 6px}
 #haul .line{display:flex;justify-content:space-between;border-bottom:2px dotted #c9b38a;padding:3px 4px;font-weight:800;font-size:15px;color:var(--ink)}
 #haul .line:last-child{border-bottom:0;font-family:var(--disp);font-size:18px;color:var(--orange);margin-top:4px}
 @media (max-height:700px){
   #ticket b{font-size:26px}
   #ticket{min-width:72px}
-  .tut{white-space:normal;max-width:92vw;text-align:center;top:calc(108px + env(safe-area-inset-top))}
+  .tut{white-space:normal;max-width:92%;text-align:center;top:calc(108px + env(safe-area-inset-top))}
   h1{font-size:48px}
   .head h2{font-size:20px}
   #pbot{gap:5px}
@@ -173,3 +173,20 @@ body[data-scene="truck"] #bHome,body[data-scene="safe"] #bHome{display:none!impo
 .mapside .mid{min-width:96px;font-size:16px;padding:12px 10px 6px}
 .big.play{position:absolute;left:50%;top:60%;min-width:118px;min-height:56px;font-size:23px;padding:12px 16px 6px;white-space:nowrap;animation:pulse 1.2s ease-in-out infinite}
 @media(max-height:700px){.mapside{top:calc(132px + env(safe-area-inset-top))}.big.play{min-height:50px;font-size:20px;min-width:104px}}
+
+/* Sunnyvale village map */
+.mapfoot{position:absolute;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.mapfoot>*{pointer-events:auto}
+.big.build{min-height:52px;font-size:19px;padding:8px 18px 4px;background:linear-gradient(#a7ee6f,#46b43a 55%,#2b8a27);line-height:1;display:flex;flex-direction:column;align-items:center}
+.big.build small{font-size:12px;letter-spacing:1px;color:#eaffd8}
+.big.build.poor{background:linear-gradient(#f6c16b,#d98a2b 55%,#a85c14)}
+.builtbar{width:min(86%,330px);background:#2b160ce8;border:3px solid #2b160c;box-shadow:0 0 0 2px #e0a64f,0 4px 0 #2b160c;border-radius:16px;padding:5px 10px 6px;text-align:center}
+.builtbar span{font:15px/1.1 var(--disp);color:#ffe08a;letter-spacing:.5px}
+.builtbar i{display:block;height:10px;border-radius:6px;background:#5b3a1e;margin-top:3px;overflow:hidden;border:1px solid #000}
+.builtbar b{display:block;height:100%;width:0;background:linear-gradient(#bff27f,#3fae35);transition:width .8s}
+/* desktop / wide screens: center a phone-shaped frame, letterbox art behind */
+@media (min-aspect-ratio:3/4){
+  body{background:#120b06}
+  body:before{content:"";position:fixed;inset:-60px;background:url(assets/bg/terrain.jpg) center/cover;filter:blur(22px) brightness(.5) saturate(1.1)}
+  #app{inset:auto;left:50%;top:50%;height:min(calc(100vh - 28px),932px);width:calc(min(calc(100vh - 28px),932px) * .462);transform:translate(-50%,-50%);border-radius:28px;overflow:hidden;box-shadow:0 0 0 5px #2b160c,0 0 0 9px #e0a64f,0 0 0 12px #2b160c,0 24px 70px #000d}
+}

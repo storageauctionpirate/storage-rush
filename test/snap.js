@@ -13,6 +13,10 @@ const shot=async n=>{await pg.screenshot({path:path.join(out,sz+'-'+n+'.png')});
 await setSave({});const sc=(process.env.SC||'title,map,board,safe,flea,truck,locked').split(',');
 if(sc.includes('title')){await setSave({});await wait(500);await shot('title');}
 if(sc.includes('map')){await setSave({unit:6,bank:850});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('map');}
+if(sc.includes('mapstart')){await setSave({unit:0,bank:0});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('map-start');}
+if(sc.includes('village')){await setSave({unit:9,bank:1450,truckSeen:true,built:['sign','office'],tasks:['wash']});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('map-mid');
+  await pg.evaluate(()=>document.getElementById('bBuild').click());await wait(500);await shot('map-building');await wait(1600);await shot('map-built');}
+if(sc.includes('mapend')){await setSave({unit:19,bank:5000,truckSeen:true,built:['sign','office','units','flea','thrift','garage','pawn','warehouse']});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('map-end');}
 if(sc.includes('door')){await setSave({unit:4,bank:900});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(800);await pg.evaluate(()=>document.getElementById('bLadNext').click());await wait(900);await shot('door');}
 if(sc.includes('board')){await setSave({unit:11,bank:2450});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(800);await pg.evaluate(()=>document.getElementById('bLadNext').click());await wait(600);const L=await pg.evaluate(()=>SR.lockXY());await pg.touchscreen.tap(L.x,L.y);await wait(2600);await shot('board');}
 if(sc.includes('safe')){for(const r of (process.env.RAR||'rare').split('|')){await pg.evaluate(r=>SR.debugSafe&&SR.debugSafe(r),r);await wait(+process.env.SAFE_T||1200);await shot('safe-spin-'+r);await wait(2600);await shot('safe-open-'+r);}}

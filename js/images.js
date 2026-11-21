@@ -15,7 +15,16 @@ const FILES={
   'truck-before':'assets/chars/truck-before.png', 'truck-after':'assets/chars/truck-after.png',
   'ic-cut':'assets/ui/cutters.png', 'ic-flash':'assets/ui/flashlight.png', 'ic-free':'assets/ui/swap.png',
   'bg-door':'assets/bg/unit-door.jpg', 'bg-map':'assets/bg/map-clean.jpg', 'bg-flea':'assets/bg/flea-empty.jpg',
-  'bg-truck':'assets/bg/truck-lot.jpg', 'bg-safe':'assets/bg/vault-room.jpg', 'bg-desert':'assets/bg/desert-gold.jpg'
+  'bg-truck':'assets/bg/truck-lot.jpg', 'bg-safe':'assets/bg/vault-room.jpg', 'bg-desert':'assets/bg/desert-gold.jpg',
+  'bg-terrain':'assets/bg/terrain.jpg', 'bg-maptop':'assets/bg/map-top.png',
+  'lm-sign':'assets/landmarks/sign.png', 'lm-sign-b':'assets/landmarks/sign-b.png',
+  'lm-office':'assets/landmarks/office.png', 'lm-office-b':'assets/landmarks/office-b.png',
+  'lm-units':'assets/landmarks/units.png', 'lm-units-b':'assets/landmarks/units-b.png',
+  'lm-flea':'assets/landmarks/flea.png', 'lm-flea-b':'assets/landmarks/flea-b.png',
+  'lm-thrift':'assets/landmarks/thrift.png', 'lm-thrift-b':'assets/landmarks/thrift-b.png',
+  'lm-garage':'assets/landmarks/garage.png', 'lm-garage-b':'assets/landmarks/garage-b.png',
+  'lm-pawn':'assets/landmarks/pawn.png', 'lm-pawn-b':'assets/landmarks/pawn-b.png',
+  'lm-warehouse':'assets/landmarks/warehouse.png', 'lm-warehouse-b':'assets/landmarks/warehouse-b.png'
 };
 const PIECE_KEYS=['tote','box','crate','lamp','toy','treasure'];
 const cache={};

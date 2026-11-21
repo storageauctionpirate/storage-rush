@@ -4,6 +4,7 @@ const puppeteer=require('puppeteer-core');const fs=require('fs');const path=requ
 const BASE=process.env.URL||'http://127.0.0.1:8872/index.html';
 const SHOTS=process.env.SHOTS!=='0';const ONLY=process.env.ONLY;
 const out=[];let fails=0;const ok=(n,c,i)=>{const line=(c?'PASS ':'FAIL ')+n+(i!=null&&i!==''?'  — '+i:'');out.push(line);console.log(line);if(!c)fails++;};
+const st0=pg=>pg.evaluate(()=>SR.state());
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const VPS=[
   {tag:'390x844',full:true,vp:{width:390,height:844,deviceScaleFactor:2,isMobile:true,hasTouch:true},ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148'},
@@ -107,7 +108,11 @@ for(const V of VPS){
   await tapSel('#bOpen');await wait(700);s=await st();
   ok(`${T} world map opens on Sunnyvale Storage`,s.mode==='map'&&/Sunnyvale Storage/.test(await txt('#ladH'))&&/first unit/.test(await txt('#ladSub')));
   ok(`${T} no "No Home" text on screen`,!(await pg.evaluate(()=>/no home/i.test(document.body.innerText))));
-  await checkFit('map');await shot('world-map');seen.shots.map=1;
+  { const v=await pg.evaluate(()=>SR.village());const H0=(await pg.evaluate(()=>innerHeight));
+    ok(`${T} map: one tall path with all 20 stops in order`,v.stops.length===20&&v.stops.every((p,i)=>i===0||p.y<v.stops[i-1].y)&&v.worldH>H0*2.5,'worldH '+v.worldH);
+    ok(`${T} map: camera starts on stop 1`,v.stops[0].y>0&&v.stops[0].y<H0,'y '+Math.round(v.stops[0].y));
+    ok(`${T} map: Sunnyvale 0% built bar`,/Sunnyvale 0% built/.test(await txt('#builtTxt'))&&v.pct===0); }
+  await checkFit('map');await shot('world-map');await shot('map-start');seen.shots.map=1;
   /* ---- unit 1 ---- */
   await tapSel('#bLadNext');await wait(500);s=await st();ok(`${T} door closed with padlock`,s.mode==='door'&&s.door==='closed');await shot('door');
   await tapLock();await wait(120);s=await st();ok(`${T} lock tap starts jiggle/snap`,s.door==='open');await wait(1800);
@@ -139,6 +144,13 @@ for(const V of VPS){
   /* ---- unit 3 ---- */
   await tapSel('#bLadNext');await wait(400);await playUnit('Unit 3');s=await settleAfterWin('Unit 3');await until(x=>x.mode==='map'&&!(x.map&&x.map.walking),4000);
   ok(`${T} 3 flips earns the free Pickup upgrade scene`,!!seen.truck);
+  { await wait(800);let v=await pg.evaluate(()=>SR.village());const H0=await pg.evaluate(()=>innerHeight);
+    ok(`${T} map: camera follows the hustler to stop 4`,v.stops[3].y>0&&v.stops[3].y<H0,'y '+Math.round(v.stops[3].y));
+    ok(`${T} village: truck landmark upgraded by the Pickup milestone`,v.pct>0,v.pct+'%');
+    const p0=v.pct;
+    if(await vis('#bBuild')&&!(await pg.$eval('#bBuild',e=>e.classList.contains('poor')))){const b0=(await st()).save.bank;await tapSel('#bBuild');await wait(700);await shot('map-building');await wait(2000);v=await pg.evaluate(()=>SR.village());const b1=(await st()).save.bank;
+      ok(`${T} village: earned cash fixes up the next landmark`,v.built.includes('sign')&&v.pct>p0&&b1<b0&&new RegExp(v.pct+'% built').test(await txt('#builtTxt')),v.pct+'% · bank '+b0+'→'+b1);await shot('map-village');}
+    else ok(`${T} village: earned cash fixes up the next landmark`,false,'build button missing or too poor'); }
   await tapSel('#bEmpire');await wait(400);
   ok(`${T} Upgrades: Pickup tasks panel`,await vis('#tasks')&&/Fix up The Pickup/.test(await txt('#tasks h3')));
   await checkFit('upgrades');
@@ -167,12 +179,14 @@ for(const V of VPS){
     for(let u=5;u<=20;u++){
       s=await until(async x=>x.mode==='map'&&!(x.map&&x.map.walking)&&await vis('#bLadNext'),6000);const name='Unit '+u;
       if(u%4===0){await tapSel('#bEmpire');await wait(300);const can=await pg.$$eval('#tasks button:not([disabled])',bs=>bs.map(b=>b.dataset.task)).catch(()=>[]);if(can.length&&await vis('#tasks')){await tapSel(`#tasks button[data-task="${can[0]}"]`);await wait(300);if((await st()).mode==='truck'){await pg.evaluate(()=>SR.finishTruck());await wait(300);}}await tapSel('#bEmpireBack');await wait(400);}
+      if(await vis('#bBuild')&&!(await pg.$eval('#bBuild',e=>e.classList.contains('poor')))){await tapSel('#bBuild');await wait(2700);if(u===12)await shot('map-mid-progress');}
       await tapSel('#bLadNext');await wait(400);
       const tries=await playUnit(name);s=await st();
       ok(`${T} ${name} cleared`,await vis('#msg')&&/cleared/.test(await txt('#msgH')),tries+' retries');
       s=await settleAfterWin(name);
       await until(x=>x.mode==='map'||x.mode==='locked',4000);
     }
+    ok(`${T} village keeps building as you play`,(await pg.evaluate(()=>SR.village())).pct>=50,(await pg.evaluate(()=>SR.village())).pct+'% built');
     ok(`${T} all 20 Sunnyvale levels cleared`, (await st()).save.unit>=20 || (await st()).mode==='locked');
     ok(`${T} Dolly / Bubble Wrap / Gavel all showed up`,['dolly','wrap','gavel'].every(k=>seen.specials.has(k)),[...seen.specials].join(','));
     ok(`${T} Scrapper teach near-miss played`,seen.teachScr);
@@ -219,6 +233,17 @@ for(const V of VPS){
   ok(`${T} no console errors/warnings`,errs.length===0,errs.slice(0,4).join(' | '));
   ok(`${T} no external requests`,ext.length===0,ext.slice(0,3).join(' '));
   await pg.close();}
+if(!ONLY||ONLY==='1280x800'){const T='1280x800';const pg=await b.newPage();const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+  await pg.setViewport({width:1280,height:800});await pg.goto(BASE,{waitUntil:'load'});
+  await pg.evaluate(()=>{localStorage.clear();localStorage.setItem('storageRush.v3',JSON.stringify({v:3,unit:9,bank:1450,sound:false,rung:0,tasks:['wash'],truckSeen:true,built:['sign','office'],boosters:{cut:2,flash:1,free:0},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:true,taughtBoost:{cut:true,flash:true,free:true}}));});
+  await pg.reload({waitUntil:'load'});await wait(700);await pg.click('#bOpen');await wait(1600);
+  const r=await pg.evaluate(()=>{const a=document.getElementById('app').getBoundingClientRect(),c=document.getElementById('cv').getBoundingClientRect();const bs=[...document.querySelectorAll('#ladderUI button')].filter(b=>b.offsetParent).map(b=>b.getBoundingClientRect());return {a:[a.left,a.top,a.width,a.height],c:[c.width,c.height],inside:bs.every(b=>b.left>=a.left-1&&b.right<=a.right+1&&b.top>=a.top-1&&b.bottom<=a.bottom+1)};});
+  ok(`${T} desktop: phone-shaped frame centered, nothing cropped`,r.a[2]<520&&r.a[3]<=800&&Math.abs(r.a[0]+r.a[2]/2-640)<2&&r.c[0]===r.a[2]&&r.c[1]===r.a[3]&&r.inside,JSON.stringify(r));
+  const v=await pg.evaluate(()=>SR.village());ok(`${T} desktop: map centered on the current stop`,v.stops[9].y>0&&v.stops[9].y<800,'y '+Math.round(v.stops[9].y));
+  if(SHOTS)await pg.screenshot({path:path.join(root,'shots','sunnyvale','1280x800-desktop-map.png')});
+  await pg.evaluate(()=>document.getElementById('bLadNext').click());await wait(700);const L=await pg.evaluate(()=>SR.lockXY());await pg.mouse.click(L.x,L.y);await wait(2000);
+  ok(`${T} desktop: board opens inside the frame`,(await st0(pg)).mode==='play');if(SHOTS)await pg.screenshot({path:path.join(root,'shots','sunnyvale','1280x800-desktop-board.png')});
+  ok(`${T} desktop: no page errors`,errs.length===0,errs.join(' | '));await pg.close();}
 await b.close();
 const summary=`\n${out.length-fails}/${out.length} passed  (${new Date().toLocaleString('en-US',{timeZone:'America/Los_Angeles'})} PT, ${BASE})`;
 console.log(summary);fs.writeFileSync(path.join(__dirname,'last-run.txt'),out.join('\n')+summary+'\n');process.exit(fails?1:0);

@@ -12,7 +12,7 @@ const VPS=[
 ].filter(v=>!ONLY||v.tag===ONLY);
 (async()=>{
 const root=path.join(__dirname,'..');
-const files=['index.html','style.css','js/game.js','js/art.js','js/audio.js','js/engine.js','js/levels.js','js/images.js'];
+const files=['index.html','style.css','js/game.js','js/art.js','js/audio.js','js/engine.js','js/levels.js','js/images.js','js/rhythm.js'];
 const src=files.map(f=>fs.readFileSync(path.join(root,f),'utf8')).join('\n');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 ok('source never uses the banned word',!/tetris/i.test(src));

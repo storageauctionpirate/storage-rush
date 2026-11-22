@@ -135,8 +135,9 @@ P.cut=function(r,c){return this.chip(r,c);};
 P.age=function(){const out={warn:[],snatch:[]};if(this.scrapper==='off')return out;
   this.findsOnBoard().forEach(f=>{if(f.age>=SCRAP_LIMIT&&this.scrapper==='on')out.snatch.push(f);else if(f.age>=SCRAP_WARN)out.warn.push(f);});return out;};
 P.snatch=function(r,c){const t=this.at(r,c);if(!t||t.k!=='find')return;this.snatched.push(t.find);this.g[r][c]=null;};
+P.tarpsLeft=function(){let n=0;this.each(t=>{if(t.k==='tarp')n++;});return n;};
 P.status=function(){const d=this.def;
-  if(this.collected.length>=d.need)return 'win';
+  if(this.collected.length>=d.need&&(!d.clearTarps||this.tarpsLeft()===0))return 'win';
   if(this.totalFinds-this.snatched.length<d.need)return 'scrapped';
   if(this.moves<=0&&!this.findsOnBoard().length)return 'out';
   return 'play';};
@@ -149,7 +150,7 @@ P.scoreSwap=function(a,b){
   let sc=0;const seen=new Set();
   gs.forEach(g=>{sc+=g.cells.size+(g.special==='gavel'?40:g.special==='wrap'?25:g.special==='dolly'?18:0);
     g.cells.forEach(k=>{const r=Math.floor(k/7),c=k%7;let t0=this.at(r,c);if(t0&&t0.sp)sc+=15;
-      DIRS.forEach(d=>{const t=this.at(r+d[0],c+d[1]);if(t&&t.k==='tarp'&&!seen.has(t.id)){seen.add(t.id);sc+=t.find?(t.layers===1?40:28):10;}});});});
+      DIRS.forEach(d=>{const t=this.at(r+d[0],c+d[1]);if(t&&t.k==='tarp'&&!seen.has(t.id)){seen.add(t.id);sc+=(t.find||this.def.clearTarps)?(t.layers===1?40:28):10;}});});});
   return sc;};
 P.bestMove=function(){let best=null,bs=-1;
   for(let r=0;r<7;r++)for(let c=0;c<7;c++){[[0,1],[1,0]].forEach(d=>{const r2=r+d[0],c2=c+d[1];if(r2>6||c2>6)return;const s=this.scoreSwap([r,c],[r2,c2]);if(s>bs){bs=s;best={a:[r,c],b:[r2,c2],score:s};}});}

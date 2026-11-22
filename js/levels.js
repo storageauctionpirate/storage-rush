@@ -7,11 +7,11 @@
 const B=(o)=>Object.assign({types:6,scrapper:'off',pre:[]},o);
 const YARD0={units:[
   {id:'Unit 1',name:'First Locker',theme:'indoor',boards:[
-    B({seed:485,moves:26,need:3,types:6,tut:'swap',tarps:[[6,3,2,'guitar'],[6,1,2,'camera'],[6,5,2,'jewelry']],pre:[[5,2,0],[5,4,0],[4,3,0],[5,3,1]]})]},
+    B({seed:485,moves:28,need:1,clearTarps:true,types:6,tut:'swap',tarps:[[6,3,2,'guitar'],[6,1,2,null],[6,5,2,null]],pre:[[5,2,0],[5,4,0],[4,3,0],[5,3,1]]})]},
   {id:'Unit 2',name:'Clean Indoor Unit',theme:'indoor',boards:[
     B({seed:286,moves:26,need:3,types:6,tut:'layers',tarps:[[6,1,2,'jewelry'],[6,5,2,'camera'],[4,3,2,'guitar'],[3,0,1,null]]})]},
   {id:'Unit 3',name:'Clean Indoor Unit',theme:'indoor',boards:[
-    B({seed:103,moves:20,need:3,tarps:[[5,1,2,'guitar'],[6,3,2,'jewelry'],[5,5,2,'safe']]})]},
+    B({seed:103,moves:20,need:3,tarps:[[5,1,2,'guitar'],[6,3,2,'jewelry'],[5,5,2,'camera']]})]},
   {id:'Unit 4',name:'Greasy Garage',theme:'garage',boards:[
     B({seed:104,moves:24,need:2,teach:'dolly',tarps:[[6,2,2,'camera'],[6,5,2,'guitar'],[4,0,1,null]],pre:[[2,1,2],[2,2,2],[2,3,3],[2,4,2],[1,3,2]]})]},
   {id:'Unit 5',name:'Greasy Garage',theme:'garage',boards:[

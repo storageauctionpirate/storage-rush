@@ -9,7 +9,10 @@ const YARD=LV.YARD1;const UNITS=YARD.units;
 const QS=new URLSearchParams(location.search);const DEBUG=QS.get('debug')==='1';
 /* Store / live-ops flags: design only. Nothing here charges, shows a buyable price, or loads ads. */
 const FLAGS={store:false,continuePaid:false,ads:false};
-const PICKUP_TASKS=[{id:'wash',name:'Wash the truck',price:200},{id:'fender',name:'Patch the fender',price:400},{id:'visor',name:'Hang a Pirate sun visor',price:300},{id:'hitch',name:'Add a trailer hitch',price:800},{id:'table',name:'Sturdier flip table',price:1200}];
+const PICKUP_TASKS=[{id:'wash',name:'Lift kit & chrome rims',price:1000,at:3},{id:'fender',name:'Light bar & hood stripe',price:1500,at:8},{id:'visor',name:'Loaded cargo rack',price:2000,at:12},{id:'hitch',name:'Pirate trailer',price:3000,at:16}];
+const TRUCK_NAMES=['Beat-up Pickup','Fresh paint','Lift kit & chrome rims','Light bar & hood stripe','Loaded cargo rack','Pirate trailer'];
+function truckLv(){const n=PICKUP_TASKS.filter(t=>save.tasks.includes(t.id)).length;return Math.min(5,(save.truckSeen?1:0)+n);}
+function truckImg(n){return IM.get('truck-L'+Math.max(0,Math.min(5,n)));}
 const YARD_TASKS=[{id:'truck',name:'Buy a hand truck',price:600},{id:'canopy',name:'Put up a canopy',price:900},{id:'second',name:'Rent a second locker',price:1500}];
 const NODES_TO_YARD=10, JUNK_PRICE=2;
 const BUILT_LINES={wash:'The Pickup is shining.',fender:'The Pickup looks meaner already.',visor:'Pirate visor is up. Respect.',hitch:'Hitch on. Bigger hauls coming.',table:'Sturdy table. Flip like a pro.',
@@ -103,22 +106,22 @@ function afterHop(){if(S.map)S.map.walking=false;$('bLadNext').classList.remove(
   $('bLadNext').textContent=save.unit>=UNITS.length?'Desert Gold':'Unit '+(save.unit+1)+' ▸';
   updBuildUI();renderTasks();}
 function taskList(){if(save.unit<3)return [];
-  const list=PICKUP_TASKS.filter(t=>!save.tasks.includes(t.id));
+  const nt=PICKUP_TASKS.find(t=>!save.tasks.includes(t.id)),list=nt?[nt]:[];
   if(save.rung>=1)list.push(...YARD_TASKS.filter(t=>!save.tasks.includes(t.id)));
   return list.sort((a,b)=>a.price-b.price).slice(0,2);}
 function renderTasks(){const el=$('tasks');const list=taskList();
   if(!list.length||S.mode!=='empire'){el.classList.add('hidden');return;}
   const pickup=PICKUP_TASKS.some(t=>list.includes(t));
   el.innerHTML='<h3>'+(pickup?'Fix up The Pickup':'Build out First Yard')+'</h3>';let sug=false;
-  list.forEach(t=>{const d=document.createElement('div');const can=save.bank>=t.price;d.className='task'+(can&&!sug?' suggest':'');if(can)sug=true;
-    d.innerHTML='<span>'+t.name+'</span>';const b=document.createElement('button');b.dataset.task=t.id;b.disabled=!can;b.textContent=can?money(t.price):'Need '+money(t.price-save.bank);
+  list.forEach(t=>{const d=document.createElement('div');const reached=save.unit>=(t.at||0),can=reached&&save.bank>=t.price;d.className='task'+(can&&!sug?' suggest':'');if(can)sug=true;
+    d.innerHTML='<span>'+t.name+'</span>';const b=document.createElement('button');b.dataset.task=t.id;b.disabled=!can;b.textContent=!reached?'After Unit '+t.at:can?money(t.price):'Need '+money(t.price-save.bank);
     b.onclick=()=>buyTask(t);d.appendChild(b);el.appendChild(d);});
   el.classList.remove('hidden');}
-function goEmpire(){S.mode='empire';S.build=null;show('empireUI');$('empireBank').textContent=money(save.bank);$('empireName').textContent=save.rung?'First Yard':'The Pickup';$('empireSub').textContent=save.tasks.length+'/8 upgrades · earned game cash only';renderTasks();music();}
-function buyTask(t){if(S.build||save.bank<t.price||save.tasks.includes(t.id))return;
+function goEmpire(){S.mode='empire';S.build=null;show('empireUI');$('empireBank').textContent=money(save.bank);$('empireName').textContent=save.rung?'First Yard':'The Pickup';$('empireSub').textContent=(PICKUP_TASKS.concat(YARD_TASKS).filter(t=>save.tasks.includes(t.id)).length)+'/7 upgrades · earned game cash only';renderTasks();music();}
+function buyTask(t){if(S.build||save.bank<t.price||save.unit<(t.at||0)||save.tasks.includes(t.id))return;const from=truckLv(),isTruck=PICKUP_TASKS.some(q=>q.id===t.id);
   SFX.till();save.bank-=t.price;save.tasks.push(t.id);store();$('empireBank').textContent=money(save.bank);
   S.build={rung:0,t0:performance.now(),task:t,sfx:{}};$('tasks').classList.add('hidden');
-  S.truck={t0:performance.now(),task:t.name};S.mode='truck';show('truckUI');$('truckTitle').textContent=t.id==='wash'?'Fresh & clean!':'Pickup upgraded!';$('truckSub').textContent=t.name+' · '+money(t.price)+' game cash';$('bTruckNext').classList.add('hidden');S.truck.returnTo='empire';music();}
+  if(isTruck)save.truckLevel=truckLv();store();S.truck={t0:performance.now(),task:t.name,from,to:isTruck?truckLv():from,kind:isTruck?'truck':'yard',lm:({truck:'units',canopy:'flea',second:'warehouse'})[t.id]};S.mode='truck';show('truckUI');$('truckTitle').textContent=isTruck?'Pickup Level '+from+' → '+S.truck.to:'First Yard upgraded!';$('truckSub').textContent=t.name+' · '+money(t.price)+' game cash';$('bTruckNext').classList.add('hidden');S.truck.returnTo='empire';music();}
 function upFlags(rung){const o={};save.tasks.forEach(id=>o[id]=1);return o;}
 
 /* ---------------- units / boards ---------------- */
@@ -127,7 +130,7 @@ function startRun(kind,unit){const bonusEligible=rnd()<.35||unit.id==='Unit 3';S
 function boardDef(){return S.run.unit.boards[S.run.bi];}
 function isTutorial(){return S.run.kind==='campaign'&&save.unit<3;}
 function openDoorScene(){S.mode='door';S.result=null;S.busy=false;S.dying=[];S.parts=[];S.floats=[];S.rings=[];S.beams=[];S.scr=null;
-  newEngine();show('doorUI');const U=S.run.unit,d=boardDef();$('unitLabel').textContent='SUNNYVALE · '+U.id.toUpperCase();$('goalLabel').textContent='FIND '+d.need+' OF '+(d.tarps||[]).filter(t=>t[3]).length;
+  newEngine();show('doorUI');const U=S.run.unit,d=boardDef();roomLabel();
   $('doorName').textContent=U.id+' · '+U.name;$('doorGoal').textContent='Pull '+d.need+' find'+(d.need>1?'s':'')+' in '+d.moves+' moves';
   $('doorUI').querySelector('.tapme').classList.remove('hidden');S.door={t0:0,phase:'closed'};updateHUD();music();}
 function newEngine(){const d=boardDef();S.eng=new E(d,Math.floor(rnd()*1e9));S.continued=false;S.taught=false;S.result=null;S.hint=null;S.tutHand=null;S.armed=null;S.flash=0;
@@ -217,9 +220,10 @@ function checkEnd(){if(S.mode!=='play'||S.result)return;const st=S.eng.status();
     if(!isTutorial()&&!S.continued){setTimeout(()=>showMsg({h:'Out of bid cards!',p:'Take 5 more moves? First one is on the house.',b:'+5 Moves (free)',stamp:'',fn:()=>{S.continued=true;S.eng.moves+=5;S.busy=false;updateHUD();banner('+5 moves!');},b2:'No thanks',fn2:()=>failMsg('Out of moves','So close. Rip the tarps first.')}),500);return;}
     S.result='fail';SFX.fail();setTimeout(()=>failMsg('Out of moves','So close. Rip the tarps first.'),650);}}
 function failMsg(h,p){S.result='fail';showMsg({h,p,b:'Try again',fn:()=>{S.run.haul.splice(S.run.haul.length-S.eng.collected.length,S.eng.collected.length);openDoorScene();}});}
+function roomLabel(){if(!S.run)return;const U=S.run.unit,n=U.boards.length,d=boardDef();$('unitLabel').textContent='SUNNYVALE · '+U.id.toUpperCase();$('goalLabel').textContent=(n>1?'ROOM '+(S.run.bi+1)+'/'+n+' · ':'')+'FIND '+d.need+' OF '+(d.tarps||[]).filter(t=>t[3]).length;}
 function boardWon(){const run=S.run;run.cart+=S.eng.cart;
   if(run.bi<run.unit.boards.length-1){if(run.kind==='daily'){save.daily.day=today();save.daily.boards=run.bi+1;store();}
-    run.bi++;banner('Room '+(run.bi+1)+'!',1100);SFX.special();setTimeout(()=>{newEngine();S.result=null;S.busy=false;beginPlay();S.enter=performance.now();},900);return;}
+    run.bi++;roomLabel();banner('Room '+(run.bi+1)+' of '+run.unit.boards.length+'!',1100);SFX.special();setTimeout(()=>{newEngine();S.result=null;S.busy=false;beginPlay();S.enter=performance.now();},900);return;}
   const lines=run.haul.map(k=>'<div class="line"><span>'+A.FINDS[k].name+'</span><span>'+money(A.FINDS[k].price)+'</span></div>').join('')+'<div class="line"><span>Cart of stuff ('+run.cart+')</span><span>'+money(run.cart*JUNK_PRICE)+'</span></div>';
   const go=()=>{if((run.bonusEligible||run.haul.includes('safe'))&&!run.safeDone&&!(run.kind==='campaign'&&UNITS.indexOf(run.unit)<2))startSafe();else startFlip();};
   showMsg({h:run.unit.id+' cleared!',p:lines,b:'Flip it!',stamp:'CLEARED',fn:go});}
@@ -534,19 +538,19 @@ function drawSafe(now){const s=S.safe,c=ctx;if(!s)return;IM.cover(c,IM.get('bg-s
   drawDust(now,.3);
 }
 /* ---------------- visible empire / truck upgrade ---------------- */
-function startTruck(){save.truckSeen=true;save.truckLevel=1;store();S.mode='truck';S.truck={t0:performance.now(),returnTo:'map'};show('truckUI');$('bHome').classList.add('hidden');$('truckTitle').textContent='The Pickup upgraded!';$('truckSub').textContent='Three flips. Your first big step.';$('bTruckNext').classList.add('hidden');SFX.built();music();}
+function startTruck(){const from=truckLv();save.truckSeen=true;save.truckLevel=truckLv();store();S.mode='truck';S.truck={t0:performance.now(),returnTo:'map',from,to:truckLv(),kind:'truck'};show('truckUI');$('bHome').classList.add('hidden');$('truckTitle').textContent='Pickup Level '+from+' → '+S.truck.to;$('truckSub').textContent='Fresh paint · Three flips. Your first big step.';$('bTruckNext').classList.add('hidden');SFX.built();music();}
 function finishTruck(){if(!S.truck)return;const ret=S.truck.returnTo;S.truck=null;S.build=null;if(ret==='empire')goEmpire();else goMap(S.flip&&S.flip.hopFrom);}
-function drawTruck(now){const c=ctx,t=S.truck;if(!t)return;IM.cover(c,IM.get('bg-truck'),W,H);const el=now-t.t0,k=Math.max(0,Math.min(1,(el-1000)/900)),w=Math.min(W*.98,720),y=H*.42;label(c,k<.5?'BEFORE':'AFTER',W/2,y-8,22,k<.5?'#f4d3a0':'#ffda68');const im0=IM.get('truck-before'),im1=IM.get('truck-after');
+function drawTruck(now){const c=ctx,t=S.truck;if(!t)return;IM.cover(c,IM.get('bg-truck'),W,H);const el=now-t.t0,k=Math.max(0,Math.min(1,(el-1000)/900)),w=Math.min(W*.98,720),y=H*.42;label(c,k<.5?(t.kind==='yard'?'BEFORE':'BEFORE · LEVEL '+t.from):(t.kind==='yard'?'AFTER':'AFTER · LEVEL '+t.to),W/2,y-8,22,k<.5?'#f4d3a0':'#ffda68');const im0=t.kind==='yard'?IM.get('lm-'+t.lm+'-b'):truckImg(t.from),im1=t.kind==='yard'?IM.get('lm-'+t.lm):truckImg(t.to);if(t.kind!=='yard')label(c,TRUCK_NAMES[k<.5?t.from:t.to],W/2,y+w*.68,22,'#ffe08a');
   c.save();c.globalAlpha=1-k;IM.contain(c,im0,W/2-w/2,y,w,w*.67);c.restore();c.save();c.globalAlpha=k;const z=1+Math.sin(k*Math.PI)*.05;c.translate(W/2,y+w*.34);c.scale(z,z);IM.contain(c,im1,-w/2,-w*.34,w,w*.67);c.restore();
   if(el>1000&&el<2100){const x=W*.1+W*.8*k;c.fillStyle=A.lg(c,x-25,0,x+25,0,[[0,'#ffec9a00'],[.5,'#fffad7bb'],[1,'#ffec9a00']]);c.fillRect(x-25,y-10,50,w*.7);}
   if(k>.9){IM.contain(c,IM.get('hustler-cheer'),W*.7,H*.66,W*.22,H*.23);for(let i=0;i<9;i++){const x=W*(.15+(i*37%70)/100),yy=H*.4+Math.sin(now/550+i)*H*.13;A.star(c,x,yy,3+Math.sin(now/190+i)*2,'#ffe29c',4,.22);}if(!t.celebrated){t.celebrated=true;SFX.built();}$('bTruckNext').classList.remove('hidden');}
 }
-function drawEmpire(now){const c=ctx;IM.cover(c,IM.get('bg-truck'),W,H);const w=Math.min(W*.9,650);IM.contain(c,IM.get(save.truckSeen||save.tasks.length?'truck-after':'truck-before'),W/2-w/2,H*.29,w,w*.65);if(save.rung){const bx=W*.15,by=H*.3;label(c,'FIRST YARD',W/2,by-16,22,'#ffda83');}IM.contain(c,IM.get('hustler-idle'),W*.72,H*.44,W*.2,H*.22);}
+function drawEmpire(now){const c=ctx;IM.cover(c,IM.get('bg-truck'),W,H);const w=Math.min(W*.9,650);IM.contain(c,truckImg(truckLv()),W/2-w/2,H*.29,w,w*.65);if(save.rung){const bx=W*.15,by=H*.3;label(c,'FIRST YARD',W/2,by-16,22,'#ffda83');}IM.contain(c,IM.get('hustler-idle'),W*.72,H*.44,W*.2,H*.22);}
 /* ---------------- animated world map, live numbered path ---------------- */
 function drawDust(now,alpha=1){const c=ctx;for(let i=0;i<22;i++){const x=((i*79+Math.sin(now/3500+i)*14)%W+W)%W,y=(i*113-now*.008)%H;c.fillStyle='rgba(255,225,158,'+alpha*(.12+Math.sin(now/1000+i)*.1)+')';c.beginPath();c.arc(x,y<0?y+H:y,1+i%2,0,TAU);c.fill();}}
 /* ---------------- Sunnyvale scrolling world map ---------------- */
-const LANDMARKS=[{id:'sign',n:2,name:'Yard Sign',cost:250},{id:'truck',n:3,name:'The Pickup',cost:0},{id:'office',n:5,name:'Office',cost:500},{id:'units',n:7,name:'Unit Row',cost:800},
-  {id:'flea',n:9,name:'Flea Stall',cost:1100},{id:'thrift',n:11,name:'Thrift Shop',cost:1400},{id:'garage',n:13,name:'Garage',cost:1800},{id:'pawn',n:15,name:'Pirate Pawn',cost:2200},{id:'warehouse',n:17,name:'Warehouse',cost:2600}];
+const LANDMARKS=[{id:'sign',n:2,name:'Yard Sign',cost:1500},{id:'truck',n:3,name:'The Pickup',cost:0},{id:'office',n:5,name:'Office',cost:5500},{id:'units',n:7,name:'Unit Row',cost:8000},
+  {id:'flea',n:9,name:'Flea Stall',cost:8500},{id:'thrift',n:11,name:'Thrift Shop',cost:9500},{id:'garage',n:13,name:'Garage',cost:10500},{id:'pawn',n:15,name:'Pirate Pawn',cost:12000},{id:'warehouse',n:17,name:'Warehouse',cost:15500}];
 function lmBuilt(l){return l.id==='truck'?!!(save.truckSeen||save.tasks.length):(save.built||[]).includes(l.id);}
 function builtPct(){return Math.round(LANDMARKS.filter(lmBuilt).length/LANDMARKS.length*100);}
 function nextLm(){return LANDMARKS.find(l=>!lmBuilt(l)&&l.id!=='truck'&&save.unit>=l.n)||null;}
@@ -615,7 +619,7 @@ function drawMap(now){const c=ctx,g=MG();if(!S.cam)S.cam={y:camTarget(stopW(Math
   const btn=$('bLadNext');if(!m.walking&&btn&&!btn.classList.contains('hidden')){const bw=btn.offsetWidth||130,bh=btn.offsetHeight||56;let bx=SL.bx,by=SL.by-cy;by=Math.max(150,Math.min(H-bh-118,by));btn.style.left=Math.round(bx)+'px';btn.style.top=Math.round(by)+'px';}
 }
 function drawLm(c,l,now){const q=lmW(l),built=lmBuilt(l),b=S.lmb&&S.lmb.id===l.id?S.lmb:null,el=b?now-b.t0:9e9;
-  let key='lm-'+l.id+(built&&el>1000?'':'-b');const im=IM.get(key);const s=q.s*(l.id==='truck'?1.05:1);
+  let key='lm-'+l.id+(built&&el>1000?'':'-b');const im=l.id==='truck'&&built?truckImg(truckLv()):IM.get(key);const s=q.s*(l.id==='truck'?1.05:1);
   c.save();let sx=q.x,sy=q.y;if(b&&el<1000){sx+=Math.sin(el/30)*3;}
   if(b&&el>1000&&el<1500){const k=(el-1000)/500;c.translate(sx,sy);c.scale(1+.15*Math.sin(k*Math.PI),1+.15*Math.sin(k*Math.PI));c.translate(-sx,-sy);}
   c.fillStyle='rgba(0,0,0,.22)';c.beginPath();c.ellipse(sx,sy+s*.02,s*.42,s*.1,0,0,TAU);c.fill();
@@ -669,7 +673,8 @@ window.SR={
   board:()=>S.eng?S.eng.g.map(row=>row.map(t=>t&&({k:t.k,t:t.t,sp:t.sp,find:t.find,layers:t.layers}))):null,
   debugSafe:r=>{if(!DEBUG)return;S.run=S.run||{kind:'campaign',unit:UNITS[2],bi:0,haul:['guitar','safe'],cart:85};S.run.safeDone=false;startSafe(r);},
   debugFlip:()=>{if(!DEBUG)return;S.run={kind:'campaign',unit:UNITS[2],bi:0,haul:['guitar','camera'],cart:50};startFlip();},
-  debugTruck:()=>{if(DEBUG)startTruck();},
+  debugTruck:(n)=>{if(!DEBUG)return;if(n==null){startTruck();return;}n=Math.max(1,Math.min(5,n));S.truck={t0:performance.now(),returnTo:'map',from:n-1,to:n,kind:'truck'};S.mode='truck';show('truckUI');$('truckTitle').textContent='Pickup Level '+(n-1)+' → '+n;$('truckSub').textContent=TRUCK_NAMES[n];$('bTruckNext').classList.add('hidden');},
+  truckLevel:()=>truckLv(),
   artReady:()=>IM.ready(),mapPath:()=>Array.from({length:20},(_,i)=>({n:i+1,...ofs(mapXY(i))}))};
 
 resize();boosterIcons();setSound(save.sound!==false);if(IM&&IM.load)IM.load(()=>{bgCache={};sprites={};boosterIcons();if(S.eng)buildGoals();});goTitle();requestAnimationFrame(frame);

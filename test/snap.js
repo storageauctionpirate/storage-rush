@@ -22,6 +22,7 @@ if(sc.includes('door')){await setSave({unit:4,bank:900});await pg.evaluate(()=>d
 if(sc.includes('board')){await setSave({unit:11,bank:2450});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(800);await pg.evaluate(()=>document.getElementById('bLadNext').click());await wait(600);const L=await pg.evaluate(()=>SR.lockXY());await pg.touchscreen.tap(L.x,L.y);await wait(2600);await shot('board');}
 if(sc.includes('safe')){for(const r of (process.env.RAR||'rare').split('|')){await pg.evaluate(r=>SR.debugSafe&&SR.debugSafe(r),r);await wait(+process.env.SAFE_T||1200);await shot('safe-spin-'+r);await wait(2600);await shot('safe-open-'+r);}}
 if(sc.includes('flea')){await pg.evaluate(()=>SR.debugFlip&&SR.debugFlip());await wait(1500);await shot('flea');await pg.evaluate(()=>{const b=document.getElementById('bFlipNext');b&&b.click();});await wait(1400);await shot('flea-sold');}
+if(sc.includes('trucklv')){for(let n=1;n<=5;n++){await pg.evaluate(n=>SR.debugTruck(n),n);await wait(600);await shot('truck-L'+(n-1)+'-before');await wait(2500);await shot('truck-L'+n+'-after');}}
 if(sc.includes('truck')){await pg.evaluate(()=>SR.debugTruck&&SR.debugTruck());await wait(700);await shot('truck-before');await wait(2600);await shot('truck-after');}
 if(sc.includes('locked')){await setSave({unit:20,bank:9000,rung:1});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1500);await shot('locked');}
 console.log(sz,'errors:',errs.length?errs.join(' | '):'none');await pg.close();}

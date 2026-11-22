@@ -23,6 +23,8 @@ ok('no ads/analytics/payment/network code',!/(googletag|gtag\(|google-analytics|
 const csp=(html.match(/Content-Security-Policy" content="([^"]+)"/)||[])[1]||'';
 ok('CSP kept: self-only scripts, no network, local fonts',/script-src 'self'/.test(csp)&&/connect-src 'none'/.test(csp)&&/font-src 'self'/.test(csp)&&/default-src 'self'/.test(csp),csp);
 ok('display font is bundled locally',fs.existsSync(path.join(root,'fonts/LuckiestGuy-Regular.ttf'))&&fs.existsSync(path.join(root,'fonts/LICENSE.txt')));
+ok('every truck level has its own art',[0,1,2,3,4,5].every(n=>fs.existsSync(path.join(root,'assets/trucks/L'+n+'.png')))&&new Set([0,1,2,3,4,5].map(n=>fs.statSync(path.join(root,'assets/trucks/L'+n+'.png')).size)).size===6);
+ok('every campaign unit has 3 rooms',(()=>{const L=require(path.join(root,'js/levels.js'));return L.YARD1.units.length===20&&L.YARD1.units.every(u=>u.boards.length===3);})());
 ok('art-sheet assets shipped',fs.existsSync(path.join(root,'assets/pieces/tote.png'))&&fs.existsSync(path.join(root,'assets/bg/map-clean.jpg'))&&fs.existsSync(path.join(root,'assets/safes/front-legendary.png'))&&fs.existsSync(path.join(root,'assets/chars/truck-after.png'))&&fs.existsSync(path.join(root,'assets/chars/hustler-idle.png')));
 ok('fence + door signs kept',src.includes("You can't hit a home run")&&src.includes('SCARED MONEY')&&src.includes("DON'T MAKE MONEY"));
 ok('locked door says Unlock coming soon',html.includes('Unlock coming soon'));
@@ -48,7 +50,7 @@ for(const V of VPS){
   const tapLock=async()=>{const L=await pg.evaluate(()=>SR.lockXY());await tap(L.x,L.y);};
   const seen={specials:new Set(),teachScr:false,safeBonus:false,continueOffered:false,shots:{}};
   async function playBoard(opt){opt=opt||{};let stuck=0;
-    for(let step=0;step<220;step++){
+    for(let step=0;step<900;step++){
       if(await vis('#msg')){const h=await txt('#msgH');
         if(/Out of bid cards/.test(h)){seen.continueOffered=true;await tapSel('#msgB');await wait(300);continue;}
         if(/cleared!/.test(h))return 'win';return 'fail';}
@@ -144,7 +146,7 @@ for(const V of VPS){
   s=await settleAfterWin('Unit 2');await until(x=>x.mode==='map'&&!(x.map&&x.map.walking),4000);
   /* ---- unit 3 ---- */
   await tapSel('#bLadNext');await wait(400);await playUnit('Unit 3');s=await settleAfterWin('Unit 3');await until(x=>x.mode==='map'&&!(x.map&&x.map.walking),4000);
-  ok(`${T} 3 flips earns the free Pickup upgrade scene`,!!seen.truck);
+  {const z=await st();ok(`${T} 3 flips earns the free Pickup upgrade scene`,!!seen.truck,JSON.stringify({mode:z.mode,unit:z.save.unit,unitId:z.unitId,bi:z.bi,msg:await vis('#msg')?await txt('#msgH'):''}));}
   { await wait(800);let v=await pg.evaluate(()=>SR.village());const H0=await pg.evaluate(()=>innerHeight);
     ok(`${T} map: camera follows the hustler to stop 4`,v.stops[3].y>0&&v.stops[3].y<H0,'y '+Math.round(v.stops[3].y));
     ok(`${T} village: truck landmark upgraded by the Pickup milestone`,v.pct>0,v.pct+'%');
@@ -156,7 +158,8 @@ for(const V of VPS){
   ok(`${T} Upgrades: Pickup tasks panel`,await vis('#tasks')&&/Fix up The Pickup/.test(await txt('#tasks h3')));
   await checkFit('upgrades');
   s=await st();
-  if(s.save.bank>=200){await tapSel('#tasks button[data-task="wash"]');await wait(300);s=await st();ok(`${T} buying an upgrade plays the truck before/after`,s.mode==='truck'&&s.save.tasks.includes('wash'));
+  if(s.save.bank>=1000){const lv0=await pg.evaluate(()=>SR.truckLevel());await tapSel('#tasks button[data-task="wash"]');await wait(300);s=await st();const lv1=await pg.evaluate(()=>SR.truckLevel());ok(`${T} buying an upgrade plays the truck before/after`,s.mode==='truck'&&s.save.tasks.includes('wash'));
+    ok(`${T} truck shows Level N → N+1 with new art`,lv1===lv0+1&&new RegExp('Level '+lv0+' → '+lv1).test(await txt('#truckTitle')),await txt('#truckTitle'));
     await wait(2300);if(!seen.shots.truck2){seen.shots.truck2=1;await shot('truck-upgrade');}ok(`${T} upgrade celebration has a continue button`,await vis('#bTruckNext'));await tapSel('#bTruckNext');await wait(400);s=await st();ok(`${T} back on Upgrades after the celebration`,s.mode==='empire');}
   else ok(`${T} buying an upgrade plays the truck before/after`,false,'bank too low: $'+s.save.bank);
   await tapSel('#bEmpireBack');await wait(400);

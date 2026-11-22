@@ -27,6 +27,7 @@ const FILES={
   'lm-pawn':'assets/landmarks/pawn.png', 'lm-pawn-b':'assets/landmarks/pawn-b.png',
   'lm-warehouse':'assets/landmarks/warehouse.png', 'lm-warehouse-b':'assets/landmarks/warehouse-b.png'
 };
+for(let n=0;n<=5;n++)FILES['truck-L'+n]='assets/trucks/L'+n+'.png';
 const PIECE_KEYS=['tote','box','crate','lamp','toy','treasure'];
 const cache={};
 let ready=false, pending=[];

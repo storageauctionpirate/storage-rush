@@ -5,14 +5,183 @@ PASS 20 Sunnyvale levels in the campaign
 PASS no ads/analytics/payment/network code
 PASS CSP kept: self-only scripts, no network, local fonts  — default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; frame-src 'none'; object-src 'none'
 PASS display font is bundled locally
+PASS every truck level has its own art
+PASS every campaign unit has 3 rooms
 PASS art-sheet assets shipped
 PASS fence + door signs kept
 PASS locked door says Unlock coming soon
 PASS Desert Gold is the next-world tease
 PASS Safe Cracking is earned only: no prices, IAP or ads in its code
+PASS 390x844 v1 save migrates to v3 with bank intact  — {"v":3,"bank":1234,"unit":0}
+PASS 390x844 old v1 key left alone
+PASS 390x844 fresh save gifts boosters 2/1/0
+PASS 390x844 title: Open Unit, no Start over on a fresh save
+PASS 390x844 display font loaded from same origin
+PASS 390x844 sound toggle flips and saves (music + sfx share it)
+PASS 390x844 world map opens on Sunnyvale Storage
+PASS 390x844 no "No Home" text on screen
+PASS 390x844 map: one tall path with all 20 stops in order  — worldH 2448
+PASS 390x844 map: camera starts on stop 1  — y 665
+PASS 390x844 map: Sunnyvale 0% built bar
+PASS 390x844 map: no landmark touches a stop, tag, other landmark, the hustler or the Unit button
+PASS 390x844 door closed with padlock
+PASS 390x844 lock tap starts jiggle/snap
+PASS 390x844 door rolls up into the framed board
+PASS 390x844 tutorial tip + finger shown on board 1
+PASS 390x844 no-match swap bounces back free  — used=0
+PASS 390x844 swipe swap spends one move
+PASS 390x844 Unit 1 (tutorial) won
+PASS 390x844 find collected onto the cart
+PASS 390x844 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Guitar$350Guitar$350Guitar$350Cart of stuff (70)$140"}
+PASS 390x844 Unit 1: flea market FLIP, itemized haul  — Guitar$350Guitar$350Guitar$350Cart of stuff (70)$140Haul total$1,190
+PASS 390x844 bank grew from the flip  — $1190
+PASS 390x844 back on the map, next unit is 2
+PASS 390x844 hustler walk finishes, next unit offered
+PASS 390x844 no Pickup tasks before 3 flips
+PASS 390x844 tutorial board: out of moves skips +5 offer
+PASS 390x844 Unit 2: flea market FLIP, itemized haul  — Jewelry Box$240Vintage Camera$180Jewelry Box$240Vintage Camera$180Vintage Camera
+PASS 390x844 Unit 3: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 3: flea market FLIP, itemized haul  — Safe$900Guitar$350Jewelry Box$240Guitar$350Jewelry Box$240Safe$900Safe$900Guitar
+PASS 390x844 3 flips earns the free Pickup upgrade scene
+PASS 390x844 map: camera follows the hustler to stop 4  — y 439
+PASS 390x844 village: truck landmark upgraded by the Pickup milestone  — 11%
+PASS 390x844 village: earned cash fixes up the next landmark  — 22% · bank 7954→6454
+PASS 390x844 Upgrades: Pickup tasks panel
+PASS 390x844 buying an upgrade plays the truck before/after
+PASS 390x844 truck shows Level N → N+1 with new art  — Pickup Level 1 → 2
+PASS 390x844 upgrade celebration has a continue button
+PASS 390x844 back on Upgrades after the celebration
+PASS 390x844 glove box daily booster offered
+PASS 390x844 glove box adds one booster
+PASS 390x844 board 4 teaches the Dolly
+PASS 390x844 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
+PASS 390x844 Flashlight x-rays tarps
+PASS 390x844 out of moves offers free +5 before the fail card
+PASS 390x844 +5 moves granted once
+PASS 390x844 Unit 4: flea market FLIP, itemized haul  — Vintage Camera$180Guitar$350Vintage Camera$180Guitar$350Vintage Camera$180Guitar
+PASS 390x844 Unit 5 cleared  — 0 retries
+PASS 390x844 Unit 5: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 5: flea market FLIP, itemized haul  — Safe$900Jewelry Box$240Safe$900Jewelry Box$240Jewelry Box$240Safe$900Cart of stu
+PASS 390x844 Unit 6 cleared  — 0 retries
+PASS 390x844 Unit 6: flea market FLIP, itemized haul  — Guitar$350Vintage Camera$180Guitar$350Vintage Camera$180Guitar$350Vintage Camera
+PASS 390x844 Unit 7 cleared  — 0 retries
+PASS 390x844 Unit 7: flea market FLIP, itemized haul  — Jewelry Box$240Guitar$350Jewelry Box$240Guitar$350Jewelry Box$240Guitar$350Jewel
+PASS 390x844 Unit 8 cleared  — 0 retries
+PASS 390x844 Unit 8: Safe Cracking Bonus pays earned game cash  — +$700
+PASS 390x844 Unit 8: flea market FLIP, itemized haul  — Safe$900Jewelry Box$240Jewelry Box$240Safe$900Safe$900Safe$900Jewelry Box$240Car
+PASS 390x844 Unit 9 cleared  — 1 retries
+PASS 390x844 Unit 9: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 9: flea market FLIP, itemized haul  — Guitar$350Safe$900Vintage Camera$180Vintage Camera$180Guitar$350Safe$900Vintage 
+PASS 390x844 Unit 10 cleared  — 1 retries
+PASS 390x844 Unit 10: flea market FLIP, itemized haul  — Jewelry Box$240Guitar$350Jewelry Box$240Guitar$350Vintage Camera$180Jewelry Box$
+PASS 390x844 Unit 11 cleared  — 0 retries
+PASS 390x844 Unit 11: Safe Cracking Bonus pays earned game cash  — +$700
+PASS 390x844 Unit 11: flea market FLIP, itemized haul  — Guitar$350Safe$900Vintage Camera$180Guitar$350Vintage Camera$180Safe$900Guitar$3
+PASS 390x844 Unit 12 cleared  — 0 retries
+PASS 390x844 Unit 12: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 12: flea market FLIP, itemized haul  — Guitar$350Jewelry Box$240Vintage Camera$180Jewelry Box$240Guitar$350Vintage Came
+PASS 390x844 Unit 13 cleared  — 0 retries
+PASS 390x844 Unit 13: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 13: flea market FLIP, itemized haul  — Guitar$350Safe$900Jewelry Box$240Guitar$350Safe$900Jewelry Box$240Guitar$350Safe
+PASS 390x844 Unit 14 cleared  — 0 retries
+PASS 390x844 Unit 14: flea market FLIP, itemized haul  — Jewelry Box$240Guitar$350Vintage Camera$180Jewelry Box$240Guitar$350Vintage Came
+PASS 390x844 Unit 15 cleared  — 0 retries
+PASS 390x844 Unit 15: Safe Cracking Bonus pays earned game cash  — +$700
+PASS 390x844 Unit 15: flea market FLIP, itemized haul  — Safe$900Guitar$350Vintage Camera$180Guitar$350Safe$900Vintage Camera$180Guitar$3
+PASS 390x844 Unit 16 cleared  — 0 retries
+PASS 390x844 Unit 16: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 16: flea market FLIP, itemized haul  — Safe$900Guitar$350Vintage Camera$180Safe$900Vintage Camera$180Jewelry Box$240Saf
+PASS 390x844 Unit 17 cleared  — 0 retries
+PASS 390x844 Unit 17: Safe Cracking Bonus pays earned game cash  — +$1,600
+PASS 390x844 Unit 17: flea market FLIP, itemized haul  — Vintage Camera$180Guitar$350Safe$900Safe$900Vintage Camera$180Guitar$350Safe$900
+PASS 390x844 Unit 18 cleared  — 0 retries
+PASS 390x844 Unit 18: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 18: flea market FLIP, itemized haul  — Jewelry Box$240Guitar$350Safe$900Vintage Camera$180Guitar$350Safe$900Safe$900Gui
+PASS 390x844 Unit 19 cleared  — 0 retries
+PASS 390x844 Unit 19: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 390x844 Unit 19: flea market FLIP, itemized haul  — Safe$900Jewelry Box$240Guitar$350Safe$900Guitar$350Jewelry Box$240Safe$900Guitar
+PASS 390x844 Unit 20 cleared  — 0 retries
+PASS 390x844 Unit 20: Safe Cracking Bonus pays earned game cash  — +$700
+PASS 390x844 Unit 20: flea market FLIP, itemized haul  — Safe$900Vintage Camera$180Guitar$350Jewelry Box$240Guitar$350Safe$900Guitar$350J
+PASS 390x844 village keeps building as you play  — 100% built
+PASS 390x844 all 20 Sunnyvale levels cleared
+PASS 390x844 Dolly / Bubble Wrap / Gavel all showed up  — dolly,gavel,wrap
+PASS 390x844 Scrapper teach near-miss played
+PASS 390x844 map offers Desert Gold after Unit 20
+PASS 390x844 Desert Gold is locked after unit 20
+PASS 390x844 tapping the locked Desert Gold door does not open a store
+PASS 390x844 Daily Auction screen opens  — opened or already past title
+PASS 390x844 Start over button on title for a played save
+PASS 390x844 Start over asks to confirm
+PASS 390x844 "Keep my stuff" keeps the save
+PASS 390x844 "Wipe it" starts fresh
+PASS 390x844 no store, prices or pay-to-play hooks on the Desert Gold screen
+PASS 390x844 every visible button on screen and >=44px
+PASS 390x844 no console errors/warnings
+PASS 390x844 no external requests
+PASS 375x667 v1 save migrates to v3 with bank intact  — {"v":3,"bank":1234,"unit":0}
+PASS 375x667 old v1 key left alone
+PASS 375x667 fresh save gifts boosters 2/1/0
+PASS 375x667 title: Open Unit, no Start over on a fresh save
+PASS 375x667 display font loaded from same origin
+PASS 375x667 sound toggle flips and saves (music + sfx share it)
+PASS 375x667 world map opens on Sunnyvale Storage
+PASS 375x667 no "No Home" text on screen
+PASS 375x667 map: one tall path with all 20 stops in order  — worldH 2354
+PASS 375x667 map: camera starts on stop 1  — y 495
+PASS 375x667 map: Sunnyvale 0% built bar
+PASS 375x667 map: no landmark touches a stop, tag, other landmark, the hustler or the Unit button
+PASS 375x667 door closed with padlock
+PASS 375x667 lock tap starts jiggle/snap
+PASS 375x667 door rolls up into the framed board
+PASS 375x667 tutorial tip + finger shown on board 1
+PASS 375x667 no-match swap bounces back free  — used=0
+PASS 375x667 swipe swap spends one move
+PASS 375x667 Unit 1 (tutorial) won
+PASS 375x667 find collected onto the cart
+PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Guitar$350Guitar$350Guitar$350Cart of stuff (86)$172"}
+PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Guitar$350Guitar$350Guitar$350Cart of stuff (86)$172Haul total$1,222
+PASS 375x667 bank grew from the flip  — $1222
+PASS 375x667 back on the map, next unit is 2
+PASS 375x667 hustler walk finishes, next unit offered
+PASS 375x667 no Pickup tasks before 3 flips
+PASS 375x667 tutorial board: out of moves skips +5 offer
+PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Jewelry Box$240Vintage Camera$180Jewelry Box$240Vintage Camera$180Vintage Camera
+PASS 375x667 Unit 3: Safe Cracking Bonus pays earned game cash  — +$300
+PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Safe$900Jewelry Box$240Guitar$350Guitar$350Jewelry Box$240Safe$900Safe$900Guitar
+PASS 375x667 3 flips earns the free Pickup upgrade scene
+PASS 375x667 map: camera follows the hustler to stop 4  — y 347
+PASS 375x667 village: truck landmark upgraded by the Pickup milestone  — 11%
+PASS 375x667 village: earned cash fixes up the next landmark  — 22% · bank 8010→6510
+PASS 375x667 Upgrades: Pickup tasks panel
+PASS 375x667 buying an upgrade plays the truck before/after
+PASS 375x667 truck shows Level N → N+1 with new art  — Pickup Level 1 → 2
+PASS 375x667 upgrade celebration has a continue button
+PASS 375x667 back on Upgrades after the celebration
+PASS 375x667 glove box daily booster offered
+PASS 375x667 glove box adds one booster
+PASS 375x667 board 4 teaches the Dolly
+PASS 375x667 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
+PASS 375x667 Flashlight x-rays tarps
+PASS 375x667 out of moves offers free +5 before the fail card
+PASS 375x667 +5 moves granted once
+PASS 375x667 saved progress resumes on the map at Unit 20
+PASS 375x667 Unit 20: Safe Cracking Bonus pays earned game cash  — +$700
+PASS 375x667 Unit 20: flea market FLIP, itemized haul  — Guitar$350Jewelry Box$240Safe$900Jewelry Box$240Guitar$350Safe$900Guitar$350Jewe
+PASS 375x667 Desert Gold after the last unit
+PASS 375x667 tapping the locked Desert Gold door does not open a store
+PASS 375x667 Daily Auction screen opens  — opened or already past title
+PASS 375x667 Start over button on title for a played save
+PASS 375x667 Start over asks to confirm
+PASS 375x667 "Keep my stuff" keeps the save
+PASS 375x667 "Wipe it" starts fresh
+PASS 375x667 no store, prices or pay-to-play hooks on the Desert Gold screen
+PASS 375x667 every visible button on screen and >=44px
+PASS 375x667 no console errors/warnings
+PASS 375x667 no external requests
 PASS 1280x800 desktop: phone-shaped frame centered, nothing cropped  — {"a":[461.671875,14,356.65625,772],"c":[356.65625,772],"inside":true}
 PASS 1280x800 desktop: no landmark overlaps on the map
 PASS 1280x800 desktop: map centered on the current stop  — y 415
 PASS 1280x800 desktop: board opens inside the frame
 PASS 1280x800 desktop: no page errors
-17/17 passed  (11/21/2026, 5:19:48 PM PT, http://127.0.0.1:8872/index.html)
+186/186 passed  (11/21/2026, 6:04:25 PM PT, http://127.0.0.1:8872/index.html)

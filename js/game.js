@@ -313,7 +313,8 @@ function cartPrice(run){return run.kind==='campaign'&&UNITS.indexOf(run.unit)===
 function afterClear(){const run=S.run;S.mode='play';show('playUI');roomLabel();S.busy=true;S.result='win';updateHUD();placeRush();
   const first=run.kind==='campaign'&&UNITS.indexOf(run.unit)===0;
   const lines=run.haul.map(k=>'<div class="line"><span>'+A.FINDS[k].name+'</span><span>'+money(A.FINDS[k].price)+'</span></div>').join('')+'<div class="line"><span>Cart of stuff ('+run.cart+')'+(first?' · lot price':'')+'</span><span>'+money(cartPrice(run))+'</span></div>'+
-    (run.bonus?'<div class="line"><span>Hot + Rush bonus</span><span>'+money(run.bonus)+'</span></div>':'');
+    (run.bonus?'<div class="line"><span>Hot + Rush bonus</span><span>'+money(run.bonus)+'</span></div>':'')+
+    (run.box&&run.box.opened?'<p class="sub">Mystery Box: +'+money(run.box.cash)+' already banked</p>':'');
   const go=()=>{if(run.safe&&!run.safe.done)startSafe(run.safe.rarity);else startFlip();};
   showMsg({h:run.unit.id+' cleared!',p:lines+(run.resumed&&run.cleared?'<p class="sub">Saved. Picked up right where you left off.</p>':''),b:run.safe&&!run.safe.done?'Crack the safe!':'Flip it!',stamp:'CLEARED',fn:go});}
 
@@ -863,6 +864,7 @@ window.SR={
   rushAdd:n=>{if(!DEBUG||!S.run||!rushOn()||S.run.rushX)return;S.run.meter=Math.min(RH.METER,S.run.meter+n);if(S.run.meter>=RH.METER)startRush();updateHUD();},
   debugBox:t=>{if(!DEBUG||!S.run||S.mode!=='play')return;earnBox();if(t){Object.assign(S.run.box,RH.rollBox(()=>t==='gold'?.95:t==='rare'?.7:.1,1),{opened:false});}updateHUD();},
   boxNow:t=>{if(!DEBUG)return;S.run=S.run||newRun('campaign',UNITS[3]);S.run.box=Object.assign(RH.rollBox(()=>t==='gold'?.95:t==='rare'?.7:.1,1),{opened:false});startBox(()=>goMap());},
+  debugHaul:k=>{if(!DEBUG||!S.run)return;S.run.haul.push(k);},
   skipBox,finishBox,rushRect:()=>{const e=$('rush');if(!e||e.classList.contains('hidden'))return null;const r=e.getBoundingClientRect();return [r.left,r.top,r.width,r.height];},
   debugFlip:(h)=>{if(!DEBUG)return;S.run=Object.assign(newRun('campaign',UNITS[2]),{haul:h||['guitar','camera'],cart:50});startFlip();},
   debugTruck:(n)=>{if(!DEBUG)return;if(n==null){startTruck();return;}n=Math.max(1,Math.min(5,n));S.truck={t0:performance.now(),returnTo:'map',from:n-1,to:n,kind:'truck'};S.mode='truck';show('truckUI');$('truckTitle').textContent='Pickup Level '+(n-1)+' → '+n;$('truckSub').textContent=TRUCK_NAMES[n];$('bTruckNext').classList.add('hidden');},

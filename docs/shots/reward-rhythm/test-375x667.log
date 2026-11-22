@@ -1,0 +1,111 @@
+PASS source never uses the banned word
+PASS no "No Home" copy anywhere
+PASS start rung is The Pickup
+PASS 20 Sunnyvale levels in the campaign
+PASS no ads/analytics/payment/network code
+PASS CSP kept: self-only scripts, no network, local fonts  — default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; frame-src 'none'; object-src 'none'
+PASS display font is bundled locally
+PASS every truck level has its own art
+PASS room ramp: Units 1-2 one room, 3-5 two rooms, 6+ three rooms
+PASS Unit 1 teaches tarps with real goals (rip all 3 tarps, find the guitar)
+PASS economy: Unit 1 sale is exactly $474, first stall $400, $74 left
+PASS Rush Meter: earned 2X, 3X, then 5X (never higher in the prototype)
+PASS Rush Meter fills from cascades, not from single matches
+PASS Mystery Box is earned only by a 5+ chain or a Gavel
+PASS Safe Cracker is earned only by a Safe find or a 3X Rush
+PASS Mystery Box odds disclosed and add up to 100%
+PASS every Mystery Box pays cash plus a bonus
+PASS Safe guarantees: first safe and 5X-Rush safe are Rare+, never 4 Commons in a row
+PASS no purchase prompts or paid moves/chances anywhere (store, paid continue, ads all off)
+PASS art-sheet assets shipped
+PASS fence + door signs kept
+PASS locked door says Unlock coming soon
+PASS Desert Gold is the next-world tease
+PASS Safe Cracking is earned only: no prices, IAP or ads in its code
+PASS 375x667 rhythm: no Rush Meter during the Unit 1 tutorial
+PASS 375x667 Rush Meter shows on Unit 4, between the board and the boosters  — {"rr":[26,552,323,30],"boardBottom":532,"pbotTop":601}
+PASS 375x667 Rush Meter goes HOT at 50% (cart pays $3)  — HOT · CART $3
+PASS 375x667 full meter starts RUSH 2X
+PASS 375x667 Rush pays extra cash on cleared items  — +$12
+PASS 375x667 Mystery Box earned in play waits for the room to clear
+PASS 375x667 Mystery Box opens between rooms
+PASS 375x667 Mystery Box pays cash + bonus, saved with the room  — +$400 bank 900→1300
+PASS 375x667 map says the room is saved after a reload  — Unit 4 · room 2 of 2 saved
+PASS 375x667 reload resumes at room 2, cleared room not replayed  — {"mode":"door","bi":1,"bank":1300}
+PASS 375x667 a 2nd Rush is 3X and earns the Safe Cracker  — {"best":3,"safe":"legendary"}
+PASS 375x667 reload after the clear goes straight to the saved cleared card
+PASS 375x667 saved safe keeps its rarity after reload (no reroll)  — legendary
+PASS 375x667 flip banks once, clears the saved run, shows the next build  — {"bank":[1300,2924],"haul":"bonus$12Haul total$24Next build: Office · opens after Unit 5"}
+PASS 375x667 reload after the flip never pays twice
+PASS 375x667 rhythm: no page errors
+PASS 375x667 v1 save migrates to v3 with bank intact  — {"v":3,"bank":1234,"unit":0}
+PASS 375x667 old v1 key left alone
+PASS 375x667 fresh save gifts boosters 2/1/0
+PASS 375x667 title: Open Unit, no Start over on a fresh save
+PASS 375x667 display font loaded from same origin
+PASS 375x667 sound toggle flips and saves (music + sfx share it)
+PASS 375x667 map art is loaded before the map shows (no pop-in)
+PASS 375x667 world map opens on Sunnyvale Storage
+PASS 375x667 no "No Home" text on screen
+PASS 375x667 map: one tall path with all 20 stops in order  — worldH 2354
+PASS 375x667 map: camera starts on stop 1  — y 495
+PASS 375x667 map: Sunnyvale 0% built bar
+PASS 375x667 map: no landmark touches a stop, tag, other landmark, the hustler or the Unit button
+PASS 375x667 door closed with padlock
+PASS 375x667 lock tap starts jiggle/snap
+PASS 375x667 door rolls up into the framed board
+PASS 375x667 tutorial tip + finger shown on board 1
+PASS 375x667 header: SUNNYVALE STORAGE sign art is not covered by a title pill  — UNIT 1 · RIP 3 TARPS
+PASS 375x667 no-match swap bounces back free  — used=0
+PASS 375x667 swipe swap spends one move
+PASS 375x667 Unit 1 teaches the tarp with highlighted tiles  — Match right next to a tarp to rip it.
+PASS 375x667 Unit 1 (tutorial) won
+PASS 375x667 find collected onto the cart
+PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Guitar$350Cart of stuff (107) · lot price$124"}
+PASS 375x667 CLEARED stamp does not cover the title  — {"a":[74,243,301,276],"b":[257,176,366,234],"hit":false}
+PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Guitar$350Cart of stuff (107) · lot price$124Haul total$474Next build: Flea Mark
+PASS 375x667 bank grew from the flip  — $474
+PASS 375x667 back on the map, next unit is 2
+PASS 375x667 hustler walk finishes, next unit offered
+PASS 375x667 Unit 1 sale banks exactly $474 and offers the $400 Flea Market Stall  — 474 · BuildFlea Market Stall · $400
+PASS 375x667 Unit 2 is open without any extra cash (before the stall is built)
+PASS 375x667 paying $400 builds the first stall, $74 left, town moves  — $74 · 6%
+PASS 375x667 Unit pill stays put once shown (first tap lands)  — [[319,444,"visible"],[319,444,"visible"]]
+PASS 375x667 map: Unit pills never cover a stop number
+PASS 375x667 no Pickup tasks before 3 flips
+PASS 375x667 tutorial board: out of moves skips +5 offer
+PASS 375x667 fail text matches progress  — 0 finds: No finds pulled yet. Match right next to a tarp to rip it open.
+PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Guitar$350Vintage Camera$180Jewelry Box$240Cart of stuff (85)$170Haul total$940N
+PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Vintage Camera$180Guitar$350Jewelry Box$240Jewelry Box$240Guitar$350Vintage Came
+PASS 375x667 3 flips earns the free Pickup upgrade scene  — {"mode":"map","unit":3,"unitId":"Unit 3","bi":1,"msg":""}
+PASS 375x667 map: camera follows the hustler to stop 4  — y 347
+PASS 375x667 village: truck landmark upgraded by the Pickup milestone  — 15%
+PASS 375x667 village: earned cash fixes up the next landmark  — 27% · bank 6000→500
+PASS 375x667 Upgrades: Pickup tasks panel
+PASS 375x667 buying an upgrade plays the truck before/after
+PASS 375x667 truck shows Level N → N+1 with new art  — Pickup Level 1 → 2
+PASS 375x667 upgrade celebration has a continue button
+PASS 375x667 back on Upgrades after the celebration
+PASS 375x667 glove box daily booster offered
+PASS 375x667 glove box adds one booster
+PASS 375x667 board 4 teaches the Dolly
+PASS 375x667 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
+PASS 375x667 Flashlight x-rays tarps
+PASS 375x667 out of moves offers free +5 before the fail card
+PASS 375x667 +5 moves granted once
+PASS 375x667 saved progress resumes on the map at Unit 20
+PASS 375x667 Unit 20: Safe Cracking Bonus pays earned game cash  — +$700
+PASS 375x667 Unit 20: flea market FLIP, itemized haul  — Guitar$350Jewelry Box$240Safe$900Jewelry Box$240Guitar$350Safe$900Jewelry Box$24
+PASS 375x667 Desert Gold after the last unit
+PASS 375x667 tapping the locked Desert Gold door does not open a store
+PASS 375x667 Daily Auction screen opens  — opened or already past title
+PASS 375x667 Start over button on title for a played save
+PASS 375x667 Start over asks to confirm
+PASS 375x667 "Keep my stuff" keeps the save
+PASS 375x667 "Wipe it" starts fresh
+PASS 375x667 no store, prices or pay-to-play hooks on the Desert Gold screen
+PASS 375x667 every visible button on screen and >=44px
+PASS 375x667 no console errors/warnings
+PASS 375x667 no external requests
+
+109/109 passed  (11/21/2026, 11:20:52 PM PT, http://127.0.0.1:8872/index.html)

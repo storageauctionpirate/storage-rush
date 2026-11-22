@@ -25,14 +25,66 @@ ok('CSP kept: self-only scripts, no network, local fonts',/script-src 'self'/.te
 ok('display font is bundled locally',fs.existsSync(path.join(root,'fonts/LuckiestGuy-Regular.ttf'))&&fs.existsSync(path.join(root,'fonts/LICENSE.txt')));
 ok('every truck level has its own art',[0,1,2,3,4,5].every(n=>fs.existsSync(path.join(root,'assets/trucks/L'+n+'.png')))&&new Set([0,1,2,3,4,5].map(n=>fs.statSync(path.join(root,'assets/trucks/L'+n+'.png')).size)).size===6);
 ok('room ramp: Units 1-2 one room, 3-5 two rooms, 6+ three rooms',(()=>{const L=require(path.join(root,'js/levels.js'));return L.YARD1.units.length===20&&L.YARD1.units.every((u,i)=>u.boards.length===(i<2?1:i<5?2:3));})());
-ok('Unit 1 teaches tarps with real goals (3 finds, not a 1-find freebie)',(()=>{const L=require(path.join(root,'js/levels.js'));const b=L.YARD1.units[0].boards[0];return b.tut==='swap'&&b.need===3&&b.tarps.length>=3;})());
+ok('Unit 1 teaches tarps with real goals (rip all 3 tarps, find the guitar)',(()=>{const L=require(path.join(root,'js/levels.js'));const b=L.YARD1.units[0].boards[0];return b.tut==='swap'&&b.clearTarps&&b.need===1&&b.tarps.length===3&&b.tarps.filter(t=>t[3]).map(t=>t[3]).join()==='guitar';})());
+const RH=require(path.join(root,'js/rhythm.js'));
+ok('economy: Unit 1 sale is exactly $474, first stall $400, $74 left',RH.FIRST_SALE===474&&RH.STALL_COST===400&&RH.FIRST_SALE-RH.STALL_COST===74);
+ok('Rush Meter: earned 2X, 3X, then 5X (never higher in the prototype)',RH.mult(1)===2&&RH.mult(2)===3&&RH.mult(3)===5&&RH.mult(9)===5);
+ok('Rush Meter fills from cascades, not from single matches',RH.gain(1,3,0,0)===0&&RH.gain(2,3,0,0)>0&&RH.gain(4,3,0,0)>RH.gain(2,3,0,0));
+ok('Mystery Box is earned only by a 5+ chain or a Gavel',!RH.boxEarned(4,['dolly','wrap'])&&RH.boxEarned(5,[])&&RH.boxEarned(1,['gavel']));
+ok('Safe Cracker is earned only by a Safe find or a 3X Rush',!RH.safeEarned(['guitar'],2)&&RH.safeEarned(['safe'],0)&&RH.safeEarned([],3));
+ok('Mystery Box odds disclosed and add up to 100%',Math.abs(RH.BOX_ODDS.reduce((a,o)=>a+o[1],0)-1)<1e-9&&/Common 60% · Rare 30% · Gold 10%/.test(html));
+ok('every Mystery Box pays cash plus a bonus',[0.1,0.7,0.95].every(x=>{const b=RH.rollBox(()=>x,1);return b.cash>0&&(b.booster||b.meter);}));
+ok('Safe guarantees: first safe and 5X-Rush safe are Rare+, never 4 Commons in a row',RH.rollSafe(()=>.1,{first:true})!=='common'&&RH.rollSafe(()=>.1,{bestRush:5})!=='common'&&RH.rollSafe(()=>.1,{commons:3})!=='common'&&RH.rollSafe(()=>.1,{})==='common');
+ok('no purchase prompts or paid moves/chances anywhere (store, paid continue, ads all off)',/FLAGS=\{store:false,continuePaid:false,ads:false\}/.test(src)&&!/(buy now|in-app|\$\d+\.\d\d)/i.test(src)&&!/(price|\$\d|purchase|buy)/i.test(src.slice(src.indexOf('Mystery Box: earned'),src.indexOf('BOX_T=')))&&!/(price|purchase|buy)/i.test(fs.readFileSync(path.join(root,'js/rhythm.js'),'utf8').replace(/Nothing is sold, and no chance roll can be bought/,'')));
 ok('art-sheet assets shipped',fs.existsSync(path.join(root,'assets/pieces/tote.png'))&&fs.existsSync(path.join(root,'assets/bg/map-clean.jpg'))&&fs.existsSync(path.join(root,'assets/safes/front-legendary.png'))&&fs.existsSync(path.join(root,'assets/chars/truck-after.png'))&&fs.existsSync(path.join(root,'assets/chars/hustler-idle.png')));
 ok('fence + door signs kept',src.includes("You can't hit a home run")&&src.includes('SCARED MONEY')&&src.includes("DON'T MAKE MONEY"));
 ok('locked door says Unlock coming soon',html.includes('Unlock coming soon'));
 ok('Desert Gold is the next-world tease',/Desert Gold/.test(src));
 ok('Safe Cracking is earned only: no prices, IAP or ads in its code',!/(price|\$\d|iap|purchase|buy)/i.test(src.slice(src.indexOf('Safe Cracking Bonus'),src.indexOf('visible empire'))));
+async function rhythmChecks(b,T,vp){const pg=await b.newPage();const errs=[];pg.on('pageerror',e=>errs.push(e.message));pg.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
+  await pg.setViewport(vp);const D=BASE+(BASE.includes('?')?'&':'?')+'debug=1';
+  const st=()=>pg.evaluate(()=>SR.state());const vis=s=>pg.$eval(s,e=>!e.classList.contains('hidden')&&e.offsetParent!==null&&getComputedStyle(e).visibility!=='hidden').catch(()=>false);const txt=s=>pg.$eval(s,e=>e.textContent);
+  const click=async s=>{const r=await pg.$eval(s,e=>{const b=e.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2}});await pg.mouse.click(r.x,r.y);};
+  const dir=path.join(root,'shots','sunnyvale','reward-rhythm');const shot=async n=>{if(SHOTS){fs.mkdirSync(dir,{recursive:true});await pg.screenshot({path:path.join(dir,T+'-'+n+'.png')});}};
+  const until=async(fn,ms)=>{const t0=Date.now();while(Date.now()-t0<(ms||6000)){const s=await st();if(await fn(s))return s;await wait(100);}return st();};
+  const move=async()=>{const m=await pg.evaluate(()=>SR.bestMove());if(!m)return;const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await pg.mouse.move(a.x,a.y);await pg.mouse.down();for(let i=1;i<=5;i++){await pg.mouse.move(a.x+(c.x-a.x)*i/5,a.y+(c.y-a.y)*i/5);await wait(16);}await pg.mouse.up();await wait(200);await until(x=>!x.busy,6000);};
+  const enter=async()=>{await click('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(600);await click('#bLadNext');await wait(800);const L=await pg.evaluate(()=>SR.lockXY());await pg.mouse.click(L.x,L.y);await until(x=>x.mode==='play'&&!x.busy,6000);await wait(500);};
+  const seed=(o)=>pg.evaluate(o=>{localStorage.clear();localStorage.setItem('storageRush.v3',JSON.stringify(Object.assign({v:3,lmv:2,unit:3,bank:900,sound:false,rung:0,tasks:['wash'],boosters:{cut:2,flash:1,free:1},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:true,taughtBoost:{cut:true,flash:true,free:true},truckSeen:true,built:['flea'],safeBank:0},o)));},o);
+  await pg.goto(D,{waitUntil:'load'});await seed({unit:0,bank:0,built:[],truckSeen:false,tasks:[]});await pg.reload({waitUntil:'load'});await wait(800);await enter();
+  ok(`${T} rhythm: no Rush Meter during the Unit 1 tutorial`,!(await vis('#rush')));
+  await seed({});await pg.reload({waitUntil:'load'});await wait(800);await enter();
+  const rr=await pg.evaluate(()=>SR.rushRect()),lay=await pg.evaluate(()=>SR.layout()),pb=await pg.$eval('#pbot',e=>{const r=e.getBoundingClientRect();return [r.top,r.bottom];});
+  const cr=await pg.$eval('#cv',e=>{const r=e.getBoundingClientRect();return [r.left,r.top];});
+  ok(`${T} Rush Meter shows on Unit 4, between the board and the boosters`,!!rr&&rr[1]-cr[1]>=lay.y+lay.cell*7-1&&rr[1]+rr[3]<=pb[0]+1&&rr[0]>=cr[0]&&rr[0]+rr[2]<=cr[0]+lay.W+1,JSON.stringify({rr:rr&&rr.map(Math.round),boardBottom:lay.y+lay.cell*7,pbotTop:Math.round(pb[0])}));
+  await shot('rush-0-empty');
+  await pg.evaluate(()=>SR.rushAdd(52));await wait(500);let s=await st();ok(`${T} Rush Meter goes HOT at 50% (cart pays $3)`,s.rush.meter>=50&&/HOT/.test(await txt('#rushTxt')),await txt('#rushTxt'));await shot('rush-1-filling-hot');
+  await pg.evaluate(()=>SR.rushAdd(60));await wait(600);s=await st();ok(`${T} full meter starts RUSH 2X`,s.rush.x===2&&s.rush.rushNo===1&&/RUSH 2X/.test(await txt('#rushTxt')));await shot('rush-2-active-2x');
+  const bonus0=s.rush.bonus;await move();await move();s=await st();ok(`${T} Rush pays extra cash on cleared items`,s.rush.bonus>bonus0,'+$'+(s.rush.bonus-bonus0));await shot('rush-3-paying');
+  // Mystery Box: earned mid-room (debug stands in for a 5+ chain), opens after the room is cleared
+  await pg.evaluate(()=>SR.debugBox('rare'));await wait(400);s=await st();ok(`${T} Mystery Box earned in play waits for the room to clear`,s.mode==='play'&&s.rush.box&&!s.rush.box.opened&&await vis('#rushBox'));
+  const bank0=s.save.bank;await pg.evaluate(()=>SR.debugWin());s=await until(x=>x.mode==='box',4000);ok(`${T} Mystery Box opens between rooms`,s.mode==='box');await wait(700);await shot('box-1-spinning');
+  await wait(2600);await shot('box-2-revealed');const bp=await txt('#boxPay');await click('#bBoxNext');s=await until(x=>x.mode==='play',5000);
+  ok(`${T} Mystery Box pays cash + bonus, saved with the room`,s.save.bank===bank0+400&&s.save.run&&s.save.run.bi===1&&s.save.run.box.opened&&s.rush.x===0,bp+' bank '+bank0+'→'+s.save.bank);
+  // save / resume: reload mid-unit lands on room 2, nothing paid twice
+  await pg.reload({waitUntil:'load'});await wait(800);await click('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(400);
+  ok(`${T} map says the room is saved after a reload`,/room 2 of 2 saved/.test(await txt('#ladSub')),await txt('#ladSub'));await shot('save-1-map-after-reload');
+  await click('#bLadNext');await wait(800);s=await st();ok(`${T} reload resumes at room 2, cleared room not replayed`,s.mode==='door'&&s.bi===1&&s.save.bank===bank0+400,JSON.stringify({mode:s.mode,bi:s.bi,bank:s.save.bank}));
+  {const L=await pg.evaluate(()=>SR.lockXY());await pg.mouse.click(L.x,L.y);await until(x=>x.mode==='play',5000);await wait(500);await shot('save-2-resumed-room2');}
+  // two Rushes -> 3X -> safe earned; reload after clear keeps the same safe
+  await pg.evaluate(()=>SR.rushAdd(100));await wait(300);await pg.evaluate(()=>SR.debugWin());await wait(300);
+  s=await until(x=>!!(x.save.run&&x.save.run.cleared),4000);const rar=s.save.run&&s.save.run.safe&&s.save.run.safe.rarity;
+  ok(`${T} a 2nd Rush is 3X and earns the Safe Cracker`,s.rush.best===3&&!!rar,JSON.stringify({best:s.rush.best,safe:rar}));
+  await pg.reload({waitUntil:'load'});await wait(800);await click('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(400);await click('#bLadNext');await wait(900);
+  ok(`${T} reload after the clear goes straight to the saved cleared card`,await vis('#msg')&&/cleared!/.test(await txt('#msgH'))&&/Crack the safe/.test(await txt('#msgB')));
+  await click('#msgB');s=await until(x=>x.mode==='safe',3000);ok(`${T} saved safe keeps its rarity after reload (no reroll)`,s.safe&&s.safe.rarity===rar,s.safe&&s.safe.rarity);
+  await wait(1500);await shot('safe-1-dials');await wait(1200);await shot('safe-2-last-dial');await wait(800);await shot('safe-3-door-swinging');await wait(1500);await shot('safe-4-wide-open');
+  const b1=(await st()).save.bank;await click('#bSafeNext');s=await until(x=>x.mode==='flip',4000);await until(x=>x.flipDone,4000);await wait(300);await click('#bFlipNext');await wait(900);
+  ok(`${T} flip banks once, clears the saved run, shows the next build`,s.save.run===null&&s.save.bank>b1&&/Next build/.test(await txt('#haul')),JSON.stringify({bank:[b1,s.save.bank],haul:(await txt('#haul')).slice(-60)}));await shot('flip-receipt-next-build');
+  await pg.reload({waitUntil:'load'});await wait(700);s=await st();ok(`${T} reload after the flip never pays twice`,s.save.bank===(await pg.evaluate(()=>JSON.parse(localStorage.getItem('storageRush.v3')).bank))&&s.save.run===null&&s.save.unit===4);
+  ok(`${T} rhythm: no page errors`,errs.length===0,errs.slice(0,3).join(' | '));await pg.close();}
 const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:'new',args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});
 for(const V of VPS){
+  await rhythmChecks(b,V.tag,Object.assign({},V.vp,{isMobile:false,hasTouch:false}));
   const T=V.tag;const pg=await b.newPage();const errs=[],ext=[];
   pg.on('console',m=>{if(m.type()==='error'||m.type()==='warning')errs.push(m.type()+': '+m.text())});pg.on('pageerror',e=>errs.push('pageerror: '+e.message));
   await pg.setRequestInterception(true);pg.on('request',r=>{const u=r.url();if(!u.startsWith(new URL(BASE).origin+'/')&&!u.startsWith('data:'))ext.push(u);r.continue();});
@@ -57,6 +109,7 @@ for(const V of VPS){
         if(/cleared!/.test(h))return 'win';return 'fail';}
       let s=await st();
       if(s.mode==='safe'){seen.safeBonus=true;if(!seen.shots.safe){seen.shots.safe=1;await wait(1400);await shot('safe-bonus');}await pg.evaluate(()=>SR.skipSafe());await wait(1100);await tapSel('#bSafeNext');await wait(300);continue;}
+      if(s.mode==='box'){seen.box=(seen.box||0)+1;await pg.evaluate(()=>SR.skipBox());await wait(500);await tapSel('#bBoxNext');await wait(400);continue;}
       if(s.mode!=='play'){if(s.mode==='door'){await tapLock();await wait(1800);continue;}await wait(150);continue;}
       if(s.result==='win'){await wait(700);continue;}
       if(s.busy){await wait(80);continue;}
@@ -81,6 +134,7 @@ for(const V of VPS){
     for(let i=0;i<25;i++){
       const s=await st();
       if(s.mode==='safe'){seen.safeBonus=true;if(!seen.shots.safe){seen.shots.safe=1;await wait(1400);await shot('safe-bonus');}const b0=s.save.bank;await pg.evaluate(()=>SR.skipSafe());await wait(1100);const pay=await txt('#safePay');await tapSel('#bSafeNext');await wait(400);const s2=await st();ok(`${T} ${label}: Safe Cracking Bonus pays earned game cash`,/\+\$/.test(pay)&&s2.save.bank>b0,pay);continue;}
+      if(s.mode==='box'){seen.box=(seen.box||0)+1;const b0=s.save.bank;await pg.evaluate(()=>SR.skipBox());await wait(500);await tapSel('#bBoxNext');await wait(400);ok(`${T} ${label}: Mystery Box pays earned game cash`,(await st()).save.bank>b0);continue;}
       if(s.mode==='truck'){if(!seen.shots.truck){seen.shots.truck=1;await wait(2300);await shot('truck-upgrade');}seen.truck=true;await pg.evaluate(()=>SR.finishTruck());await wait(400);continue;}
       if(s.mode==='flip'){
         if(!seen.shots.flip){seen.shots.flip=1;await shot('flea-market');}
@@ -140,7 +194,12 @@ for(const V of VPS){
   ok(`${T} bank grew from the flip`,s.save.bank>0,'$'+s.save.bank);
   ok(`${T} back on the map, next unit is 2`,s.mode==='map'&&s.save.unit===1);
   s=await until(x=>x.mode==='map'&&!x.map.walking,4000);ok(`${T} hustler walk finishes, next unit offered`,/Unit 2/.test(await txt('#bLadNext')));
-  { await wait(3400);s=await until(x=>x.mode==='map'&&!x.map.walking&&!x.building,6000);const v=await pg.evaluate(()=>SR.village());ok(`${T} first sale gifts a free build (Yard Sign, ~5%)`,v.built.includes('sign')&&v.pct>=4&&v.pct<=8,v.pct+'%');
+  { await wait(3400);s=await until(x=>x.mode==='map'&&!x.map.walking&&!x.building,6000);const v=await pg.evaluate(()=>SR.village());const bank0=(await st()).save.bank,bt=await txt('#bBuild');
+    ok(`${T} Unit 1 sale banks exactly $474 and offers the $400 Flea Market Stall`,bank0===474&&v.pct===0&&await vis('#bBuild')&&/Flea Market Stall/.test(bt)&&/\$400/.test(bt),bank0+' · '+bt);
+    ok(`${T} Unit 2 is open without any extra cash (before the stall is built)`,await vis('#bLadNext')&&/Unit 2/.test(await txt('#bLadNext')));
+    await shot('stall-offer');await tapSel('#bBuild');await wait(700);await shot('stall-building');await wait(2400);v=await pg.evaluate(()=>SR.village());const bank1=(await st()).save.bank;
+    ok(`${T} paying $400 builds the first stall, $74 left, town moves`,bank1===74&&v.built.includes('flea')&&v.pct>=4&&v.pct<=8,'$'+bank1+' · '+v.pct+'%');await shot('stall-built');
+    s=await until(x=>x.mode==='map'&&!x.building,4000);
     const r0=await pg.$eval('#bLadNext',e=>{const b=e.getBoundingClientRect();return [Math.round(b.left+b.width/2),Math.round(b.top+b.height/2),getComputedStyle(e).visibility];});await wait(900);const r1=await pg.$eval('#bLadNext',e=>{const b=e.getBoundingClientRect();return [Math.round(b.left+b.width/2),Math.round(b.top+b.height/2),getComputedStyle(e).visibility];});
     ok(`${T} Unit pill stays put once shown (first tap lands)`,r0[2]==='visible'&&Math.abs(r0[0]-r1[0])<=1&&Math.abs(r0[1]-r1[1])<=1,JSON.stringify([r0,r1]));
     const bad=await pg.evaluate(()=>SR.mapCheck());ok(`${T} map: Unit pills never cover a stop number`,!bad.some(x=>/x stop/.test(x)&&/button/.test(x)),bad.filter(x=>/button/.test(x)).slice(0,4).join(' | ')); }
@@ -163,7 +222,7 @@ for(const V of VPS){
     ok(`${T} village: truck landmark upgraded by the Pickup milestone`,v.pct>=13,v.pct+'%');
     const p0=v.pct;
     if(await vis('#bBuild')&&!(await pg.$eval('#bBuild',e=>e.classList.contains('poor')))){const b0=(await st()).save.bank;await tapSel('#bBuild');await wait(700);await shot('map-building');await wait(2000);v=await pg.evaluate(()=>SR.village());const b1=(await st()).save.bank;
-      ok(`${T} village: earned cash fixes up the next landmark`,v.built.includes('sign')&&v.pct>p0&&b1<b0&&new RegExp(v.pct+'% built').test(await txt('#builtTxt')),v.pct+'% · bank '+b0+'→'+b1);await shot('map-village');}
+      ok(`${T} village: earned cash fixes up the next landmark`,v.built.includes('flea')&&v.pct>p0&&b1<b0&&new RegExp(v.pct+'% built').test(await txt('#builtTxt')),v.pct+'% · bank '+b0+'→'+b1);await shot('map-village');}
     else { // next paid landmark (Office) unlocks at Unit 5: check the paid build on a seeded save, then come back
       const keep=await pg.evaluate(()=>localStorage.getItem('storageRush.v3'));await pg.evaluate(()=>{const o=JSON.parse(localStorage.getItem('storageRush.v3'));o.unit=5;o.bank=6000;localStorage.setItem('storageRush.v3',JSON.stringify(o));});await pg.reload({waitUntil:'load'});await wait(900);await tapSel('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(300);
       const b0=(await st()).save.bank;const p1=(await pg.evaluate(()=>SR.village())).pct;await tapSel('#bBuild');await wait(2700);v=await pg.evaluate(()=>SR.village());const b1=(await st()).save.bank;
@@ -253,7 +312,7 @@ for(const V of VPS){
   ok(`${T} no console errors/warnings`,errs.length===0,errs.slice(0,4).join(' | '));
   ok(`${T} no external requests`,ext.length===0,ext.slice(0,3).join(' '));
   await pg.close();}
-if(!ONLY||ONLY==='1280x800'){const T='1280x800';const pg=await b.newPage();const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+if(!ONLY||ONLY==='1280x800'){await rhythmChecks(b,'1280x800',{width:1280,height:800});const T='1280x800';const pg=await b.newPage();const errs=[];pg.on('pageerror',e=>errs.push(e.message));
   await pg.setViewport({width:1280,height:800});await pg.goto(BASE,{waitUntil:'load'});
   await pg.evaluate(()=>{localStorage.clear();localStorage.setItem('storageRush.v3',JSON.stringify({v:3,unit:9,bank:1450,sound:false,rung:0,tasks:['wash'],truckSeen:true,built:['sign','office'],boosters:{cut:2,flash:1,free:0},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:true,taughtBoost:{cut:true,flash:true,free:true}}));});
   await pg.reload({waitUntil:'load'});await wait(700);await pg.click('#bOpen');await wait(1600);

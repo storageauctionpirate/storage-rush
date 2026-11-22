@@ -24,7 +24,8 @@ const csp=(html.match(/Content-Security-Policy" content="([^"]+)"/)||[])[1]||'';
 ok('CSP kept: self-only scripts, no network, local fonts',/script-src 'self'/.test(csp)&&/connect-src 'none'/.test(csp)&&/font-src 'self'/.test(csp)&&/default-src 'self'/.test(csp),csp);
 ok('display font is bundled locally',fs.existsSync(path.join(root,'fonts/LuckiestGuy-Regular.ttf'))&&fs.existsSync(path.join(root,'fonts/LICENSE.txt')));
 ok('every truck level has its own art',[0,1,2,3,4,5].every(n=>fs.existsSync(path.join(root,'assets/trucks/L'+n+'.png')))&&new Set([0,1,2,3,4,5].map(n=>fs.statSync(path.join(root,'assets/trucks/L'+n+'.png')).size)).size===6);
-ok('every campaign unit has 3 rooms',(()=>{const L=require(path.join(root,'js/levels.js'));return L.YARD1.units.length===20&&L.YARD1.units.every(u=>u.boards.length===3);})());
+ok('room ramp: Units 1-2 one room, 3-5 two rooms, 6+ three rooms',(()=>{const L=require(path.join(root,'js/levels.js'));return L.YARD1.units.length===20&&L.YARD1.units.every((u,i)=>u.boards.length===(i<2?1:i<5?2:3));})());
+ok('Unit 1 teaches tarps with real goals (3 finds, not a 1-find freebie)',(()=>{const L=require(path.join(root,'js/levels.js'));const b=L.YARD1.units[0].boards[0];return b.tut==='swap'&&b.need===3&&b.tarps.length>=3;})());
 ok('art-sheet assets shipped',fs.existsSync(path.join(root,'assets/pieces/tote.png'))&&fs.existsSync(path.join(root,'assets/bg/map-clean.jpg'))&&fs.existsSync(path.join(root,'assets/safes/front-legendary.png'))&&fs.existsSync(path.join(root,'assets/chars/truck-after.png'))&&fs.existsSync(path.join(root,'assets/chars/hustler-idle.png')));
 ok('fence + door signs kept',src.includes("You can't hit a home run")&&src.includes('SCARED MONEY')&&src.includes("DON'T MAKE MONEY"));
 ok('locked door says Unlock coming soon',html.includes('Unlock coming soon'));
@@ -108,6 +109,7 @@ for(const V of VPS){
   await tapSel('#bSound');s=await st();const muted=await pg.evaluate(()=>document.body.classList.contains('muted'));await tapSel('#bSound');const s2=await st();
   ok(`${T} sound toggle flips and saves (music + sfx share it)`,s.save.sound===false&&muted&&s2.save.sound===true);
   await tapSel('#bOpen');await wait(700);s=await st();
+  ok(`${T} map art is loaded before the map shows (no pop-in)`,s.mode==='map'&&s.mapArt);
   ok(`${T} world map opens on Sunnyvale Storage`,s.mode==='map'&&/Sunnyvale Storage/.test(await txt('#ladH'))&&/first unit/.test(await txt('#ladSub')));
   ok(`${T} no "No Home" text on screen`,!(await pg.evaluate(()=>/no home/i.test(document.body.innerText))));
   { const v=await pg.evaluate(()=>SR.village());const H0=(await pg.evaluate(()=>innerHeight));
@@ -121,26 +123,35 @@ for(const V of VPS){
   await tapLock();await wait(120);s=await st();ok(`${T} lock tap starts jiggle/snap`,s.door==='open');await wait(1800);
   s=await st();ok(`${T} door rolls up into the framed board`,s.mode==='play'&&s.unitId==='Unit 1');
   ok(`${T} tutorial tip + finger shown on board 1`,await vis('#tut')&&s.tut==='swap');
+  ok(`${T} header: SUNNYVALE STORAGE sign art is not covered by a title pill`,!(await vis('#sign'))&&/UNIT 1/.test(await txt('#goalLabel')),await txt('#goalLabel'));
   await checkFit('board');await shot('board');
   const nm=await pg.evaluate(()=>SR.noMatchSwap());
-  if(nm){const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),nm.a[0],nm.a[1]),c2=await pg.evaluate((r,c)=>SR.cellXY(r,c),nm.b[0],nm.b[1]);await swipe(a,c2);await wait(500);s=await st();ok(`${T} no-match swap bounces back free`,s.used===0&&s.moves===22,'used='+s.used);}
+  if(nm){const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),nm.a[0],nm.a[1]),c2=await pg.evaluate((r,c)=>SR.cellXY(r,c),nm.b[0],nm.b[1]);await swipe(a,c2);await wait(500);s=await st();ok(`${T} no-match swap bounces back free`,s.used===0,'used='+s.used);}
   else ok(`${T} no-match swap bounces back free`,true,'no adjacent no-match pair on this seed');
-  { const m=await pg.evaluate(()=>SR.bestMove());const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c2=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await swipe(a,c2);await wait(100);await untilIdle();s=await st();ok(`${T} swipe swap spends one move`,s.used===1);}
+  { const m=await pg.evaluate(()=>SR.bestMove());const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c2=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await swipe(a,c2);await wait(100);await untilIdle();s=await st();ok(`${T} swipe swap spends one move`,s.used===1);
+    await wait(300);s=await st();if(!s.finds.length&&s.tarps.some(t=>t.find))ok(`${T} Unit 1 teaches the tarp with highlighted tiles`,s.tarpGlow&&/tarp/i.test(await txt('#tut')),await txt('#tut'));else ok(`${T} Unit 1 teaches the tarp with highlighted tiles`,true,'find already out after the first swap');}
   let r=await playBoard();ok(`${T} Unit 1 (tutorial) won`,r==='win');
   s=await st();ok(`${T} find collected onto the cart`,s.collected.length>=1);
   await wait(400);ok(`${T} cleared card is a stamped work order with itemized lines`,(await txt('#msgStamp'))==='CLEARED'&&/Unit 1 cleared!/.test(await txt('#msgH'))&&/Guitar|Cart/.test(await txt('#msgP')),JSON.stringify({stamp:await txt('#msgStamp'),h:await txt('#msgH'),p:await txt('#msgP')}));
+  { const o=await pg.evaluate(()=>{const h=document.getElementById('msgH'),r=document.createRange();r.selectNodeContents(h);const a=r.getBoundingClientRect(),b=document.getElementById('msgStamp').getBoundingClientRect();return {a:[a.left,a.top,a.right,a.bottom].map(Math.round),b:[b.left,b.top,b.right,b.bottom].map(Math.round),hit:a.left<b.right&&b.left<a.right&&a.top<b.bottom&&b.top<a.bottom};});
+    ok(`${T} CLEARED stamp does not cover the title`,!o.hit,JSON.stringify(o)); }
   await shot('cleared');
   s=await settleAfterWin('Unit 1');
   ok(`${T} bank grew from the flip`,s.save.bank>0,'$'+s.save.bank);
   ok(`${T} back on the map, next unit is 2`,s.mode==='map'&&s.save.unit===1);
   s=await until(x=>x.mode==='map'&&!x.map.walking,4000);ok(`${T} hustler walk finishes, next unit offered`,/Unit 2/.test(await txt('#bLadNext')));
+  { await wait(3400);s=await until(x=>x.mode==='map'&&!x.map.walking&&!x.building,6000);const v=await pg.evaluate(()=>SR.village());ok(`${T} first sale gifts a free build (Yard Sign, ~5%)`,v.built.includes('sign')&&v.pct>=4&&v.pct<=8,v.pct+'%');
+    const r0=await pg.$eval('#bLadNext',e=>{const b=e.getBoundingClientRect();return [Math.round(b.left+b.width/2),Math.round(b.top+b.height/2),getComputedStyle(e).visibility];});await wait(900);const r1=await pg.$eval('#bLadNext',e=>{const b=e.getBoundingClientRect();return [Math.round(b.left+b.width/2),Math.round(b.top+b.height/2),getComputedStyle(e).visibility];});
+    ok(`${T} Unit pill stays put once shown (first tap lands)`,r0[2]==='visible'&&Math.abs(r0[0]-r1[0])<=1&&Math.abs(r0[1]-r1[1])<=1,JSON.stringify([r0,r1]));
+    const bad=await pg.evaluate(()=>SR.mapCheck());ok(`${T} map: Unit pills never cover a stop number`,!bad.some(x=>/x stop/.test(x)&&/button/.test(x)),bad.filter(x=>/button/.test(x)).slice(0,4).join(' | ')); }
   ok(`${T} no Pickup tasks before 3 flips`,!(await vis('#tasks')));
   /* ---- unit 2: tutorial boards skip the +5 offer ---- */
   await tapSel('#bLadNext');await wait(400);await tapLock();await wait(1800);
   await pg.evaluate(()=>SR.setMoves(1));
   { s=await st();if(!s.finds.length){const m=await pg.evaluate(()=>SR.bestMove());const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c2=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await swipe(a,c2);await untilIdle();}
     await wait(900);s=await st();
-    if(s.status==='out'){ok(`${T} tutorial board: out of moves skips +5 offer`,await vis('#msg')&&/Out of moves/.test(await txt('#msgH')));await tapSel('#msgB');await wait(400);}
+    if(s.status==='out'){ok(`${T} tutorial board: out of moves skips +5 offer`,await vis('#msg')&&/Out of moves/.test(await txt('#msgH')));
+      { const p=await txt('#msgP');ok(`${T} fail text matches progress`,s.collected.length===0?/No finds/.test(p)&&!/So close/.test(p):true,s.collected.length+' finds: '+p); }await tapSel('#msgB');await wait(400);}
     else ok(`${T} tutorial board: out of moves skips +5 offer`,true,'skipped (find on board / won)');}
   if(!(await vis('#msg'))||!/cleared/.test(await txt('#msgH'))){await playUnit('Unit 2');}
   s=await settleAfterWin('Unit 2');await until(x=>x.mode==='map'&&!(x.map&&x.map.walking),4000);
@@ -149,11 +160,15 @@ for(const V of VPS){
   {const z=await st();ok(`${T} 3 flips earns the free Pickup upgrade scene`,!!seen.truck,JSON.stringify({mode:z.mode,unit:z.save.unit,unitId:z.unitId,bi:z.bi,msg:await vis('#msg')?await txt('#msgH'):''}));}
   { await wait(800);let v=await pg.evaluate(()=>SR.village());const H0=await pg.evaluate(()=>innerHeight);
     ok(`${T} map: camera follows the hustler to stop 4`,v.stops[3].y>0&&v.stops[3].y<H0,'y '+Math.round(v.stops[3].y));
-    ok(`${T} village: truck landmark upgraded by the Pickup milestone`,v.pct>0,v.pct+'%');
+    ok(`${T} village: truck landmark upgraded by the Pickup milestone`,v.pct>=13,v.pct+'%');
     const p0=v.pct;
     if(await vis('#bBuild')&&!(await pg.$eval('#bBuild',e=>e.classList.contains('poor')))){const b0=(await st()).save.bank;await tapSel('#bBuild');await wait(700);await shot('map-building');await wait(2000);v=await pg.evaluate(()=>SR.village());const b1=(await st()).save.bank;
       ok(`${T} village: earned cash fixes up the next landmark`,v.built.includes('sign')&&v.pct>p0&&b1<b0&&new RegExp(v.pct+'% built').test(await txt('#builtTxt')),v.pct+'% · bank '+b0+'→'+b1);await shot('map-village');}
-    else ok(`${T} village: earned cash fixes up the next landmark`,false,'build button missing or too poor'); }
+    else { // next paid landmark (Office) unlocks at Unit 5: check the paid build on a seeded save, then come back
+      const keep=await pg.evaluate(()=>localStorage.getItem('storageRush.v3'));await pg.evaluate(()=>{const o=JSON.parse(localStorage.getItem('storageRush.v3'));o.unit=5;o.bank=6000;localStorage.setItem('storageRush.v3',JSON.stringify(o));});await pg.reload({waitUntil:'load'});await wait(900);await tapSel('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(300);
+      const b0=(await st()).save.bank;const p1=(await pg.evaluate(()=>SR.village())).pct;await tapSel('#bBuild');await wait(2700);v=await pg.evaluate(()=>SR.village());const b1=(await st()).save.bank;
+      ok(`${T} village: earned cash fixes up the next landmark`,v.built.includes('office')&&v.pct>p1&&b1<b0&&new RegExp(v.pct+'% built').test(await txt('#builtTxt')),v.pct+'% · bank '+b0+'→'+b1);await shot('map-village');
+      await pg.evaluate(k=>localStorage.setItem('storageRush.v3',k),keep);await pg.reload({waitUntil:'load'});await wait(900);await tapSel('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(300);} }
   await tapSel('#bEmpire');await wait(400);
   ok(`${T} Upgrades: Pickup tasks panel`,await vis('#tasks')&&/Fix up The Pickup/.test(await txt('#tasks h3')));
   await checkFit('upgrades');

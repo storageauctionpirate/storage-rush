@@ -14,7 +14,7 @@ const st=()=>pg.evaluate(()=>SR.state());
 const vis=s=>pg.$eval(s,e=>!e.classList.contains('hidden')&&e.offsetParent!==null).catch(()=>false);
 const tap=async(x,y)=>{await pg.mouse.move(x,y);await pg.mouse.down();await wait(40);await pg.mouse.up();};
 const tapSel=async s=>{const r=await pg.$eval(s,e=>{const b=e.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2}});await tap(r.x,r.y);};
-const rect=s=>pg.$eval(s,e=>{const b=e.getBoundingClientRect();return [b.x|0,b.y|0,b.width|0,b.height|0,e.classList.contains('hidden')?'H':'']}).catch(()=>null);
+const rect=s=>pg.$eval(s,e=>{const b=e.getBoundingClientRect();return [b.x|0,b.y|0,b.width|0,b.height|0,e.classList.contains('hidden')?'H':getComputedStyle(e).visibility==='hidden'?'v':'']}).catch(()=>null);
 const swipe=async(a,c)=>{await pg.mouse.move(a.x,a.y);await pg.mouse.down();for(let i=1;i<=5;i++){await pg.mouse.move(a.x+(c.x-a.x)*i/5,a.y+(c.y-a.y)*i/5);await wait(16);}await pg.mouse.up();};
 const setSave=async o=>{await pg.goto(BASE,{waitUntil:'load'});await pg.evaluate(o=>{localStorage.clear();if(o)localStorage.setItem('storageRush.v3',JSON.stringify(Object.assign({v:3,unit:0,bank:0,sound:false,rung:0,tasks:[],boosters:{cut:2,flash:1,free:1},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:true,taughtBoost:{},truckSeen:false,safeBank:0},o)));},o);await pg.reload({waitUntil:'load'});await wait(900);};
 const info={};
@@ -29,8 +29,9 @@ if(SC.includes('header')||SC.includes('win')||SC.includes('flip')||SC.includes('
   await wait(500);await shot('win-popup');
   await tapSel('#msgB');await wait(400);let s=await st();if(s.mode==='safe'){await pg.evaluate(()=>SR.skipSafe());await wait(1200);await tapSel('#bSafeNext');await wait(500);}
   await wait(2600);await shot('flip-table');await tapSel('#bFlipNext');await wait(1800);await shot('flip-sold');
-  await tapSel('#bFlipNext');const tr=[];const t0=Date.now();for(let i=0;i<30;i++){tr.push([Date.now()-t0,JSON.stringify(await rect('#bLadNext'))]);if(i===6)await shot('walk-mid');await wait(100);}
+  await tapSel('#bFlipNext');const tr=[];const t0=Date.now();for(let i=0;i<60;i++){tr.push([Date.now()-t0,JSON.stringify(await rect('#bLadNext'))]);if(i===6)await shot('walk-mid');await wait(100);}
   info.walkBtn=tr.filter((x,i)=>i===0||x[1]!==tr[i-1][1]);await shot('walk-end');s=await st();info.afterU1={pct:(await pg.evaluate(()=>SR.village())).pct,bank:s.save.bank,build:await vis('#bBuild'),buildTxt:await pg.$eval('#bBuild',e=>e.textContent)};}
+if(SC.includes('flea')){for(const hl of [['guitar'],['guitar','camera','jewelry']]){await setSave({unit:2,bank:400});await pg.evaluate(hl=>SR.debugFlip(hl),hl);await wait(2400);await shot('flea-'+hl.length+'-table');await tapSel('#bFlipNext');await wait(700);await shot('flea-'+hl.length+'-sold');}}
 if(SC.includes('top')){for(const u of [2,3,4]){await setSave({unit:u,bank:500,truckSeen:u>=3});await tapSel('#bOpen');await wait(1800);await shot('map-u'+(u+1));}}
 if(SC.includes('fail')){await setSave({unit:1,bank:300});await tapSel('#bOpen');await wait(1500);await tapSel('#bLadNext');await wait(700);const L=await pg.evaluate(()=>SR.lockXY());await tap(L.x,L.y);await wait(2600);
   await pg.evaluate(()=>SR.setMoves(1));const m=await pg.evaluate(()=>SR.bestMove());const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await swipe(a,c);

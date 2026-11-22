@@ -171,7 +171,8 @@ body[data-scene="truck"] #bHome,body[data-scene="safe"] #bHome{display:none!impo
 
 .mapside{position:absolute;left:10px;top:calc(150px + env(safe-area-inset-top));display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .mapside .mid{min-width:96px;font-size:16px;padding:12px 10px 6px}
-.big.play{position:absolute;left:50%;top:60%;min-width:118px;min-height:56px;font-size:23px;padding:12px 16px 6px;white-space:nowrap;animation:pulse 1.2s ease-in-out infinite}
+.big.play{position:absolute;left:50%;top:60%;min-width:118px;min-height:56px;font-size:23px;padding:12px 16px 6px;white-space:nowrap;animation:glowp 1.2s ease-in-out infinite}
+@keyframes glowp{0%,100%{filter:brightness(1);box-shadow:0 5px 0 #2b160c,0 0 0 0 #ffd06200}50%{filter:brightness(1.12);box-shadow:0 5px 0 #2b160c,0 0 18px 6px #ffd062aa}}
 @media(max-height:700px){.mapside{top:calc(132px + env(safe-area-inset-top))}.big.play{min-height:50px;font-size:20px;min-width:104px}}
 
 /* Sunnyvale village map */

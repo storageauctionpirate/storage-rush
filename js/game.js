@@ -592,10 +592,13 @@ function lmRects(){const R=[];LANDMARKS.forEach(l=>{const q=lmW(l),s2=q.s*(l.id=
   const names=[l.name,l.cost?'BUILD '+money(l.cost):l.name,'Unit '+l.n],tw=(Math.max(...names.map(t=>t.length))*W*.032*.62+W*.07)*1.06,th=W*.058*1.06,ty=q.y+q.s*.1;R.push([q.x-tw/2,ty-th/2,q.x+tw/2,ty+th/2]);});return R;}
 function stopRects(){const a=[];for(let j=0;j<20;j++){const q=stopW(j),w=W*(j===19?.17:.135),h=w*.56;a.push([q.x-w/2,q.y-h/2-W*.03,q.x+w/2+W*.02,q.y+h/2]);}return a;}
 function rOv(a,b,pad){pad=pad==null?W*.008:pad;return a[0]<b[2]+pad&&b[0]<a[2]+pad&&a[1]<b[3]+pad&&b[1]<a[3]+pad;}
-function stopSlot(i,bw,bh){const p=stopW(i),hs=W*.2,R=lmRects();let best=null;
+function stopSlot(i,bw,bh){const p=stopW(i),hs=W*.2,R=lmRects(),SR2=stopRects();let best=null;
   [-1,1].forEach(side=>{const cx=p.x+side*hs*.42,hb=[cx-hs*.33,p.y-hs*1.05,cx+hs*.33,p.y+hs*.03];if(hb[0]<0||hb[2]>W)return;const hbad=R.filter(r=>rOv(hb,r)).length;
-    [[Math.max(hb[2],p.x+W*.075)+W*.01,p.y-bh/2],[Math.min(hb[0],p.x-W*.075)-W*.01-bw,p.y-bh/2],[p.x-bw/2,p.y+W*.06],[p.x-bw/2,p.y-W*.09-bh]].forEach((c,k)=>{const bx=Math.max(8,Math.min(W-bw-8,c[0])),bb=[bx,c[1],bx+bw,c[1]+bh];
-      const bad=hbad*10+R.filter(r=>rOv(bb,r)).length*3+(rOv(bb,hb)?5:0)+stopRects().filter(r=>rOv(bb,r,W*.006)).length*8+(side<0?0:.1)+k*.05;if(!best||bad<best.bad)best={bad,side,bx,by:c[1]};});});
+    const rx=Math.max(hb[2],p.x+W*.075)+W*.01,lx=Math.min(hb[0],p.x-W*.075)-W*.01-bw,C=[];
+    [0,-.6,.6,-1.1,1.1].forEach(dy=>{C.push([rx,p.y-bh/2+dy*bh]);C.push([lx,p.y-bh/2+dy*bh]);});
+    [0,-.5,.5].forEach(dx=>{C.push([p.x-bw/2+dx*bw,p.y+W*.06]);C.push([p.x-bw/2+dx*bw,p.y-W*.09-bh]);C.push([p.x-bw/2+dx*bw,p.y+W*.06+bh*.7]);});
+    C.forEach((c,k)=>{const bx=Math.max(8,Math.min(W-bw-8,c[0])),bb=[bx,c[1],bx+bw,c[1]+bh];
+      const bad=hbad*10+R.filter(r=>rOv(bb,r)).length*10+(rOv(bb,hb)?6:0)+SR2.filter(r=>rOv(bb,r,W*.006)).length*10+(side<0?0:.1)+k*.02;if(!best||bad<best.bad)best={bad,side,bx,by:c[1]};});});
   return best||{side:-1,bx:p.x+W*.08,by:p.y-bh/2};}
 function camClamp(y){return Math.max(0,Math.min(MG().h-H,y));}
 function camTarget(wy){return camClamp(wy-H*.52);}

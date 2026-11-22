@@ -32,8 +32,8 @@ if(SC.includes('header')||SC.includes('win')||SC.includes('flip')||SC.includes('
   await tapSel('#bFlipNext');const tr=[];const t0=Date.now();for(let i=0;i<60;i++){tr.push([Date.now()-t0,JSON.stringify(await rect('#bLadNext'))]);if(i===6)await shot('walk-mid');await wait(100);}
   info.walkBtn=tr.filter((x,i)=>i===0||x[1]!==tr[i-1][1]);await shot('walk-end');s=await st();info.afterU1={pct:(await pg.evaluate(()=>SR.village())).pct,bank:s.save.bank,build:await vis('#bBuild'),buildTxt:await pg.$eval('#bBuild',e=>e.textContent)};}
 if(SC.includes('flea')){for(const hl of [['guitar'],['guitar','camera','jewelry']]){await setSave({unit:2,bank:400});await pg.evaluate(hl=>SR.debugFlip(hl),hl);await wait(2400);await shot('flea-'+hl.length+'-table');await tapSel('#bFlipNext');await wait(700);await shot('flea-'+hl.length+'-sold');}}
-if(SC.includes('top')){for(const u of [2,3,4]){await setSave({unit:u,bank:500,truckSeen:u>=3});await tapSel('#bOpen');await wait(1800);await shot('map-u'+(u+1));}}
-if(SC.includes('fail')){await setSave({unit:1,bank:300});await tapSel('#bOpen');await wait(1500);await tapSel('#bLadNext');await wait(700);const L=await pg.evaluate(()=>SR.lockXY());await tap(L.x,L.y);await wait(2600);
+if(SC.includes('top')){for(const u of [2,3,4]){await setSave({unit:u,bank:500,truckSeen:u>=3,built:['sign']});await tapSel('#bOpen');await wait(1800);await shot('map-u'+(u+1));}}
+if(SC.includes('fail')){await setSave({unit:1,bank:300,built:['sign']});await tapSel('#bOpen');await wait(1500);await tapSel('#bLadNext');await wait(700);const L=await pg.evaluate(()=>SR.lockXY());await tap(L.x,L.y);await wait(2600);
   await pg.evaluate(()=>SR.setMoves(1));const m=await pg.evaluate(()=>SR.bestMove());const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await swipe(a,c);
   for(let i=0;i<40&&!(await vis('#msg'));i++)await wait(150);await wait(300);info.fail=await pg.$eval('#card',e=>e.innerText);await shot('fail-0finds');}
 console.log(sz,JSON.stringify(info),'errors:',errs.length?errs.join(' | '):'none');await pg.close();}

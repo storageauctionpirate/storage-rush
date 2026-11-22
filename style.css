@@ -254,3 +254,6 @@ body[data-scene="truck"] #bHome,body[data-scene="safe"] #bHome{display:none!impo
 #haul .line.set span,#msgP .line.set span{color:#2f7d32}
 #haul .line.total{border-bottom:0;font-family:var(--disp);font-size:18px;color:var(--orange);margin-top:4px}
 #haul .cartlist,#msgP .cartlist{font:600 11.5px var(--body);color:#6b4a2a;margin:4px 2px 2px;line-height:1.3}
+/* long flip receipts (3-room units with a safe item) stay on screen: the receipt scrolls and the Next button never drops below the fold */
+#haul{max-height:calc(100vh - 300px);max-height:calc(100dvh - 300px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+@media (max-height:700px){#haul{max-height:calc(100vh - 380px);max-height:calc(100dvh - 380px)}#haul .line{padding:2px 4px;font-size:14px}#haul .cartlist{font-size:11px}}

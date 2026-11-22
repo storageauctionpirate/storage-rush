@@ -35,7 +35,9 @@ function load(cb){
   if(ready){cb&&cb();return;}
   if(cb)pending.push(cb);
   if(pending.length>1)return;
-  const keys=Object.keys(FILES); let n=0, total=keys.length;
+  // map art first so the village never pops in late
+  const pri=k=>/^(bg-terrain|bg-maptop|lm-|truck-L|hustler-)/.test(k)?0:/^bg-door|^bg-map$/.test(k)?1:2;
+  const keys=Object.keys(FILES).sort((a,b)=>pri(a)-pri(b)); let n=0, total=keys.length;
   keys.forEach(k=>{
     const im=new Image();
     im.onload=im.onerror=()=>{n++; if(n>=total){ready=true; pending.splice(0).forEach(fn=>fn());}};
@@ -60,5 +62,8 @@ function piece(c, type, s){
   if(!im)return false;
   contain(c,im,-s/2,-s/2,s,s); return true;
 }
-root.IMGS={load,get,cover,contain,piece,PIECE_KEYS,ready:()=>ready};
+const MAP_KEYS=()=>Object.keys(FILES).filter(k=>/^(bg-terrain|bg-maptop|lm-|truck-L|hustler-idle|hustler-walk)/.test(k));
+function done(k){const im=cache[k];return !!(im&&im.complete);}
+function mapReady(){return ready||MAP_KEYS().every(done);}
+root.IMGS={load,get,cover,contain,piece,PIECE_KEYS,ready:()=>ready,mapReady};
 })(this);

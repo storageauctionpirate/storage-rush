@@ -7,9 +7,9 @@
 const B=(o)=>Object.assign({types:6,scrapper:'off',pre:[]},o);
 const YARD0={units:[
   {id:'Unit 1',name:'First Locker',theme:'indoor',boards:[
-    B({seed:101,moves:22,need:1,types:5,tut:'swap',tarps:[[6,3,2,'guitar']],pre:[[5,2,0],[5,4,0],[4,3,0],[5,3,1]]})]},
+    B({seed:485,moves:26,need:3,types:6,tut:'swap',tarps:[[6,3,2,'guitar'],[6,1,2,'camera'],[6,5,2,'jewelry']],pre:[[5,2,0],[5,4,0],[4,3,0],[5,3,1]]})]},
   {id:'Unit 2',name:'Clean Indoor Unit',theme:'indoor',boards:[
-    B({seed:102,moves:20,need:2,types:5,tut:'tarp',tarps:[[6,1,2,'jewelry'],[6,5,2,'camera']]})]},
+    B({seed:286,moves:26,need:3,types:6,tut:'layers',tarps:[[6,1,2,'jewelry'],[6,5,2,'camera'],[4,3,2,'guitar'],[3,0,1,null]]})]},
   {id:'Unit 3',name:'Clean Indoor Unit',theme:'indoor',boards:[
     B({seed:103,moves:20,need:3,tarps:[[5,1,2,'guitar'],[6,3,2,'jewelry'],[5,5,2,'safe']]})]},
   {id:'Unit 4',name:'Greasy Garage',theme:'garage',boards:[
@@ -62,10 +62,14 @@ function roomsFor(b,ui){const gentle=ui<2,late=ui>=12,mid=ui>=6;
   const f3=r3tarps.filter(t=>t[3]).length;
   const r3=B({seed:b.seed+900,moves:b.moves+(gentle?3:5),need:gentle?Math.min(2,f3):Math.min(f3,b.need+(mid?1:0)),types:b.types,scrapper:sc,tarps:r3tarps});
   [r2,r3].forEach(r=>{r.seed=SEED_FIX[r.seed]||r.seed;});return [r2,r3];}
-const YARD1={id:'sunnyvale',name:'Sunnyvale Storage',nextWorld:'Desert Gold',units:YARD0.units.map((u,i)=>Object.assign({},u,{boards:[Object.assign({},u.boards[0],{seed:({105:179,107:144,111:222,112:186,113:187,116:412,117:154,118:229,119:156,120:157})[u.boards[0].seed]||u.boards[0].seed})].concat(roomsFor(u.boards[0],i))}))};
+const ROOM1_SEED={105:179,107:144,111:222,112:186,113:187,116:412,117:154,118:229,119:156,120:157};
+// room ramp: Units 1-2 one room, Units 3-5 two rooms, Unit 6+ three rooms
+function roomCount(ui){return ui<2?1:ui<5?2:3;}
+const YARD1={id:'sunnyvale',name:'Sunnyvale Storage',nextWorld:'Desert Gold',units:YARD0.units.map((u,i)=>{const r1=Object.assign({},u.boards[0],{seed:ROOM1_SEED[u.boards[0].seed]||u.boards[0].seed});
+  return Object.assign({},u,{boards:[r1].concat(roomsFor(u.boards[0],i)).slice(0,roomCount(i))});})};
 const TUTORIAL={swap:'Swap two neighbors to make 3 in a row.',tarp:'Match right next to a tarp to rip it.',layers:'Chained tarps take 2 hits.',dummy:'Some tarps are just junk. Gold glint = a find!',
   dolly:'Match 4 to build a DOLLY!',wrap:'Match an L or T for BUBBLE WRAP!',gavel:'Match 5 in a row for the AUCTION GAVEL!'};
 const MAP_PATH=[{n:1,x:0.47,y:0.926},{n:2,x:0.538,y:0.846},{n:3,x:0.574,y:0.774},{n:4,x:0.564,y:0.708},{n:5,x:0.514,y:0.656},{n:6,x:0.458,y:0.61},{n:7,x:0.395,y:0.57},{n:8,x:0.352,y:0.532},{n:9,x:0.336,y:0.497},{n:10,x:0.358,y:0.465},{n:11,x:0.408,y:0.436},{n:12,x:0.46,y:0.413},{n:13,x:0.512,y:0.393},{n:14,x:0.56,y:0.375},{n:15,x:0.596,y:0.354},{n:16,x:0.636,y:0.3375},{n:17,x:0.635,y:0.32},{n:18,x:0.608,y:0.305},{n:19,x:0.575,y:0.2935},{n:20,x:0.532,y:0.281}];
-const api={YARD1,TUTORIAL,MAP_PATH};
+const api={YARD1,TUTORIAL,MAP_PATH,roomCount};
 if(typeof module!=='undefined')module.exports=api;else root.LEVELS=api;
 })(this);

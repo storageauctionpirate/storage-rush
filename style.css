@@ -83,7 +83,7 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 .card h2{margin:0;font:32px/1 var(--disp);color:var(--orange)}
 #msgP{margin:10px 0 16px;font-weight:800;font-size:16px;line-height:1.35}
 #msgP .line{display:flex;justify-content:space-between;border-bottom:2px dotted #c9b38a;padding:2px 4px}
-.stamp{position:absolute;right:8px;top:8px;transform:rotate(14deg);font:22px var(--disp);color:#d8261a;border:3px solid #d8261a;border-radius:8px;padding:5px 8px 1px;opacity:.9;animation:stampIn .45s cubic-bezier(.2,1.8,.4,1) .15s backwards}
+.stamp{position:absolute;right:-14px;top:-30px;transform:rotate(14deg);background:#fff8e6;box-shadow:0 3px 8px #0006;z-index:2;font:22px var(--disp);color:#d8261a;border:3px solid #d8261a;border-radius:8px;padding:5px 8px 1px;opacity:.9;animation:stampIn .45s cubic-bezier(.2,1.8,.4,1) .15s backwards}
 #toast{position:absolute;left:50%;top:21%;transform:translateX(-50%);background:#fff8e6;border:3px solid var(--ink);border-radius:18px;padding:14px 22px 8px;font:22px var(--disp);color:var(--orange);z-index:9;white-space:nowrap;box-shadow:0 4px 0 var(--ink)}
 .debug{margin-top:10px;max-width:94%;background:rgba(0,0,0,.78);border:2px dashed #ffcf5a;border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.35;text-align:left}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
@@ -94,7 +94,7 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 
 #bUnlock{font-size:26px;white-space:nowrap;padding-left:18px;padding-right:18px}
 
-#haul{font:16px var(--body);text-align:left;max-width:94%;width:min(94%,340px);padding:8px 12px 6px}
+#haul{margin-bottom:22px;font:16px var(--body);text-align:left;max-width:94%;width:min(94%,340px);padding:8px 12px 6px}
 #haul .line{display:flex;justify-content:space-between;border-bottom:2px dotted #c9b38a;padding:3px 4px;font-weight:800;font-size:15px;color:var(--ink)}
 #haul .line:last-child{border-bottom:0;font-family:var(--disp);font-size:18px;color:var(--orange);margin-top:4px}
 @media (max-height:700px){
@@ -117,7 +117,7 @@ h1{margin:8px 0 0;font:58px/.9 var(--disp);letter-spacing:1px;color:var(--gold);
 #ticket{transform:none;min-width:76px;border-radius:12px;background:linear-gradient(#fff6df,#efd6a6);box-shadow:inset 0 2px 0 #fff,0 4px 0 var(--ink)}
 #ticket b{font-size:32px}
 #goalBox{flex:1;background:linear-gradient(#fff6df,#efd6a6);border:3px solid var(--ink);border-radius:12px;box-shadow:inset 0 2px 0 #fff,0 4px 0 var(--ink);display:flex;flex-direction:column;align-items:center;overflow:hidden}
-#goalBox small{display:block;width:100%;text-align:center;background:var(--orange);color:#fff;font:14px var(--disp);letter-spacing:1px;padding:2px 0 0}
+#goalBox small{display:block;width:100%;text-align:center;background:var(--orange);color:#fff;font:13px var(--disp);letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 0 0}
 #goals{position:static;display:flex;gap:6px;justify-content:center;padding:4px 4px 3px}
 .goal{width:44px;height:44px}
 .goal canvas{width:38px;height:38px}
@@ -190,3 +190,8 @@ body[data-scene="truck"] #bHome,body[data-scene="safe"] #bHome{display:none!impo
   body:before{content:"";position:fixed;inset:-60px;background:url(assets/bg/terrain.jpg) center/cover;filter:blur(22px) brightness(.5) saturate(1.1)}
   #app{inset:auto;left:50%;top:50%;height:min(calc(100vh - 28px),932px);width:calc(min(calc(100vh - 28px),932px) * .462);transform:translate(-50%,-50%);border-radius:28px;overflow:hidden;box-shadow:0 0 0 5px #2b160c,0 0 0 9px #e0a64f,0 0 0 12px #2b160c,0 24px 70px #000d}
 }
+
+#loader{position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(#3a2414,#140b05);color:#ffe2a4;font:20px var(--disp)}
+#loader.hidden{display:none}
+#loader .spin{width:54px;height:54px;border-radius:50%;border:6px solid #ffd06233;border-top-color:#ffd062;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}

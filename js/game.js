@@ -293,7 +293,7 @@ function failText(){const d=boardDef(),got=S.eng?S.eng.collected.length:0,left=d
   if(got===0)return 'No finds pulled yet. Match right next to a tarp to rip it open.';if(left===1)return 'So close! Just 1 more find.';return 'You pulled '+got+' of '+d.need+'. Rip the tarps first.';}
 function failMsg(h,p){S.result='fail';showMsg({h,p,b:'Try again',fn:()=>{S.run.haul.splice(S.run.haul.length-S.eng.collected.length,S.eng.collected.length);restoreSnap();openDoorScene();}});}
 function roomLabel(){if(!S.run)return;const U=S.run.unit,n=U.boards.length,d=boardDef();$('unitLabel').textContent='SUNNYVALE · '+U.id.toUpperCase();const nf=(d.tarps||[]).filter(t=>t[3]).length;$('goalLabel').textContent=U.id.toUpperCase()+' · '+(d.clearTarps?'RIP '+(d.tarps||[]).length+' TARPS':n>1?'ROOM '+(S.run.bi+1)+'/'+n+' · FIND '+d.need:'FIND '+d.need+' OF '+nf);}
-function boardWon(){const run=S.run;run.cart+=S.eng.cart;const rx=run.rushX,rp=run.rushPaid||0;run.rushX=0;run.rushLeft=0;
+function boardWon(){const run=S.run;hideTut();S.tutHand=null;S.hint=null;run.cart+=S.eng.cart;const rx=run.rushX,rp=run.rushPaid||0;run.rushX=0;run.rushLeft=0;
   const ui=UNITS.indexOf(run.unit),last=run.bi>=run.unit.boards.length-1;
   // earned by clearing: the first bonus game (first room cleared in Unit 3+), and one at least every 2 units
   if(run.kind==='campaign'&&RH.clearBox({eligible:rushOn()&&ui>=RH.BOX_FROM,hasBox:!!run.box,boxSeen:!!save.boxSeen,lastRoom:last,bonusThisUnit:!!run.safe||RH.safeEarned(run.haul,run.best),dry:save.dry||0}))

@@ -1,0 +1,208 @@
+51 title|||||||||
+258 map|||||||||
+1913 door|Unit 3|0|||||0|0|20
+4727 play|Unit 3|0|||||0|0|20
+5290 play|Unit 3|0|||||0|0|19
+6140 play|Unit 3|0|||||0|0|18
+6789 play|Unit 3|0|||||0|0|17
+6876 play|Unit 3|0|FOUND IT!||||5|0|17
+7181 play|Unit 3|0|FOUND IT!||||11.666666666666668|0|17
+7411 play|Unit 3|0|FOUND IT!||||25|0|17
+7718 play|Unit 3|0|FOUND IT!||||45|0|17
+7904 play|Unit 3|0|||||45|0|17
+7959 play|Unit 3|0|HOT! Cart pays $3||||71.66666666666667|0|17
+8160 play|Unit 3|0|||||71.66666666666667|0|17
+8674 play|Unit 3|0|||||81.66666666666667|0|17
+8913 play|Unit 3|0|||||90|0|17
+9358 play|Unit 3|0|||||96.66666666666667|0|17
+9625 play|Unit 3|0|Chain x2||||96.66666666666667|0|17
+10106 play|Unit 3|0|Chain x2||||96.66666666666667|0|16
+10226 play|Unit 3|0|||||0|2|16
+11296 play|Unit 3|0|||||0|2|15
+12527 play|Unit 3|0|||||0|2|14
+12622 play|Unit 3|0|FOUND IT!||||0|2|14
+13612 play|Unit 3|0|||||0|2|14
+13767 play|Unit 3|0|BIG CHAIN x4!||||0|2|14
+14515 play|Unit 3|0|||||0|2|14
+16203 play|Unit 3|0|Chain x3||||0|2|14
+16616 play|Unit 3|1|||||0|0|14
+18313 box|Unit 3|1|||||0|0|14
+20100 box|Unit 3|1|RARE BOX!||||0|0|14
+20324 play|Unit 3|1||+$400 banked · Rush Meter +50%|||50|0|23
+20514 play|Unit 3|1||+$400 banked · Rush Meter +50%|||50|0|22
+21271 play|Unit 3|1||+$400 banked · Rush Meter +50%|||50|0|21
+21988 play|Unit 3|1||+$400 banked · Rush Meter +50%|||50|0|20
+22306 play|Unit 3|1|||||54|0|20
+22608 play|Unit 3|1|Chain x2||||54|0|20
+23056 play|Unit 3|1|Chain x2||||54|0|19
+23356 play|Unit 3|1|||||54|0|19
+23751 play|Unit 3|1|||||54|0|18
+24438 play|Unit 3|1|||||54|0|17
+24756 play|Unit 3|1|||||58|0|17
+25058 play|Unit 3|1|Chain x2||||58|0|17
+25339 play|Unit 3|1|Chain x2||||58|0|16
+25406 play|Unit 3|1|FOUND IT!||||61|0|16
+25763 play|Unit 3|1|FOUND IT!||||65|0|16
+25976 play|Unit 3|1|Chain x2||||65|0|16
+26259 play|Unit 3|1|Chain x2||||71|0|16
+26789 play|Unit 3|1|||||71|0|15
+27405 play|Unit 3|1|||||71|0|14
+27532 play|Unit 3|1|FOUND IT!||||74|0|14
+28152 play|Unit 3|1|FOUND IT!||||80|0|14
+28506 play|Unit 3|1|||||80|0|14
+28692 play|Unit 3|1|||||80|0|13
+28756 play|Unit 3|1|FOUND IT!||||83|0|13
+29591 play|Unit 3|1|FOUND IT!||||89|0|13
+29822 play|Unit 3|1|||||89|0|13
+30103 play|Unit 3|1|||||93|0|13
+30358 play|Unit 3|1|Chain x2||||93|0|13
+30756 play|Unit 3|1|Chain x2||Unit 3 cleared!||93|0|13
+31105 play|Unit 3|1|||Unit 3 cleared!||93|0|13
+31455 flip|Unit 3|1|||Unit 3 cleared!||93|0|13
+32754 map|Unit 3|1|||Unit 3 cleared!||93|0|13
+34616 door|Unit 4|0|||Unit 3 cleared!||93|0|24
+37408 play|Unit 4|0|||Unit 3 cleared!|Match 4 to build a DOLLY!|93|0|24
+37758 play|Unit 4|0|Rush Meter kept: 93%||Unit 3 cleared!|Match 4 to build a DOLLY!|93|0|24
+38105 play|Unit 4|0|Rush Meter kept: 93%||Unit 3 cleared!|Match 4 to build a DOLLY!|93|0|23
+38213 play|Unit 4|0|Rush Meter kept: 93%||Unit 3 cleared!||93|0|23
+38821 play|Unit 4|0|Rush Meter kept: 93%||Unit 3 cleared!||93|0|22
+38992 play|Unit 4|0|||Unit 3 cleared!||93|0|22
+39757 play|Unit 4|0|||Unit 3 cleared!||93|0|21
+40655 play|Unit 4|0|||Unit 3 cleared!||93|0|20
+40783 play|Unit 4|0|||Unit 3 cleared!||98|0|20
+41204 play|Unit 4|0|||Unit 3 cleared!||0|2|20
+42139 play|Unit 4|0|||Unit 3 cleared!||0|2|19
+43180 play|Unit 4|0|||Unit 3 cleared!||0|2|18
+44008 play|Unit 4|0|||Unit 3 cleared!||0|2|17
+44827 play|Unit 4|0|||Unit 3 cleared!||0|2|16
+45923 play|Unit 4|0|||Unit 3 cleared!||0|2|15
+47060 play|Unit 4|0|BIG CHAIN x4!||Unit 3 cleared!||0|2|15
+47696 play|Unit 4|0|BIG CHAIN x4!||Unit 3 cleared!||0|2|14
+47806 play|Unit 4|0|||Unit 3 cleared!||0|2|14
+48106 play|Unit 4|0|||Unit 3 cleared!||0|0|14
+48628 play|Unit 4|0|||Unit 3 cleared!||0|0|13
+48742 play|Unit 4|0|||Unit 3 cleared!||5|0|13
+49025 play|Unit 4|0|||Unit 3 cleared!||9|0|13
+49331 play|Unit 4|0|||Unit 3 cleared!||17|0|13
+49574 play|Unit 4|0|Chain x3||Unit 3 cleared!||17|0|13
+49975 play|Unit 4|0|Chain x3||Unit 3 cleared!||17|0|12
+50079 play|Unit 4|0|FOUND IT!||Unit 3 cleared!||20|0|12
+51002 play|Unit 4|0|FOUND IT!||Unit 3 cleared!||26|0|12
+51055 play|Unit 4|0|||Unit 3 cleared!||26|0|12
+51673 play|Unit 4|0|||Unit 3 cleared!||26|0|11
+52053 play|Unit 4|0|||Unit 3 cleared!||30|0|11
+52318 play|Unit 4|0|Chain x2||Unit 3 cleared!||30|0|11
+52807 play|Unit 4|0|Chain x2||Unit 3 cleared!||30|0|10
+53060 play|Unit 4|0|||Unit 3 cleared!||30|0|10
+53163 play|Unit 4|0|||Unit 3 cleared!||34|0|10
+53407 play|Unit 4|0|Chain x2||Unit 3 cleared!||34|0|10
+53754 play|Unit 4|0|Chain x2||Unit 3 cleared!||34|0|9
+54158 play|Unit 4|0|||Unit 3 cleared!||34|0|9
+54504 play|Unit 4|0|||Unit 3 cleared!||34|0|8
+55321 play|Unit 4|0|||Unit 3 cleared!||34|0|7
+56054 play|Unit 4|0|||Unit 3 cleared!||34|0|6
+56455 play|Unit 4|0|Shuffle!||Unit 3 cleared!||34|0|6
+56771 play|Unit 4|0|Shuffle!||Unit 3 cleared!||34|0|5
+56890 play|Unit 4|0|FOUND IT!||Unit 3 cleared!||42|0|5
+57810 play|Unit 4|0|FOUND IT!||Unit 3 cleared!||48|0|5
+57858 play|Unit 4|0|||Unit 3 cleared!||48|0|5
+58756 play|Unit 4|1|||Unit 3 cleared!||48|0|5
+59955 play|Unit 4|1|||Unit 3 cleared!||48|0|27
+60323 play|Unit 4|1|||Unit 3 cleared!||48|0|26
+61222 play|Unit 4|1|||Unit 3 cleared!||48|0|25
+61330 play|Unit 4|1|HOT! Cart pays $3||Unit 3 cleared!||51|0|25
+61578 play|Unit 4|1|HOT! Cart pays $3||Unit 3 cleared!||55|0|25
+62190 play|Unit 4|1|HOT! Cart pays $3||Unit 3 cleared!||61|0|25
+62206 play|Unit 4|1|||Unit 3 cleared!||61|0|25
+63087 play|Unit 4|1|||Unit 3 cleared!||61|0|24
+63854 play|Unit 4|1|||Unit 3 cleared!||61|0|23
+64654 play|Unit 4|1|||Unit 3 cleared!||61|0|22
+65387 play|Unit 4|1|||Unit 3 cleared!||61|0|21
+65971 play|Unit 4|1|||Unit 3 cleared!||61|0|20
+66770 play|Unit 4|1|||Unit 3 cleared!||61|0|19
+67130 play|Unit 4|1|||Unit 3 cleared!||65|0|19
+67360 play|Unit 4|1|Chain x2||Unit 3 cleared!||65|0|19
+67671 play|Unit 4|1|Chain x2||Unit 3 cleared!||65|0|18
+68059 play|Unit 4|1|||Unit 3 cleared!||65|0|18
+68487 play|Unit 4|1|||Unit 3 cleared!||65|0|17
+69320 play|Unit 4|1|||Unit 3 cleared!||65|0|16
+70137 play|Unit 4|1|||Unit 3 cleared!||65|0|15
+70737 play|Unit 4|1|||Unit 3 cleared!||65|0|14
+71320 play|Unit 4|1|||Unit 3 cleared!||65|0|13
+71706 play|Unit 4|1|||Unit 3 cleared!||69|0|13
+72004 play|Unit 4|1|Chain x2||Unit 3 cleared!||69|0|13
+72253 play|Unit 4|1|Chain x2||Unit 3 cleared!||69|0|12
+72363 play|Unit 4|1|FOUND IT!||Unit 3 cleared!||77|0|12
+73312 play|Unit 4|1|FOUND IT!||Unit 3 cleared!||83|0|12
+73365 play|Unit 4|1|||Unit 3 cleared!||83|0|12
+74003 play|Unit 4|1|||Unit 4 cleared!||83|0|12
+74738 flip|Unit 4|1|||Unit 4 cleared!||83|0|12
+76018 map|Unit 4|1|||Unit 4 cleared!||83|0|12
+79179 door|Unit 5|0|||Unit 4 cleared!||83|0|23
+82406 play|Unit 5|0|||Unit 4 cleared!|Chained tarps take 2 hits.|83|0|23
+82717 play|Unit 5|0|Rush Meter kept: 83%||Unit 4 cleared!|Chained tarps take 2 hits.|83|0|23
+83454 play|Unit 5|0|Rush Meter kept: 83%||Unit 4 cleared!|Chained tarps take 2 hits.|83|0|22
+83560 play|Unit 5|0|Rush Meter kept: 83%||Unit 4 cleared!||83|0|22
+83803 play|Unit 5|0|Rush Meter kept: 83%||Unit 4 cleared!||87|0|22
+83918 play|Unit 5|0|||Unit 4 cleared!||87|0|22
+84056 play|Unit 5|0|Chain x2||Unit 4 cleared!||87|0|22
+84750 play|Unit 5|0|||Unit 4 cleared!||87|0|22
+85070 play|Unit 5|0|||Unit 4 cleared!||87|0|21
+85411 play|Unit 5|0|||Unit 4 cleared!||91|0|21
+85700 play|Unit 5|0|Chain x2||Unit 4 cleared!||91|0|21
+86403 play|Unit 5|0|||Unit 4 cleared!||91|0|21
+86538 play|Unit 5|0|||Unit 4 cleared!||91|0|20
+87653 play|Unit 5|0|||Unit 4 cleared!||91|0|19
+88254 play|Unit 5|0|||Unit 4 cleared!||91|0|18
+88854 play|Unit 5|0|||Unit 4 cleared!||91|0|17
+89654 play|Unit 5|0|||Unit 4 cleared!||91|0|16
+90386 play|Unit 5|0|||Unit 4 cleared!||91|0|15
+91304 play|Unit 5|0|||Unit 4 cleared!||91|0|14
+91411 play|Unit 5|0|FOUND IT!||Unit 4 cleared!||94|0|14
+92403 play|Unit 5|0|||Unit 4 cleared!||94|0|14
+92575 play|Unit 5|0|||Unit 4 cleared!||0|2|14
+94078 play|Unit 5|0|||Unit 4 cleared!||0|2|13
+95138 play|Unit 5|0|||Unit 4 cleared!||0|2|12
+95961 play|Unit 5|0|||Unit 4 cleared!||0|2|11
+97015 play|Unit 5|0|||Unit 4 cleared!||0|2|10
+98137 play|Unit 5|0|||Unit 4 cleared!||0|2|9
+98258 play|Unit 5|0|FOUND IT!||Unit 4 cleared!||0|2|9
+98905 play|Unit 5|0|Chain x2||Unit 4 cleared!||0|2|9
+99650 play|Unit 5|0|||Unit 4 cleared!||0|2|9
+100864 play|Unit 5|1|||Unit 4 cleared!||0|0|9
+102103 play|Unit 5|1|||Unit 4 cleared!||0|0|26
+102406 play|Unit 5|1|||Unit 4 cleared!||0|0|25
+102780 play|Unit 5|1|||Unit 4 cleared!||4|0|25
+102989 play|Unit 5|1|Chain x2||Unit 4 cleared!||4|0|25
+103753 play|Unit 5|1|Chain x2||Unit 4 cleared!||4|0|24
+103809 play|Unit 5|1|||Unit 4 cleared!||4|0|24
+104853 play|Unit 5|1|||Unit 4 cleared!||4|0|23
+105588 play|Unit 5|1|||Unit 4 cleared!||4|0|22
+105654 play|Unit 5|1|FOUND IT!||Unit 4 cleared!||12|0|22
+106088 play|Unit 5|1|FOUND IT!||Unit 4 cleared!||16|0|22
+106507 play|Unit 5|1|FOUND IT!||Unit 4 cleared!||24|0|22
+106713 play|Unit 5|1|||Unit 4 cleared!||24|0|22
+106808 play|Unit 5|1|Chain x3||Unit 4 cleared!||24|0|22
+107505 play|Unit 5|1|Chain x3||Unit 4 cleared!||30|0|22
+107571 play|Unit 5|1|||Unit 4 cleared!||30|0|22
+108487 play|Unit 5|1|||Unit 4 cleared!||30|0|21
+109319 play|Unit 5|1|||Unit 4 cleared!||30|0|20
+110102 play|Unit 5|1|||Unit 4 cleared!||30|0|19
+110886 play|Unit 5|1|||Unit 4 cleared!||30|0|18
+110953 play|Unit 5|1|||Unit 4 cleared!||35|0|18
+111354 play|Unit 5|1|||Unit 4 cleared!||39|0|18
+111609 play|Unit 5|1|||Unit 4 cleared!||47|0|18
+111857 play|Unit 5|1|HOT! Cart pays $3||Unit 4 cleared!||59|0|18
+112157 play|Unit 5|1|HOT! Cart pays $3||Unit 4 cleared!||75|0|18
+112357 play|Unit 5|1|HOT! Cart pays $3||Unit 4 cleared!||95|0|18
+112660 play|Unit 5|1|||Unit 4 cleared!||95|0|18
+113453 play|Unit 5|1|||Unit 4 cleared!||95|0|17
+113554 play|Unit 5|1|||Unit 4 cleared!||0|3|17
+115364 play|Unit 5|1|||Unit 4 cleared!||0|0|17
+116350 box|Unit 5|1|||Unit 4 cleared!||0|0|17
+118100 box|Unit 5|1|COMMON BOX!||Unit 4 cleared!||0|0|17
+118400 box|Unit 5|1|COMMON BOX!|+$150 banked · +1 Flashlight|Unit 5 cleared!||0|0|17
+119169 safe|Unit 5|1||+$150 banked · +1 Flashlight|Unit 5 cleared!||0|0|17
+120400 safe|Unit 5|1|||Unit 5 cleared!||0|0|17
+122050 safe|Unit 5|1|SAFE CRACKED!||Unit 5 cleared!||0|0|17
+123050 flip|Unit 5|1|||Unit 5 cleared!||0|0|17

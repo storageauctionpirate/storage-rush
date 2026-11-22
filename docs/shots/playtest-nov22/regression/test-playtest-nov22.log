@@ -1,0 +1,38 @@
+PASS 390x844 Unit 3 still has 2 rooms; Unit 5 still has 2 rooms; 20 units
+PASS 390x844 first bonus game guaranteed at Unit 3 room 1 (real swaps and find collection) — {"mode":"box","room":2}
+PASS 390x844 reload before opening first box restores the same box before the next room — rare
+PASS 390x844 first box banks once and is saved as seen/opened — $1500→$1900
+PASS 390x844 reload never pays the first box again
+PASS 390x844 Unit 5 boundary is one room-cleared card, not competing banners
+PASS 390x844 Unit 5 next board is room 2 of 2, with meter kept and fresh moves (not a new unit) — {"id":"Unit 5","bi":1,"meter":80,"moves":26}
+PASS 390x844 Unit-end box opens on its own, not over the cleared card
+PASS 390x844 after unit-end box: normal board scene + one cleared card, no stale Box UI
+PASS 390x844 Unit 5 cleared card offers the earned safe, never room 3/4
+PASS 390x844 safe opens by itself, cleared card is gone
+PASS 390x844 no page errors
+PASS 375x667 Unit 3 still has 2 rooms; Unit 5 still has 2 rooms; 20 units
+PASS 375x667 first bonus game guaranteed at Unit 3 room 1 (real swaps and find collection) — {"mode":"box","room":2}
+PASS 375x667 reload before opening first box restores the same box before the next room — common
+PASS 375x667 first box banks once and is saved as seen/opened — $1500→$1650
+PASS 375x667 reload never pays the first box again
+PASS 375x667 Unit 5 boundary is one room-cleared card, not competing banners
+PASS 375x667 Unit 5 next board is room 2 of 2, with meter kept and fresh moves (not a new unit) — {"id":"Unit 5","bi":1,"meter":80,"moves":26}
+PASS 375x667 Unit-end box opens on its own, not over the cleared card
+PASS 375x667 after unit-end box: normal board scene + one cleared card, no stale Box UI
+PASS 375x667 Unit 5 cleared card offers the earned safe, never room 3/4
+PASS 375x667 safe opens by itself, cleared card is gone
+PASS 375x667 no page errors
+PASS 1280x800 Unit 3 still has 2 rooms; Unit 5 still has 2 rooms; 20 units
+PASS 1280x800 first bonus game guaranteed at Unit 3 room 1 (real swaps and find collection) — {"mode":"box","room":2}
+PASS 1280x800 reload before opening first box restores the same box before the next room — common
+PASS 1280x800 first box banks once and is saved as seen/opened — $1500→$1650
+PASS 1280x800 reload never pays the first box again
+PASS 1280x800 Unit 5 boundary is one room-cleared card, not competing banners
+PASS 1280x800 Unit 5 next board is room 2 of 2, with meter kept and fresh moves (not a new unit) — {"id":"Unit 5","bi":1,"meter":80,"moves":26}
+PASS 1280x800 Unit-end box opens on its own, not over the cleared card
+PASS 1280x800 after unit-end box: normal board scene + one cleared card, no stale Box UI
+PASS 1280x800 Unit 5 cleared card offers the earned safe, never room 3/4
+PASS 1280x800 safe opens by itself, cleared card is gone
+PASS 1280x800 no page errors
+
+36/36 passed

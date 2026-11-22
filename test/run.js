@@ -194,7 +194,7 @@ for(const V of VPS){
   ok(`${T} bank grew from the flip`,s.save.bank>0,'$'+s.save.bank);
   ok(`${T} back on the map, next unit is 2`,s.mode==='map'&&s.save.unit===1);
   s=await until(x=>x.mode==='map'&&!x.map.walking,4000);ok(`${T} hustler walk finishes, next unit offered`,/Unit 2/.test(await txt('#bLadNext')));
-  { await wait(3400);s=await until(x=>x.mode==='map'&&!x.map.walking&&!x.building,6000);const v=await pg.evaluate(()=>SR.village());const bank0=(await st()).save.bank,bt=await txt('#bBuild');
+  { await wait(3400);s=await until(x=>x.mode==='map'&&!x.map.walking&&!x.building,6000);let v=await pg.evaluate(()=>SR.village());const bank0=(await st()).save.bank,bt=await txt('#bBuild');
     ok(`${T} Unit 1 sale banks exactly $474 and offers the $400 Flea Market Stall`,bank0===474&&v.pct===0&&await vis('#bBuild')&&/Flea Market Stall/.test(bt)&&/\$400/.test(bt),bank0+' · '+bt);
     ok(`${T} Unit 2 is open without any extra cash (before the stall is built)`,await vis('#bLadNext')&&/Unit 2/.test(await txt('#bLadNext')));
     await shot('stall-offer');await tapSel('#bBuild');await wait(700);await shot('stall-building');await wait(2400);v=await pg.evaluate(()=>SR.village());const bank1=(await st()).save.bank;

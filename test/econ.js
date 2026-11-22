@@ -3,9 +3,9 @@
 // Run: node test/econ.js   (SECS_PER_MOVE=5 by default for a normal player)
 const E=require('../js/engine.js');const {YARD1}=require('../js/levels.js');
 const PRICE={guitar:350,jewelry:240,safe:900,camera:180,neon:600},JUNK=2;
-const LM=JSON.parse(process.env.LM||'null')||[['sign',1,0],['truck',3,0],['office',5,5500],['units',7,8000],['flea',9,8500],['thrift',11,9500],['garage',13,10500],['pawn',15,12000],['warehouse',17,15500]];
+const LM=JSON.parse(process.env.LM||'null')||[['flea',1,400],['truck',3,0],['office',5,5500],['units',7,8000],['sign',9,8500],['thrift',11,9500],['garage',13,10500],['pawn',15,12000],['warehouse',17,15500]];
 const TRUCK=JSON.parse(process.env.TRUCK||'[1000,1500,2000,3000]');
-const WT={sign:1,truck:1.5},WSUM=LM.reduce((a,l)=>a+(WT[l[0]]||2),0);
+const WT={flea:1,truck:1.5},WSUM=LM.reduce((a,l)=>a+(WT[l[0]]||2),0);
 const SPM=+process.env.SECS_PER_MOVE||5,RUNS=+process.env.RUNS||20;
 function play(def,seed){const e=new E(def,seed);let g=0;while(e.status()==='play'&&g++<400){const f=e.findsOnBoard();if(f.length){f.forEach(x=>e.collect(x.r,x.c));e.gravity();e.settle();continue;}if(e.moves<=0)break;const m=e.bestMove();if(!m){e.shuffle();continue;}const r=e.swap(m.a,m.b);if(!r.ok){e.shuffle();continue;}e.settle();}return e;}
 let rows=[];const agg={};

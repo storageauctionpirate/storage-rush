@@ -217,3 +217,30 @@ body[data-scene="truck"] #bHome,body[data-scene="safe"] #bHome{display:none!impo
 #boxUI .pay,#safeUI .pay{margin-bottom:6px}
 
 .safehead b:empty{display:none}
+
+/* playtest fixes Nov 22: screen-wide hype banner, room-cleared card, Rush fire */
+#hype{position:absolute;left:0;right:0;top:30%;z-index:7;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 0;background:linear-gradient(90deg,#0000,#3b0d00e0 12%,#7a1d00f0 50%,#3b0d00e0 88%,#0000);animation:hypeIn .9s cubic-bezier(.2,1.5,.4,1)}
+#hype b{font:64px/1 var(--disp);color:#ffe066;-webkit-text-stroke:3px #2b0a00;text-shadow:0 0 18px #ff7a00,0 0 40px #ff3d00,0 5px 0 #2b0a00;letter-spacing:2px;animation:hypeFire .25s ease-in-out infinite alternate}
+#hype small{font:20px/1.1 var(--disp);color:#fff3d2;-webkit-text-stroke:1px #2b0a00;text-shadow:0 2px 0 #2b0a00}
+#hype.box{background:linear-gradient(90deg,#0000,#2a0d4ae0 12%,#4b1784f0 50%,#2a0d4ae0 88%,#0000)}
+#hype.box b{color:#f3e2ff;text-shadow:0 0 18px #b266ff,0 0 40px #8a2cff,0 5px 0 #1a0630}
+#hype.over{background:linear-gradient(90deg,#0000,#1d140ad0 15%,#2e2010e8 50%,#1d140ad0 85%,#0000)}
+#hype.over b{font-size:46px;color:#ffd56a;text-shadow:0 4px 0 #2b0a00;animation:none}
+@keyframes hypeIn{0%{transform:scaleX(0) scaleY(.4);opacity:0}55%{transform:scaleX(1.04) scaleY(1.1);opacity:1}100%{transform:none}}
+@keyframes hypeFire{from{filter:brightness(1)}to{filter:brightness(1.25) saturate(1.2)}}
+#roomCard{position:absolute;inset:0;z-index:8;display:grid;place-items:center;background:rgba(10,5,0,.55);animation:fadeIn .2s ease-out}
+#roomCard .rc{position:relative;width:min(84%,320px);text-align:center;background:#fff8e6;color:var(--ink);border:3px solid var(--ink);border-radius:10px;padding:22px 14px 14px;box-shadow:0 8px 0 var(--ink),0 18px 40px #0008;animation:pop .35s cubic-bezier(.2,1.6,.4,1)}
+#roomCard h3{margin:0 0 6px;font:30px/1 var(--disp);color:var(--orange,#e8741c);-webkit-text-stroke:1px var(--ink)}
+#roomCard .rcStamp{position:absolute;right:-12px;top:-22px;transform:rotate(12deg);background:#2f9e44;color:#fff;font:20px/1 var(--disp);padding:7px 12px 4px;border:3px solid var(--ink);border-radius:8px;box-shadow:0 3px 0 var(--ink);animation:stampIn .4s .15s both}
+#roomCard #rcP{font:800 15px/1.35 var(--body)}
+#roomCard #rcP .bonus{margin:8px auto 2px;padding:6px 8px;border-radius:8px;background:#4b1784;color:#fff;font:18px/1.1 var(--disp)}
+#roomCard #rcP .rushpaid{color:#c2410c}
+#roomCard #rcNext{margin:8px 0 4px;font:18px/1.1 var(--disp);color:var(--ink)}
+#roomCard small{font:700 12px var(--body);opacity:.6}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+#rush.on{height:38px}
+#rush.on .rbar{height:30px;border-color:#ffcf44}
+#rush.on .rbar b{font-size:16px}
+#rush.on small{font:18px/1 var(--disp);color:#ffe066;text-shadow:0 2px 0 #000}
+#rush.on .rbar i{transition:width .5s linear}
+#rush.first:not(.on) .rbar{animation:rushglow .7s ease-in-out infinite alternate}

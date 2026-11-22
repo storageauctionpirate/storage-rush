@@ -9,7 +9,10 @@ R.METER=100;
 R.HOT=50;                    // meter at 50%+ = HOT: cart items pay $3 instead of $2
 R.LADDER=[2,3,5];            // 1st Rush in a unit = 2X, 2nd = 3X, 3rd and later = 5X
 R.RUSH_FROM=2;               // unit index: Rush Meter shows from Unit 3
-R.BOX_FROM=3;                // unit index: Mystery Box can drop from Unit 4
+R.BOX_FROM=2;                // unit index: Mystery Box can drop from Unit 3 (playtest Nov 22: first bonus by Unit 3)
+R.RUSH_MOVES=6;              // a Rush lasts 6 moves, the bar drains one notch per move, then it ends clearly
+R.FIRST_RUSH=60;             // the very first Rush ever fills at 60% so new players feel it in Unit 3
+R.FIND_GAIN=6;               // putting a find on the cart adds to the meter
 R.RETURN_BOOST=20;           // after a big payoff unit, the next unit starts with the meter at 20%
 // meter gain for one cascade step: chain 2+ is what fills it (cascades), specials and reveals help
 R.gain=function(chain,cleared,fired,revealed){return (chain>=2?4*(chain-1):0)+fired*5+revealed*3;};
@@ -17,7 +20,10 @@ R.mult=function(rushNo){return R.LADDER[Math.min(R.LADDER.length-1,Math.max(0,ru
 // cart item pay while HOT or in a Rush (base $2)
 R.itemPay=function(meter,rushX){return rushX?2*rushX:meter>=R.HOT?3:2;};
 // Mystery Box: earned by one move that chains 5+ or fires an Auction Gavel. One per unit.
+// Also earned by clearing a room: the first room cleared in Unit 3+ when no box was ever opened (first bonus),
+// and the last room of a unit when the unit before it had no bonus game (so one comes at least every 2 units).
 R.boxEarned=function(chain,firedKinds){return chain>=5||firedKinds.some(k=>k==='gavel');};
+R.clearBox=function(o){return !!(o.eligible&&!o.hasBox&&((!o.boxSeen)||(o.lastRoom&&!o.bonusThisUnit&&(o.dry||0)>=1)));};
 // disclosed odds; every box pays cash AND one extra (booster or meter fill). M = world value boost.
 R.BOX_ODDS=[['common',.60],['rare',.30],['gold',.10]];
 R.BOX={common:{cash:150,extra:'booster',label:'Common'},rare:{cash:400,extra:'meter',label:'Rare'},gold:{cash:900,extra:'both',label:'Gold'}};

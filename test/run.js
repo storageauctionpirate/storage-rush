@@ -31,6 +31,8 @@ ok('economy: Unit 1 sale is exactly $474, first stall $400, $74 left',RH.FIRST_S
 ok('Rush Meter: earned 2X, 3X, then 5X (never higher in the prototype)',RH.mult(1)===2&&RH.mult(2)===3&&RH.mult(3)===5&&RH.mult(9)===5);
 ok('Rush Meter fills from cascades, not from single matches',RH.gain(1,3,0,0)===0&&RH.gain(2,3,0,0)>0&&RH.gain(4,3,0,0)>RH.gain(2,3,0,0));
 ok('Mystery Box is earned only by a 5+ chain or a Gavel',!RH.boxEarned(4,['dolly','wrap'])&&RH.boxEarned(5,[])&&RH.boxEarned(1,['gavel']));
+ok('first bonus game is guaranteed by clearing a room in Unit 3+, then one at least every 2 units (earned by clearing, never sold)',RH.BOX_FROM===2&&RH.clearBox({eligible:true,hasBox:false,boxSeen:false,lastRoom:false})&&!RH.clearBox({eligible:false,hasBox:false,boxSeen:false})&&!RH.clearBox({eligible:true,hasBox:false,boxSeen:true,lastRoom:true,bonusThisUnit:false,dry:0})&&RH.clearBox({eligible:true,hasBox:false,boxSeen:true,lastRoom:true,bonusThisUnit:false,dry:1})&&!RH.clearBox({eligible:true,hasBox:false,boxSeen:true,lastRoom:true,bonusThisUnit:true,dry:1}));
+ok('Rush lasts '+RH.RUSH_MOVES+' moves with a draining bar; the first Rush ever comes sooner',RH.RUSH_MOVES>=4&&RH.RUSH_MOVES<=8&&RH.FIRST_RUSH<RH.METER);
 ok('Safe Cracker is earned only by a Safe find or a 3X Rush',!RH.safeEarned(['guitar'],2)&&RH.safeEarned(['safe'],0)&&RH.safeEarned([],3));
 ok('Mystery Box odds disclosed and add up to 100%',Math.abs(RH.BOX_ODDS.reduce((a,o)=>a+o[1],0)-1)<1e-9&&/Common 60% · Rare 30% · Gold 10%/.test(html));
 ok('every Mystery Box pays cash plus a bonus',[0.1,0.7,0.95].every(x=>{const b=RH.rollBox(()=>x,1);return b.cash>0&&(b.booster||b.meter);}));
@@ -59,10 +61,15 @@ async function rhythmChecks(b,T,vp){const pg=await b.newPage();const errs=[];pg.
   await shot('rush-0-empty');
   await pg.evaluate(()=>SR.rushAdd(52));await wait(500);let s=await st();ok(`${T} Rush Meter goes HOT at 50% (cart pays $3)`,s.rush.meter>=50&&/HOT/.test(await txt('#rushTxt')),await txt('#rushTxt'));await shot('rush-1-filling-hot');
   await pg.evaluate(()=>SR.rushAdd(60));await wait(600);s=await st();ok(`${T} full meter starts RUSH 2X`,s.rush.x===2&&s.rush.rushNo===1&&/RUSH 2X/.test(await txt('#rushTxt')));await shot('rush-2-active-2x');
+  ok(`${T} Rush starts with a screen-wide 2X RUSH! banner`,await vis('#hype')&&/2X RUSH!/.test(await txt('#hypeT')),await txt('#hypeT'));
   const bonus0=s.rush.bonus;await move();await move();s=await st();ok(`${T} Rush pays extra cash on cleared items`,s.rush.bonus>bonus0,'+$'+(s.rush.bonus-bonus0));await shot('rush-3-paying');
+  {const t1=await txt('#rushTxt');ok(`${T} Rush bar drains one move at a time`,/RUSH 2X · 4 MOVES/.test(t1),t1);}
+  for(let i=0;i<4;i++)await move();s=await st();ok(`${T} Rush ends clearly after 6 moves (RUSH OVER + what it paid)`,s.rush.x===0&&/RUSH OVER/.test(await txt('#hypeT'))&&/\+\$\d+ extra/.test(await txt('#hypeS')),(await txt('#hypeT'))+' '+(await txt('#hypeS')));await shot('rush-4-over');
   // Mystery Box: earned mid-room (debug stands in for a 5+ chain), opens after the room is cleared
   await pg.evaluate(()=>SR.debugBox('rare'));await wait(400);s=await st();ok(`${T} Mystery Box earned in play waits for the room to clear`,s.mode==='play'&&s.rush.box&&!s.rush.box.opened&&await vis('#rushBox'));
-  const bank0=s.save.bank;await pg.evaluate(()=>SR.debugWin());s=await until(x=>x.mode==='box',4000);ok(`${T} Mystery Box opens between rooms`,s.mode==='box');await wait(700);await shot('box-1-spinning');
+  const bank0=s.save.bank;await pg.evaluate(()=>SR.debugWin());await wait(300);
+  ok(`${T} room clear shows one clear card: cleared, saved, bonus earned, what is next`,await vis('#roomCard')&&/Room 1 cleared!/.test(await txt('#rcH'))&&/BONUS GAME EARNED/.test(await txt('#rcP'))&&/Next: Room 2 of 2/.test(await txt('#rcNext'))&&!(await vis('#banner'))&&!(await vis('#hype')),await txt('#roomCard'));await shot('room-1-cleared-card');
+  s=await until(x=>x.mode==='box',4000);ok(`${T} Mystery Box opens between rooms`,s.mode==='box');await wait(700);await shot('box-1-spinning');
   await wait(2600);await shot('box-2-revealed');const bp=await txt('#boxPay');await click('#bBoxNext');s=await until(x=>x.mode==='play',5000);
   ok(`${T} Mystery Box pays cash + bonus, saved with the room`,s.save.bank===bank0+400&&s.save.run&&s.save.run.bi===1&&s.save.run.box.opened&&s.rush.x===0,bp+' bank '+bank0+'→'+s.save.bank);
   // save / resume: reload mid-unit lands on room 2, nothing paid twice
@@ -77,7 +84,7 @@ async function rhythmChecks(b,T,vp){const pg=await b.newPage();const errs=[];pg.
   await pg.reload({waitUntil:'load'});await wait(800);await click('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(400);await click('#bLadNext');await wait(900);
   ok(`${T} reload after the clear goes straight to the saved cleared card`,await vis('#msg')&&/cleared!/.test(await txt('#msgH'))&&/Crack the safe/.test(await txt('#msgB')));
   await click('#msgB');s=await until(x=>x.mode==='safe',3000);ok(`${T} saved safe keeps its rarity after reload (no reroll)`,s.safe&&s.safe.rarity===rar,s.safe&&s.safe.rarity);
-  await wait(1500);await shot('safe-1-dials');await wait(1200);await shot('safe-2-last-dial');await wait(800);await shot('safe-3-door-swinging');await wait(1500);await shot('safe-4-wide-open');
+  await wait(1000);await shot('safe-1-dials');await wait(800);await shot('safe-2-last-dial');await wait(600);await shot('safe-3-door-swinging');await wait(1000);await shot('safe-4-wide-open');
   const b1=(await st()).save.bank;await click('#bSafeNext');s=await until(x=>x.mode==='flip',4000);await until(x=>x.flipDone,4000);await wait(300);await click('#bFlipNext');await wait(900);
   ok(`${T} flip banks once, clears the saved run, shows the next build`,s.save.run===null&&s.save.bank>b1&&/Next build/.test(await txt('#haul')),JSON.stringify({bank:[b1,s.save.bank],haul:(await txt('#haul')).slice(-60)}));await shot('flip-receipt-next-build');
   await pg.reload({waitUntil:'load'});await wait(700);s=await st();ok(`${T} reload after the flip never pays twice`,s.save.bank===(await pg.evaluate(()=>JSON.parse(localStorage.getItem('storageRush.v3')).bank))&&s.save.run===null&&s.save.unit===4);

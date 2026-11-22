@@ -20,7 +20,7 @@ const BUILT_LINES={wash:'The Pickup is shining.',fender:'The Pickup looks meaner
 
 /* ---------------- save (v2) + migration from v1 ---------------- */
 const KEY='storageRush.v3',OLD2='storageRush.v2',OLD='storageRush.v1';
-function fresh(){return {v:3,unit:0,bank:0,sound:true,rung:0,tasks:[],boosters:{cut:2,flash:1,free:0},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:false,taughtBoost:{cut:false,flash:false,free:false},truckSeen:false,built:[],safeBank:0,lmv:2,run:null,safeSeen:false,safeCommons:0,returnBoost:false};}
+function fresh(){return {v:3,unit:0,bank:0,sound:true,rung:0,tasks:[],boosters:{cut:2,flash:1,free:0},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:false,taughtBoost:{cut:false,flash:false,free:false},truckSeen:false,built:[],safeBank:0,lmv:2,run:null,safeSeen:false,safeCommons:0,returnBoost:false,meter:0,dry:0,boxSeen:false,rushSeen:false};}
 function load(){
   try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===3){const o=Object.assign(fresh(),s);
     // landmark ids v2: the first build at stop 2 is now the $400 Flea Market Stall (art 'flea'); the old free Yard Sign moved to stop 9
@@ -65,14 +65,21 @@ function shake(px){S.shake=Math.max(S.shake,px);S.shakeT=performance.now();}
 function burst(r,c,col,n,shape,spd){const p=cellCenter(r,c);const now=performance.now();for(let i=0;i<n;i++){const a=rnd()*TAU,v=(spd||.32)*(.5+rnd());S.parts.push({x:p.x,y:p.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-.12,rot:rnd()*TAU,vr:(rnd()-.5)*.02,life:420+rnd()*260,t0:now,col,size:(shape==='dust'?8:6)+rnd()*6,shape:shape||'star'});}}
 function ring(x,y,col,maxR,dur){S.rings.push({x,y,col,maxR,dur:dur||450,t0:performance.now()});}
 function floatText(x,y,txt,col,size){S.floats.push({x,y,txt,col:col||'#ffcf5a',size:size||24,t0:performance.now()});}
-let bannerT=0;function banner(txt,ms){const b=$('banner');b.textContent=txt;b.classList.remove('hidden');b.style.animation='none';void b.offsetWidth;b.style.animation='';clearTimeout(bannerT);bannerT=setTimeout(()=>b.classList.add('hidden'),ms||900);}
+/* one message at a time: a small banner (chain, found it) never covers a big one (Rush, box, room cleared) */
+let bannerT=0,bannerPri=0,bannerUntil=0;function banner(txt,ms,pri){pri=pri||0;const now=performance.now();if(pri<bannerPri&&now<bannerUntil)return;const b=$('banner');b.textContent=txt;b.classList.remove('hidden');b.style.animation='none';void b.offsetWidth;b.style.animation='';clearTimeout(bannerT);bannerPri=pri;bannerUntil=now+(ms||900);bannerT=setTimeout(()=>b.classList.add('hidden'),ms||900);}
+let hypeT=0;function hype(t,sub,cls,ms){const h=$('hype');$('hypeT').textContent=t;$('hypeS').textContent=sub||'';h.className=cls||'';h.style.animation='none';void h.offsetWidth;h.style.animation='';$('banner').classList.add('hidden');bannerPri=9;bannerUntil=performance.now()+(ms||1300);clearTimeout(hypeT);hypeT=setTimeout(()=>h.classList.add('hidden'),ms||1300);}
+/* room cleared: freeze, say it is saved, say what is next, then the next room drops in. Tap skips. */
+let rcT=0,rcFn=null;function roomCard(o,cb){const el=$('roomCard');$('rcH').textContent=o.h;
+  $('rcP').innerHTML=(o.rush?'<div class="rushpaid">Rush '+o.rush.x+'X paid +'+money(o.rush.paid)+'</div>':'')+(o.box?'<div class="bonus">BONUS GAME EARNED!<br>Mystery Box</div>':'');
+  $('rcNext').textContent=o.next||'';el.classList.remove('hidden');$('hype').classList.add('hidden');$('banner').classList.add('hidden');SFX.special();
+  const done=()=>{if(!rcFn)return;const f=rcFn;rcFn=null;clearTimeout(rcT);el.classList.add('hidden');f();};rcFn=cb;el.onclick=()=>{SFX.tap();done();};clearTimeout(rcT);rcT=setTimeout(done,o.box?1700:1200);}
 let toastT=0;function toast(txt,ms){const t=$('toast');t.textContent=txt;t.classList.remove('hidden');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.add('hidden'),ms||1800);}
 function punchChip(id){const e=$(id);e.classList.remove('punch');void e.offsetWidth;e.classList.add('punch');}
 function zoomTo(x,y,z,dur){S.cam={z,fx:x,fy:y,t0:performance.now(),dur:dur||400};}
 
 /* ---------------- screens ---------------- */
 const SCREENS=['title','ladderUI','doorUI','playUI','flipUI','lockedUI','dailyUI','safeUI','truckUI','empireUI','boxUI'];
-function show(id){document.body.dataset.scene=S.mode;hideTut();clearTimeout(bannerT);SCREENS.forEach(s=>$(s).classList.toggle('hidden',s!==id));$('bHome').classList.toggle('hidden',id==='title');$('msg').classList.add('hidden');$('sign').classList.add('hidden');$('banner').classList.add('hidden');}
+function show(id){document.body.dataset.scene=S.mode;hideTut();clearTimeout(bannerT);SCREENS.forEach(s=>$(s).classList.toggle('hidden',s!==id));$('bHome').classList.toggle('hidden',id==='title');$('msg').classList.add('hidden');$('sign').classList.add('hidden');$('banner').classList.add('hidden');$('hype').classList.add('hidden');bannerPri=0;}
 let msgFn=null,msgFn2=null;
 function showMsg(o){$('msgH').textContent=o.h;$('msgP').innerHTML=o.p||'';$('msgB').textContent=o.b;msgFn=o.fn;
   const b2=$('msgB2');b2.classList.toggle('hidden',!o.b2);b2.textContent=o.b2||'';msgFn2=o.fn2||null;
@@ -137,7 +144,8 @@ function startCampaign(){if(!IM.ready()){artGate(()=>IM.ready(),startCampaign);r
   startRun('campaign',UNITS[save.unit]);}
 function newRun(kind,unit,bi){return {kind,unit,bi:bi||0,haul:[],cart:0,meter:0,rushNo:0,rushX:0,best:0,bonus:0,box:null,safe:null,cleared:false};}
 function startRun(kind,unit){S.run=newRun(kind,unit,kind==='daily'?Math.min(save.daily.boards,2):0);
-  if(kind==='campaign'&&save.returnBoost&&rushOn()){S.run.meter=RH.RETURN_BOOST;S.run.welcome=true;save.returnBoost=false;store();}
+  if(kind==='campaign'&&rushOn()){const kept=Math.min(RH.METER-1,save.meter||0);S.run.meter=kept;if(kept>=5)S.run.kept=kept;
+    if(save.returnBoost){S.run.meter=Math.max(kept,RH.RETURN_BOOST);S.run.welcome=true;save.returnBoost=false;store();}}
   openDoorScene();}
 /* ---------------- room save / resume: every cleared room is saved, a reload never replays it ---------------- */
 function persistRun(){const r=S.run;if(!r||r.kind!=='campaign')return;
@@ -156,12 +164,13 @@ function openDoorScene(){S.mode='door';S.result=null;S.busy=false;S.dying=[];S.p
 function newEngine(){const d=boardDef();S.eng=new E(d,Math.floor(rnd()*1e9));if(S.run){const r=S.run;r.rushX=0;r.snap={meter:r.meter,rushNo:r.rushNo,best:r.best,bonus:r.bonus,box:r.box};}S.continued=false;S.taught=false;S.result=null;S.hint=null;S.tutHand=null;S.armed=null;S.flash=0;S.tarpTold=false;S.tarpGlow=0;
   S.eng.each((t,r,c)=>{t.x=c;t.y=r;t.vy=0;t.sq=0;});buildGoals();}
 function openDoor(){if(S.mode!=='door'||S.door.phase!=='closed')return;
-  S.door={t0:performance.now(),phase:'open'};SFX.jiggle();setTimeout(()=>{SFX.snap();shake(6);},200);setTimeout(()=>SFX.rattle(1.0),560);
+  S.door={t0:performance.now(),phase:'open'};SFX.jiggle();setTimeout(()=>{SFX.snap();shake(6);},130);setTimeout(()=>SFX.rattle(1.0),360);
   $('doorUI').querySelector('.tapme').classList.add('hidden');
-  setTimeout(()=>beginPlay(),1650);}
+  setTimeout(()=>beginPlay(),1050);}
 function beginPlay(){S.mode='play';show('playUI');S.enter=performance.now();S.lastAct=performance.now();updateHUD();placeRush();music();
   if(S.run&&S.run.resumed&&S.run.bi>0){S.run.resumed=false;setTimeout(()=>banner('Welcome back! Room '+(S.run.bi+1)+' of '+S.run.unit.boards.length,1500),300);}
-  else if(S.run&&S.run.welcome){S.run.welcome=false;setTimeout(()=>banner('Back at it! Rush Meter '+RH.RETURN_BOOST+'%',1500),300);}
+  else if(S.run&&S.run.welcome){S.run.welcome=false;setTimeout(()=>banner('Back at it! Rush Meter '+Math.round(S.run.meter)+'%',1500,2),300);}
+  else if(S.run&&S.run.kept&&S.run.bi===0){const k=S.run.kept;S.run.kept=0;setTimeout(()=>banner('Rush Meter kept: '+Math.round(k)+'%',1200,2),300);}
   const d=boardDef();const tip=d.teach||d.tut;
   if(tip&&LV.TUTORIAL[tip]){showTut(LV.TUTORIAL[tip]);if(d.tut==='swap'||d.teach){const m=S.eng.bestMove();if(m)S.tutHand={a:m.a,b:m.b,t0:performance.now()};}}
   else hideTut();}
@@ -180,33 +189,37 @@ function updateHUD(){
 /* ---------------- board actions ---------------- */
 async function resolveAll(){let chain=0;const kinds=[];
   for(;;){const ev=S.eng.step();if(!ev)break;chain++;stepFx(ev,chain);rushStep(ev,chain,kinds);updateHUD();
-    await wait(ev.fired.length?300:190);
+    await wait(ev.fired.length?200:120);
     S.eng.gravity().forEach(f=>{f.tile.x=f.c;f.tile.y=-f.k-.25;f.tile.vy=0;f.tile.sq=0;});
     await settle();}
   if(!S.eng.bestMove()){S.eng.shuffle();banner('Shuffle!');}
-  if(chain>=2&&!(S.run&&S.run.rushT&&performance.now()-S.run.rushT<1500))banner(chain>=4?'BIG CHAIN x'+chain+'!':'Chain x'+chain,800);
+  if(chain>=2)banner(chain>=4?'BIG CHAIN x'+chain+'!':'Chain x'+chain,700,chain>=4?1:0);
   if(rushOn()&&UNITS.indexOf(S.run.unit)>=RH.BOX_FROM&&!S.run.box&&RH.boxEarned(chain,kinds))earnBox();
   updateHUD();}
 /* ---------------- Rush Meter: fills from cascades, earned 2X-5X, never sold ---------------- */
 function rushStep(ev,chain,kinds){if(!rushOn())return;const r=S.run;ev.fired.forEach(f=>kinds.push(f.sp));
-  const items=ev.cleared.filter(c=>c.tile&&c.tile.k==='item').length,pay=RH.itemPay(r.meter,r.rushX);
-  if(pay>2&&items){r.bonus+=items*(pay-2);if(r.rushX){const p=cellCenter(3,3);floatText(p.x+(rnd()-.5)*L.cell*3,p.y+(rnd()-.5)*L.cell*2,'+'+money(items*(pay-2)),'#ffe066',22);}}
-  if(r.rushX)return;const was=r.meter;r.meter=Math.min(RH.METER,r.meter+RH.gain(chain,ev.cleared.length,ev.fired.length,ev.hits.filter(h=>h.revealed).length));
-  if(was<RH.HOT&&r.meter>=RH.HOT&&r.meter<RH.METER){banner('HOT! Cart pays $3',900);SFX.special();}
-  if(r.meter>=RH.METER)startRush();}
-function startRush(){const r=S.run;r.rushNo++;r.rushX=RH.mult(r.rushNo);r.best=Math.max(r.best,r.rushX);r.meter=0;r.rushT=performance.now();
-  banner('RUSH '+r.rushX+'X!',1600);shake(9);SFX.gavel();setTimeout(()=>SFX.special(),220);const p=cellCenter(3,3);confetti(p.x,p.y,60,.6);ring(p.x,p.y,'#ffcf5a',L.cell*6,700);
-  floatText(W/2,L.y+L.cell*2.2,r.rushX+'X CART + FINDS','#fff',26);updateHUD();}
-function earnBox(){const r=S.run;r.box=Object.assign(RH.rollBox(rnd,1),{opened:false});SFX.reveal();shake(6);banner('MYSTERY BOX!',1400);
-  const p=cellCenter(3,3);ring(p.x,p.y,'#c9a2ff',L.cell*4,600);confetti(p.x,p.y,40,.5);floatText(p.x,p.y-L.cell,'Opens when the room is clear','#fff',20);updateHUD();}
-function restoreSnap(){const r=S.run;if(r&&r.snap){Object.assign(r,r.snap);r.rushX=0;}}
+  const its=ev.cleared.filter(c=>c.tile&&c.tile.k==='item'),items=its.length,pay=RH.itemPay(r.meter,r.rushX);
+  if(pay>2&&items){const ex=items*(pay-2);r.bonus+=ex;if(r.rushX){r.rushPaid=(r.rushPaid||0)+ex;its.slice(0,8).forEach(c=>{const q=cellCenter(c.r,c.c);floatText(q.x,q.y,'x'+r.rushX,'#ffe066',24);});
+    let cx=0,cy=0;its.forEach(c=>{const q=cellCenter(c.r,c.c);cx+=q.x;cy+=q.y;});floatText(cx/items,cy/items-L.cell*.8,'+'+money(items*pay)+' ('+r.rushX+'X)','#fff3a0',30);}}
+  if(r.rushX)return;meterAdd(RH.gain(chain,ev.cleared.length,ev.fired.length,ev.hits.filter(h=>h.revealed).length));}
+function meterAdd(n){const r=S.run;if(!rushOn()||r.rushX||!n)return;const k=save.rushSeen?1:RH.METER/RH.FIRST_RUSH,was=r.meter;r.meter=Math.min(RH.METER,r.meter+n*k);
+  if(was<RH.HOT&&r.meter>=RH.HOT&&r.meter<RH.METER){banner('HOT! Cart pays $3',900,1);SFX.special();}
+  if(r.meter>=RH.METER)startRush();updateHUD();}
+function startRush(){const r=S.run;r.rushNo++;r.rushX=RH.mult(r.rushNo);r.best=Math.max(r.best,r.rushX);r.meter=0;r.rushT=performance.now();r.rushLeft=RH.RUSH_MOVES;r.rushPaid=0;r.rushFresh=!!S.swapping;
+  if(!save.rushSeen){save.rushSeen=true;store();}
+  hype(r.rushX+'X RUSH!','Cart + finds pay '+r.rushX+'X for '+RH.RUSH_MOVES+' moves','',1500);shake(10);SFX.gavel();setTimeout(()=>SFX.special(),220);const p=cellCenter(3,3);confetti(p.x,p.y,70,.65);ring(p.x,p.y,'#ffcf5a',L.cell*6,700);updateHUD();}
+function rushTick(){const r=S.run;if(!r||!r.rushX)return;if(r.rushFresh){r.rushFresh=false;return;}r.rushLeft--;if(r.rushLeft<=0)endRush();else updateHUD();}
+function endRush(){const r=S.run;const x=r.rushX,paid=r.rushPaid||0;r.rushX=0;r.rushLeft=0;hype('RUSH OVER','+'+money(paid)+' extra from your '+x+'X Rush','over',1200);SFX.cashPop();updateHUD();}
+function earnBox(){const r=S.run;r.box=Object.assign(RH.rollBox(rnd,1),{opened:false});SFX.reveal();shake(6);hype('MYSTERY BOX!','Earned! Opens when this room is clear','box',1400);
+  const p=cellCenter(3,3);ring(p.x,p.y,'#c9a2ff',L.cell*4,600);confetti(p.x,p.y,40,.5);updateHUD();}
+function restoreSnap(){const r=S.run;if(r&&r.snap){const m=r.meter,had=r.rushNo>r.snap.rushNo;Object.assign(r,r.snap);if(!had)r.meter=Math.max(r.meter,m);r.rushX=0;r.rushLeft=0;}}
 function placeRush(){const el=$('rush');if(!el)return;const on=S.mode==='play'&&rushOn();el.classList.toggle('hidden',!on);if(!on)return;
   const pb=$('pbot').getBoundingClientRect(),cr=cv.getBoundingClientRect(),bb=L.y+L.cell*7,top=pb.top-cr.top,h=el.offsetHeight||30;
   el.style.top=Math.round(Math.max(bb+2,Math.min(top-h-4,(bb+top)/2-h/2)))+'px';}
 function rushHUD(){const el=$('rush');if(!el||!S.run||!rushOn())return;const r=S.run,hot=r.meter>=RH.HOT;
-  $('rushFill').style.width=(r.rushX?100:r.meter)+'%';el.classList.toggle('hot',hot&&!r.rushX);el.classList.toggle('on',!!r.rushX);
-  $('rushTxt').textContent=r.rushX?'RUSH '+r.rushX+'X':hot?'HOT · CART $3':'RUSH METER';
-  $('rushNext').textContent=r.rushX?('+'+money(r.bonus)):('next '+RH.mult(r.rushNo+1)+'X');
+  $('rushFill').style.width=(r.rushX?100*r.rushLeft/RH.RUSH_MOVES:r.meter)+'%';el.classList.toggle('hot',hot&&!r.rushX);el.classList.toggle('on',!!r.rushX);
+  $('rushTxt').textContent=r.rushX?'RUSH '+r.rushX+'X · '+r.rushLeft+' MOVE'+(r.rushLeft===1?'':'S'):hot?'HOT · CART $3':'RUSH METER';
+  $('rushNext').textContent=r.rushX?('+'+money(r.rushPaid||0)):('next '+RH.mult(r.rushNo+1)+'X');
   $('rushBox').classList.toggle('hidden',!(r.box&&!r.box.opened));}
 function stepFx(ev,chain){
   SFX.match(chain);S.pulse=performance.now();
@@ -235,7 +248,7 @@ async function trySwap(a,b){
   if(free){save.boosters.free--;S.armed=null;hideTut();store();}
   if(S.tutHand){S.tutHand=null;}
   if(boardDef().tut!=='swap')hideTut();
-  updateHUD();await resolveAll();await ageFinds();S.busy=false;updateHUD();teachTarp();checkEnd();return true;}
+  updateHUD();S.swapping=true;await resolveAll();S.swapping=false;await ageFinds();rushTick();S.busy=false;updateHUD();teachTarp();checkEnd();return true;}
 function tarpCells(){const a=[],all=S.run&&boardDef().clearTarps;if(S.eng)S.eng.each((t,r,c)=>{if(t.k==='tarp'&&(t.find||all))a.push({r,c,t});});return a;}
 function teachTarp(){if(boardDef().tut!=='swap'||S.result||S.mode!=='play')return;const tc=tarpCells();if(!tc.length){S.tarpGlow=0;return;}
   if(S.eng.findsOnBoard().length)return;
@@ -257,7 +270,8 @@ async function collect(r,c){const t=S.eng.at(r,c);if(!t||t.k!=='find'||S.busy||S
   if(S.scr&&S.scr.tile===t){if(S.scr.phase==='teach'){S.scr.phase='miss';S.scr.t0=performance.now();floatText(W-60,p.y-30,'Too slow, Scrapper!','#fff',22);}else S.scr=null;}
   if(boardDef().tut==='swap')hideTut();
   {const pr=A.FINDS[t.find]&&A.FINDS[t.find].price;if(pr)floatText(p.x,p.y-L.cell*1.05,'+'+money(pr),'#ffdd72',30);confetti(p.x,p.y,24,.4);
-   if(pr&&S.run.rushX){const ex=pr*(S.run.rushX-1);S.run.bonus+=ex;floatText(p.x,p.y-L.cell*1.6,S.run.rushX+'X  +'+money(ex),'#ffe066',28);}}
+   if(pr&&S.run.rushX){const ex=pr*(S.run.rushX-1);S.run.bonus+=ex;S.run.rushPaid=(S.run.rushPaid||0)+ex;floatText(p.x,p.y-L.cell*1.7,money(pr)+' x'+S.run.rushX+' = '+money(pr*S.run.rushX),'#ffe066',28);}
+   else meterAdd(RH.FIND_GAIN);}
   updateHUD();await wait(260);S.eng.gravity().forEach(g=>{g.tile.x=g.c;g.tile.y=-g.k-.25;});await settle();await resolveAll();
   S.busy=false;updateHUD();teachTarp();checkEnd();}
 async function useCut(r,c){const t=S.eng.at(r,c);if(!t||t.k!=='tarp'||save.boosters.cut<=0||S.busy)return;
@@ -268,7 +282,7 @@ async function useCut(r,c){const t=S.eng.at(r,c);if(!t||t.k!=='tarp'||save.boost
   S.busy=false;updateHUD();checkEnd();}
 function useFlash(){if(save.boosters.flash<=0||S.busy||S.mode!=='play')return;save.boosters.flash--;store();S.flash=performance.now();SFX.reveal();banner('Flashlight!',700);updateHUD();}
 function checkEnd(){if(S.mode!=='play'||S.result)return;const st=S.eng.status();
-  if(st==='win'){S.result='win';S.busy=true;SFX.win();setTimeout(boardWon,650);return;}
+  if(st==='win'){S.result='win';S.busy=true;SFX.win();setTimeout(boardWon,380);return;}
   if(st==='scrapped'){S.result='fail';S.busy=true;SFX.fail();setTimeout(()=>failMsg('Scrapped!','The Scrappers got too many finds. Tap finds fast next time.'),650);return;}
   if(st==='out'){S.busy=true;
     if(!isTutorial()&&!S.continued){setTimeout(()=>showMsg({h:'Out of bid cards!',p:'Take 5 more moves? First one is on the house.',b:'+5 Moves (free)',stamp:'',fn:()=>{S.continued=true;S.eng.moves+=5;S.busy=false;updateHUD();banner('+5 moves!');},b2:'No thanks',fn2:()=>failMsg('Out of moves',failText())}),500);return;}
@@ -278,17 +292,21 @@ function failText(){const d=boardDef(),got=S.eng?S.eng.collected.length:0,left=d
   if(got===0)return 'No finds pulled yet. Match right next to a tarp to rip it open.';if(left===1)return 'So close! Just 1 more find.';return 'You pulled '+got+' of '+d.need+'. Rip the tarps first.';}
 function failMsg(h,p){S.result='fail';showMsg({h,p,b:'Try again',fn:()=>{S.run.haul.splice(S.run.haul.length-S.eng.collected.length,S.eng.collected.length);restoreSnap();openDoorScene();}});}
 function roomLabel(){if(!S.run)return;const U=S.run.unit,n=U.boards.length,d=boardDef();$('unitLabel').textContent='SUNNYVALE · '+U.id.toUpperCase();const nf=(d.tarps||[]).filter(t=>t[3]).length;$('goalLabel').textContent=U.id.toUpperCase()+' · '+(d.clearTarps?'RIP '+(d.tarps||[]).length+' TARPS':n>1?'ROOM '+(S.run.bi+1)+'/'+n+' · FIND '+d.need:'FIND '+d.need+' OF '+nf);}
-function boardWon(){const run=S.run;run.cart+=S.eng.cart;run.rushX=0;
-  if(run.bi<run.unit.boards.length-1){if(run.kind==='daily'){save.daily.day=today();save.daily.boards=run.bi+1;store();}
-    run.bi++;persistRun();roomLabel();
-    const next=()=>{banner('Room '+(run.bi+1)+' of '+run.unit.boards.length+'!',1100);SFX.special();setTimeout(()=>{newEngine();S.result=null;S.busy=false;beginPlay();S.enter=performance.now();},900);};
-    if(run.box&&!run.box.opened){setTimeout(()=>startBox(next),700);return;}
-    banner('Room saved!',800);next();return;}
+function boardWon(){const run=S.run;run.cart+=S.eng.cart;const rx=run.rushX,rp=run.rushPaid||0;run.rushX=0;run.rushLeft=0;
+  const ui=UNITS.indexOf(run.unit),last=run.bi>=run.unit.boards.length-1;
+  // earned by clearing: the first bonus game (first room cleared in Unit 3+), and one at least every 2 units
+  if(run.kind==='campaign'&&RH.clearBox({eligible:rushOn()&&ui>=RH.BOX_FROM,hasBox:!!run.box,boxSeen:!!save.boxSeen,lastRoom:last,bonusThisUnit:!!run.safe||RH.safeEarned(run.haul,run.best),dry:save.dry||0}))
+    run.box=Object.assign(RH.rollBox(rnd,1),{opened:false,why:save.boxSeen?'streak':'first'});
+  if(!last){if(run.kind==='daily'){save.daily.day=today();save.daily.boards=run.bi+1;store();}
+    run.bi++;persistRun();const nd=boardDef(),n=run.unit.boards.length;
+    const next=()=>{newEngine();roomLabel();S.result=null;S.busy=false;beginPlay();S.enter=performance.now();};
+    const go=()=>{if(run.box&&!run.box.opened)startBox(next);else next();};
+    roomCard({h:'Room '+run.bi+' cleared!',rush:rx?{x:rx,paid:rp}:null,box:run.box&&!run.box.opened?run.box:null,next:'Next: Room '+(run.bi+1)+' of '+n+' · find '+nd.need+' in '+nd.moves+' moves'},go);return;}
   run.cleared=true;
   if(run.kind!=='endless'&&!run.safe&&RH.safeEarned(run.haul,run.best)&&!(run.kind==='campaign'&&UNITS.indexOf(run.unit)<2))
     run.safe={rarity:RH.rollSafe(rnd,{first:!save.safeSeen,bestRush:run.best,commons:save.safeCommons||0}),done:false};
   persistRun();
-  if(run.box&&!run.box.opened){setTimeout(()=>startBox(afterClear),700);return;}
+  if(run.box&&!run.box.opened){hype('BONUS GAME!','You earned a Mystery Box','box',1100);SFX.reveal();setTimeout(()=>startBox(afterClear),1000);return;}
   afterClear();}
 function cartPrice(run){return run.kind==='campaign'&&UNITS.indexOf(run.unit)===0?Math.max(0,RH.FIRST_SALE-run.haul.reduce((a,k)=>a+A.FINDS[k].price,0)):run.cart*JUNK_PRICE;}
 function afterClear(){const run=S.run;S.busy=true;S.result='win';
@@ -306,7 +324,8 @@ function startFlip(){const run=S.run;
   S.flip={items,t0:performance.now(),bank0:save.bank,total,done:false,sfx:{},coins:[],sold:false};
   S.mode='flip';show('flipUI');const hd=$('flipUI').querySelector('h2');if(hd)hd.textContent='Flea Market';$('bFlipNext').classList.add('hidden');$('haul').classList.add('hidden');$('flipBank').textContent=money(save.bank);S.flip.tapped=false;
   // Bank the haul once on entry, before any animation or reload. The saved run is cleared in the same write, so a reload can't pay twice.
-  save.bank+=total;if(run.kind==='campaign'){save.run=null;if(run.best>=5||(run.safe&&run.safe.rarity!=='common'))save.returnBoost=true;}
+  save.bank+=total;if(run.kind==='campaign'){save.run=null;if(run.best>=5||(run.safe&&run.safe.rarity!=='common'))save.returnBoost=true;
+    if(rushOn()){save.meter=Math.min(RH.METER-1,Math.round(run.meter||0));save.dry=(run.box||run.safe)?0:(save.dry||0)+1;}}
   if(run.kind==='campaign'){S.flip.hopFrom=save.unit;save.unit=Math.max(save.unit,UNITS.indexOf(run.unit)+1);}
   if(run.kind==='daily'){const d=today();save.daily.day=d;save.daily.boards=3;if(!save.daily.punch.includes(d))save.daily.punch.push(d);save.daily.punch=save.daily.punch.slice(-7);}
   if(run.kind==='endless'){save.endless.n++;save.endless.best=Math.max(save.endless.best,save.endless.n);}
@@ -469,8 +488,8 @@ function drawFx(now){const c=ctx;
     c.font=f.size+'px '+DISP;c.textAlign='center';c.textBaseline='middle';c.lineJoin='round';c.lineWidth=6;c.strokeStyle='#3a2210';c.strokeText(f.txt,0,0);c.fillStyle=f.col;c.fillText(f.txt,0,0);c.restore();return true;});}
 function stepTiles(dt){if(!S.eng)return;const g=S.eng.g;
   for(let r=0;r<7;r++)for(let k=0;k<7;k++){const t=g[r][k];if(!t)continue;if(t.x==null){t.x=k;t.y=r;}
-    if(t.ease||t.y>r){const step=dt*.008;const mv=(cur,tg)=>{const d=tg-cur;return Math.abs(d)<=step+Math.abs(d)*.22?tg:cur+d*.22+Math.sign(d)*step;};t.x=mv(t.x,k);t.y=mv(t.y,r);if(t.x===k&&t.y===r)t.ease=false;}
-    else{if(t.x!==k)t.x=k;if(t.y<r){t.vy=Math.min(.03,(t.vy||0)+dt*.00012);t.y+=t.vy*dt;if(t.y>=r){t.y=r;if(t.vy>.006)t.sq=1;t.vy=0;}}}
+    if(t.ease||t.y>r){const step=dt*.011;const mv=(cur,tg)=>{const d=tg-cur;return Math.abs(d)<=step+Math.abs(d)*.22?tg:cur+d*.22+Math.sign(d)*step;};t.x=mv(t.x,k);t.y=mv(t.y,r);if(t.x===k&&t.y===r)t.ease=false;}
+    else{if(t.x!==k)t.x=k;if(t.y<r){t.vy=Math.min(.045,(t.vy||0)+dt*.00026);t.y+=t.vy*dt;if(t.y>=r){t.y=r;if(t.vy>.006)t.sq=1;t.vy=0;}}}
     if(t.sq)t.sq=Math.max(0,t.sq-dt*.006);}}
 function settle(){return new Promise(res=>{const chk=()=>{let ok=true;if(S.eng)S.eng.each((t,r,c)=>{if(Math.abs(t.x-c)>.001||Math.abs(t.y-r)>.001)ok=false;});if(ok)res();else setTimeout(chk,16);};chk();});}
 
@@ -482,12 +501,22 @@ function applyCam(now){const c=ctx;let ox=0,oy=0;
   if(S.pulse){const k=(now-S.pulse)/140;if(k<1){const z=1+.006*Math.sin(k*Math.PI);const cx=W/2,cy=L.y+L.cell*3.5;c.translate(cx,cy);c.scale(z,z);c.translate(-cx,-cy);}else S.pulse=0;}}
 function drawPlay(now){const th=S.run.unit.theme;ctx.save();applyCam(now);
   drawUnitRoom(now);drawBoardFrame(ctx);
-  ctx.globalAlpha=1;drawBoard(now);ctx.restore();
+  ctx.globalAlpha=1;drawBoard(now);drawRushFx(now);ctx.restore();
   if(!S.busy&&!S.result&&S.eng.moves>0&&now-S.lastAct>6000&&!S.hint&&!S.tutHand){S.hint=S.eng.bestMove();}}
+/* Rush on the board: hot glow around the frame, flames on top, embers rising up the sides */
+function flame(c,x,y,w,h,a){c.save();c.translate(x,y);c.globalAlpha=a;const g=c.createLinearGradient(0,0,0,-h);g.addColorStop(0,'#ff3d00');g.addColorStop(.45,'#ff9a1f');g.addColorStop(1,'#ffe36688');c.fillStyle=g;
+  c.beginPath();c.moveTo(-w/2,0);c.quadraticCurveTo(-w*.55,-h*.45,0,-h);c.quadraticCurveTo(w*.55,-h*.45,w/2,0);c.closePath();c.fill();c.restore();}
+function drawRushFx(now){const r=S.run;if(!r||!r.rushX||S.mode!=='play')return;const c=ctx,x=L.x,y=L.y,w=L.cell*7,p=10,pulse=.5+.5*Math.sin(now/110);
+  c.save();c.fillStyle='rgba(255,110,0,'+(.06+.05*pulse)+')';c.fillRect(x,y,w,w);
+  c.lineWidth=5+4*pulse;c.strokeStyle='rgba(255,150,30,'+(.6+.35*pulse)+')';c.shadowColor='#ff6a00';c.shadowBlur=20+18*pulse;A.rr(c,x-p,y-p,w+p*2,w+p*2,12);c.stroke();c.shadowBlur=0;
+  c.globalCompositeOperation='lighter';const n=12,fw=(w+2*p)/n;
+  for(let i=0;i<n;i++){const ph=now/85+i*1.9,fh=L.cell*(.5+.28*Math.sin(ph)+.15*Math.sin(ph*2.7));flame(c,x-p+fw*(i+.5),y-p+2,fw*1.1,fh,.85);}
+  for(let i=0;i<10;i++){const k=((now/1400)+i/10)%1,side=i%2?x+w+p+4:x-p-4,ey=y+w+p-(w+2*p)*k,s=3+3*(1-k);c.globalAlpha=1-k;c.fillStyle=i%3?'#ffb43a':'#ffe066';c.beginPath();c.arc(side+Math.sin(now/200+i)*5,ey,s,0,TAU);c.fill();}
+  c.restore();}
 function drawDoor(now){const th=S.run.unit.theme;ctx.save();applyCam(now);
   drawUnitRoom(now);drawBoardFrame(ctx);drawBoard(now);
   const d=doorRect();let k=0,lockY=0,shOff=0,lockA=1,rot=0;
-  if(S.door.phase==='open'){const t=now-S.door.t0;if(t<200)rot=Math.sin(t/200*Math.PI*6)*.18;
+  if(S.door.phase==='open'){const t=(now-S.door.t0)*1.55;if(t<200)rot=Math.sin(t/200*Math.PI*6)*.18;
     else{shOff=Math.min(1,(t-200)/100)*L.cell*.16;if(t>320){const f=(t-320)/520;lockY=f*f*H*.6;rot=f*1.6;lockA=Math.max(0,1-f);}}
     k=Math.max(0,Math.min(1,(t-560)/950));k=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;}
   A.rollDoor(ctx,d.x,d.y,d.w,d.h,k,{label:S.run.unit.id.toUpperCase()});
@@ -602,7 +631,7 @@ const SAFE_RARITY=()=>RH.rollSafe(rnd,{});
 const SAFE_PAY=RH.SAFE_PAY;
 const SAFE_COLOUR={common:'#d7dce2',rare:'#6de9da',legendary:'#ffcf44'};
 // Bigger Safe Cracker: dials 1-2 snap, dial 3 crawls in, then the door swings all the way open on its hinge.
-const SAFE_T={first:700,gap:800,last:1500,open:1500};
+const SAFE_T={first:500,gap:550,last:1100,open:1100};
 function startSafe(forced){const run=S.run;if(!run)return;if(run.safe&&run.safe.done)return;const rarity=forced||(run.safe&&run.safe.rarity)||SAFE_RARITY();if(!run.safe)run.safe={rarity,done:false};
   S.safe={rarity,t0:performance.now(),phase:'spin',stopped:0,target:rarity==='legendary'?[7,7,7]:rarity==='rare'?(()=>{const a=1+Math.floor(rnd()*9);return [a,a,(a+3)%10];})():[0,0,0].map(()=>Math.floor(rnd()*10)),pay:SAFE_PAY[rarity],done:false,lastClick:0,face:null};
   S.mode='safe';show('safeUI');$('bHome').classList.add('hidden');$('safeRarity').textContent=rarity.toUpperCase();$('safeRarity').style.color=SAFE_COLOUR[rarity];$('safePay').textContent='';$('safeFind').textContent='';$('bSafeNext').textContent='Cracking…';$('bSafeNext').disabled=true;SFX.special();music();}
@@ -655,12 +684,12 @@ const BOX_COL={common:'#d9c7a0',rare:'#6de9da',gold:'#ffcf44'};
 const BOOST_NAME={cut:'Bolt Cutters',flash:'Flashlight',free:'Free Swap'};
 function startBox(next){const r=S.run;if(!r||!r.box||r.box.opened){next&&next();return;}S.box={b:r.box,t0:performance.now(),next,stopped:0,done:false};S.mode='box';show('boxUI');$('bHome').classList.add('hidden');
   $('boxTier').textContent='';$('boxPay').textContent='';$('bBoxNext').textContent='Opening…';$('bBoxNext').disabled=true;SFX.special();music();}
-const BOX_T=[1500,2100,2800];
+const BOX_T=[1500,2100,2800],BOX_SPD=1.6;  // reel stops at ~0.9s / 1.3s / 1.75s real time
 function skipBox(){if(S.box)S.box.t0=performance.now()-BOX_T[2]-400;}
-function finishBox(){const X=S.box;if(!X||X.done||X.stopped<3)return;X.done=true;const b=X.b,r=S.run;b.opened=true;save.bank+=b.cash;if(b.booster)save.boosters[b.booster]=(save.boosters[b.booster]||0)+1;
+function finishBox(){const X=S.box;if(!X||X.done||X.stopped<3)return;X.done=true;const b=X.b,r=S.run;b.opened=true;save.boxSeen=true;save.bank+=b.cash;if(b.booster)save.boosters[b.booster]=(save.boosters[b.booster]||0)+1;
   if(b.meter&&r)r.meter=Math.min(RH.METER-1,r.meter+b.meter);if(r&&r.kind==='campaign')persistRun();else store();SFX.cashPop();
   toast('+'+money(b.cash)+' banked'+(b.booster?' · +1 '+BOOST_NAME[b.booster]:'')+(b.meter?' · Rush Meter +'+b.meter+'%':''),2000);const nx=X.next;S.box=null;nx&&nx();}
-function drawBox(now){const X=S.box,c=ctx;if(!X)return;IM.cover(c,IM.get('bg-safe'),W,H);c.fillStyle='rgba(20,10,4,.35)';c.fillRect(0,0,W,H);const b=X.b,col=BOX_COL[b.tier],el=now-X.t0;
+function drawBox(now){const X=S.box,c=ctx;if(!X)return;IM.cover(c,IM.get('bg-safe'),W,H);c.fillStyle='rgba(20,10,4,.35)';c.fillRect(0,0,W,H);const b=X.b,col=BOX_COL[b.tier],el=(now-X.t0)*BOX_SPD;
   const need=BOX_T.filter(t=>el>=t).length;while(X.stopped<need){X.stopped++;SFX.dialStop();shake(X.stopped===3?8:3);if(X.stopped===3){SFX.reveal();banner(RH.BOX[b.tier].label.toUpperCase()+' BOX!',1300);$('boxTier').textContent=RH.BOX[b.tier].label.toUpperCase();$('boxTier').style.color=col;}}
   if(X.stopped<3&&now-(X.click||0)>110){SFX.dialClick();X.click=now;}
   const bw=Math.min(W*.56,300),cx=W/2,cy=H*.36;const open=Math.min(1,Math.max(0,(el-700)/500));

@@ -1,4 +1,4 @@
-// Regression checks for Mike's Nov 22 playtest. No economy/unit-count/opening changes.
+// Regression checks for Mike's Nov 22 playtest. Updated for the authorized group economy/10-unit world; playtest fixes remain intact.
 const p=require('puppeteer-core'),fs=require('fs'),path=require('path');const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const BASE=process.env.BASE||'http://127.0.0.1:8872/index.html',OUT=path.join(__dirname,'..','shots','playtest-nov22');fs.mkdirSync(OUT,{recursive:true});
 let pass=0,fail=0;const ok=(t,x,d)=>{console.log((x?'PASS ':'FAIL ')+t+(d?' — '+d:''));x?pass++:fail++;};
@@ -9,12 +9,12 @@ const txt=s=>pg.$eval(s,e=>e.textContent),vis=s=>pg.$eval(s,e=>!e.classList.cont
 const click=async s=>{const r=await pg.$eval(s,e=>{const b=e.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2}});await pg.mouse.click(r.x,r.y);};
 const shot=n=>pg.screenshot({path:path.join(OUT,T+'-'+n+'.png')});
 const move=async()=>{const m=await pg.evaluate(()=>SR.bestMove());if(!m)return;const a=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.a[0],m.a[1]),c=await pg.evaluate((r,c)=>SR.cellXY(r,c),m.b[0],m.b[1]);await pg.mouse.move(a.x,a.y);await pg.mouse.down();for(let i=1;i<=5;i++){await pg.mouse.move(a.x+(c.x-a.x)*i/5,a.y+(c.y-a.y)*i/5);await wait(16);}await pg.mouse.up();await wait(120);await until(x=>!x.busy||x.result,6000);};
-const seed=u=>pg.evaluate(u=>{localStorage.clear();localStorage.setItem('storageRush.v3',JSON.stringify({v:3,lmv:2,unit:u,bank:1500,sound:false,rung:0,tasks:['wash'],boosters:{cut:2,flash:1,free:1},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:true,taughtBoost:{cut:true,flash:true,free:true},truckSeen:true,built:['flea'],safeBank:0}));},u);
+const seed=u=>pg.evaluate(u=>{localStorage.clear();localStorage.setItem('storageRush.v3',JSON.stringify({v:3,ev:2,hookSeen:true,lmv:2,unit:u,bank:1500,sound:false,rung:0,tasks:['wash'],boosters:{cut:2,flash:1,free:1},daily:{day:'',boards:0,punch:[],glove:''},endless:{n:0,best:0},seenLadder:true,taughtBoost:{cut:true,flash:true,free:true},truckSeen:true,built:['flea'],safeBank:0}));},u);
 const map=async()=>{await click('#bOpen');await until(x=>x.mode==='map'&&!x.map.walking,6000);await wait(600);};
 const enter=async()=>{await map();await click('#bLadNext');await wait(600);const L=await pg.evaluate(()=>SR.lockXY());await pg.mouse.click(L.x,L.y);await until(x=>x.mode==='play'&&!x.busy,6000);await wait(300);};
 await pg.goto(BASE+'?debug=1&v='+Date.now(),{waitUntil:'load'});
 await seed(2);await pg.reload({waitUntil:'load'});await wait(700);await enter();
-let s=await st();ok(T+' Unit 3 still has 2 rooms; Unit 5 still has 2 rooms; 20 units',s.boards===2&&await pg.evaluate(()=>SR.units===20&&LEVELS.YARD1.units[4].boards.length===2));
+let s=await st();ok(T+' Unit 3 still has 2 rooms; Unit 5 still has 2 rooms; 10 units',s.boards===2&&await pg.evaluate(()=>SR.units===10&&LEVELS.YARD1.units[4].boards.length===2));
 // real play, not debugWin: prove the first bonus is earned by completing a room, regardless of chain luck
 for(let i=0;i<150;i++){s=await st();if(s.result==='win'||s.mode==='box')break;if(s.busy){await wait(80);continue;}
   if(s.finds.length){const f=s.finds[0],q=await pg.evaluate((r,c)=>SR.cellXY(r,c),f.r,f.c);await pg.mouse.click(q.x,q.y);await wait(180);await until(x=>!x.busy||x.result,6000);continue;}

@@ -1,11 +1,13 @@
-/* Storage Rush — Sunnyvale Storage campaign: 20 hand-authored levels, 3 rooms each (room 1 hand-made, rooms 2-3 built from it and ramped).
+/* Storage Rush — Sunnyvale Storage campaign. World 1 = 10 units (group plan, Nov 22), picked from 20 hand-authored boards.
+   Room 1 is hand-made, rooms 2-3 are built from it and ramped. Tarp finds are slots, resolved from the item ladder (js/items.js):
+   'c' ordinary find, 'u' good find (small chance of a surprise collectible), 'r' collectible, 'lock' a lockbox that opens the Safe Cracker.
    Each board: moves, need, item types, tarps [row, col, layers, find|null], fixed pre-placed items,
    tutorial / teach flags and Scrapper mode. Item fill is seeded so every board is the same each time.
    Scrappers stay off for the first few units, are taught on Unit 7, then stay on and fair. */
 (function(root){
 'use strict';
 const B=(o)=>Object.assign({types:6,scrapper:'off',pre:[]},o);
-const YARD0={units:[
+const YARD0={units:[ // (source boards; legacy find names map to slots in SLOTOF)
   {id:'Unit 1',name:'First Locker',theme:'indoor',boards:[
     B({seed:485,moves:28,need:1,clearTarps:true,types:6,tut:'swap',tarps:[[6,3,2,'guitar'],[6,1,2,null],[6,5,2,null]],pre:[[5,2,0],[5,4,0],[4,3,0],[5,3,1]]})]},
   {id:'Unit 2',name:'Clean Indoor Unit',theme:'indoor',boards:[
@@ -52,6 +54,8 @@ const YARD0={units:[
 // fill seeds re-picked so every generated room wins 80%+ for the hint-only bot (test/sim.js)
 const SEED_FIX={604:641,607:644,609:720,611:648,612:686,614:651,616:653,618:766,1007:1044,1009:1194,1012:1049,1014:1088,1016:1201,1017:1054,1018:1055};
 const FIND_CYCLE=['guitar','camera','jewelry','safe'];
+// legacy find names on the source boards -> item-ladder slots (World 1 has no guitars, cameras or big safes)
+const SLOTOF={guitar:'u',camera:'c',jewelry:'c',safe:'lock'};
 function roomsFor(b,ui){const gentle=ui<2,late=ui>=12,mid=ui>=6;
   const base=b.tarps.map(t=>t.slice());const finds=base.filter(t=>t[3]).length;
   const r2tarps=base.map(([r,c,l,f])=>[r,6-c,gentle?Math.min(l,2):l,f]);
@@ -63,13 +67,23 @@ function roomsFor(b,ui){const gentle=ui<2,late=ui>=12,mid=ui>=6;
   const r3=B({seed:b.seed+900,moves:b.moves+(gentle?3:5),need:gentle?Math.min(2,f3):Math.min(f3,b.need+(mid?1:0)),types:b.types,scrapper:sc,tarps:r3tarps});
   [r2,r3].forEach(r=>{r.seed=SEED_FIX[r.seed]||r.seed;});return [r2,r3];}
 const ROOM1_SEED={105:179,107:144,111:222,112:186,113:187,116:412,117:154,118:229,119:156,120:157};
-// room ramp: Units 1-2 one room, Units 3-5 two rooms, Unit 6+ three rooms
+// room ramp: Units 1-2 one room, Units 3-5 two rooms, Unit 6-10 three rooms
 function roomCount(ui){return ui<2?1:ui<5?2:3;}
-const YARD1={id:'sunnyvale',name:'Sunnyvale Storage',nextWorld:'Desert Gold',units:YARD0.units.map((u,i)=>{const r1=Object.assign({},u.boards[0],{seed:ROOM1_SEED[u.boards[0].seed]||u.boards[0].seed});
-  return Object.assign({},u,{boards:[r1].concat(roomsFor(u.boards[0],i)).slice(0,roomCount(i))});})};
+/* World 1 = 10 units, a mini arc:
+   1 the $1 locker from the opening auction (the lockbox safe pays off here) · 2-4 learn layers, the first Rush + bonus, the Dolly
+   5 a surprise (junk tarps + a lockbox: the first real Safe Cracker) · 6-7 the obstacle: Scrappers, then Bubble Wrap
+   8-9 a little harder (Gavel, 3-layer tarps, fewer moves) · 10 The Big One: premium locker, collectible finds and a lockbox. */
+const ARC=[{src:0,id:'Unit 1',name:'The $1 Locker',slots:['hook',null,null]},{src:1,name:'Clean Indoor Unit'},{src:2,name:'Clean Indoor Unit'},{src:3,name:'Greasy Garage'},
+  {src:4,name:'Greasy Garage',tut:'dummy'},{src:6,name:'Sunnyvale Row'},{src:7,name:'Sunnyvale Row'},{src:9,name:'Outdoor Lot',hard:true},{src:12,name:'The Back Row',hard:true},
+  {src:19,name:'The Big One',hard:true,finale:true,up:'r'}];
+function slotted(tarps,a){return tarps.map((t,j)=>{const f=a.slots?a.slots[j]:t[3]?(a.up&&SLOTOF[t[3]]!=='lock'?a.up:SLOTOF[t[3]]||'c'):null;return [t[0],t[1],t[2],f];});}
+const YARD1={id:'sunnyvale',name:'Sunnyvale Storage',nextWorld:'Desert Gold',units:ARC.map((a,i)=>{const u=YARD0.units[a.src],b0=Object.assign({},u.boards[0],a.tut?{tut:a.tut}:{});
+  const r1=Object.assign({},b0,{seed:ROOM1_SEED[b0.seed]||b0.seed});
+  const boards=[r1].concat(roomsFor(b0,a.src)).slice(0,roomCount(i)).map((b,bi)=>Object.assign({},b,{tarps:slotted(b.tarps,a).map(t=>bi>0&&t[3]==='lock'?[t[0],t[1],t[2],a.up||'c']:t)}));
+  return Object.assign({},u,{id:'Unit '+(i+1),name:a.name,src:a.src,hard:!!a.hard,finale:!!a.finale,boards});})};
 const TUTORIAL={swap:'Swap two neighbors to make 3 in a row.',tarp:'Match right next to a tarp to rip it.',layers:'Chained tarps take 2 hits.',dummy:'Some tarps are just junk. Gold glint = a find!',
   dolly:'Match 4 to build a DOLLY!',wrap:'Match an L or T for BUBBLE WRAP!',gavel:'Match 5 in a row for the AUCTION GAVEL!'};
 const MAP_PATH=[{n:1,x:0.47,y:0.926},{n:2,x:0.538,y:0.846},{n:3,x:0.574,y:0.774},{n:4,x:0.564,y:0.708},{n:5,x:0.514,y:0.656},{n:6,x:0.458,y:0.61},{n:7,x:0.395,y:0.57},{n:8,x:0.352,y:0.532},{n:9,x:0.336,y:0.497},{n:10,x:0.358,y:0.465},{n:11,x:0.408,y:0.436},{n:12,x:0.46,y:0.413},{n:13,x:0.512,y:0.393},{n:14,x:0.56,y:0.375},{n:15,x:0.596,y:0.354},{n:16,x:0.636,y:0.3375},{n:17,x:0.635,y:0.32},{n:18,x:0.608,y:0.305},{n:19,x:0.575,y:0.2935},{n:20,x:0.532,y:0.281}];
-const api={YARD1,TUTORIAL,MAP_PATH,roomCount};
+const api={YARD1,TUTORIAL,MAP_PATH,roomCount,ARC,SOURCE:YARD0};
 if(typeof module!=='undefined')module.exports=api;else root.LEVELS=api;
 })(this);

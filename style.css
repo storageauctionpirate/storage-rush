@@ -244,3 +244,13 @@ body[data-scene="truck"] #bHome,body[data-scene="safe"] #bHome{display:none!impo
 #rush.on small{font:18px/1 var(--disp);color:#ffe066;text-shadow:0 2px 0 #000}
 #rush.on .rbar i{transition:width .5s linear}
 #rush.first:not(.on) .rbar{animation:rushglow .7s ease-in-out infinite alternate}
+
+/* group version (Nov 22): $1 hook, locker bid, receipt lines */
+#hookUI{pointer-events:none}
+#hookUI .skip{pointer-events:auto;position:absolute;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));padding:8px 16px 4px;font-size:18px;opacity:.92}
+#doorGoal .bid{display:inline-block;margin-top:4px;font:800 13px var(--body);color:#ffe08a;background:#2b160cc0;border-radius:10px;padding:2px 10px}
+#bLadNext small.lp{display:block;font:800 12px var(--body);letter-spacing:.02em;opacity:.9;margin-top:-2px}
+#haul .line.bid span,#msgP .line.bid span{color:#9a3412}
+#haul .line.set span,#msgP .line.set span{color:#2f7d32}
+#haul .line.total{border-bottom:0;font-family:var(--disp);font-size:18px;color:var(--orange);margin-top:4px}
+#haul .cartlist,#msgP .cartlist{font:600 11.5px var(--body);color:#6b4a2a;margin:4px 2px 2px;line-height:1.3}

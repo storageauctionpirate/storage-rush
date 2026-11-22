@@ -13,7 +13,7 @@ function playRoom(def,seed,st,ui,rnd){const e=new E(def,seed);let g=0;const rush
   const add=n=>{if(!rushOn||st.rushX)return;st.meter+=n*(st.seen?1:R.METER/R.FIRST_RUSH);if(st.meter>=R.METER){st.rushes++;st.seen=true;st.rushX=R.mult(st.rushes);st.left=R.RUSH_MOVES;st.fresh=true;st.best=Math.max(st.best,st.rushX);st.meter=0;}};
   const onSteps=()=>{let chain=0,kinds=[];for(;;){const ev=e.step();if(!ev)break;chain++;e.gravity();
       const items=ev.cleared.filter(c=>c.tile.k==='item').length;plainCart+=items;
-      if(rushOn){extra+=items*(R.itemPay(st.meter,st.rushX)-2);ev.fired.forEach(f=>kinds.push(f.sp));
+      if(rushOn){extra+=items*(R.itemPay(st.meter,st.rushX)-1);ev.fired.forEach(f=>kinds.push(f.sp));
         add(R.gain(chain,ev.cleared.length,ev.fired.length,ev.hits.filter(h=>h.revealed).length));}}
     if(rushOn&&ui>=R.BOX_FROM&&!st.box&&R.boxEarned(chain,kinds)){st.box=true;st.boxWhy='play';}
     if(!e.bestMove())e.shuffle();};
@@ -37,7 +37,7 @@ for(let run=0;run<RUNS;run++){const rnd=lcg(run*7919+5);let commons=0,firstSafe=
     if(st.box){const bx=R.rollBox(rnd,1);boxCash=bx.cash;}
     if(ui>=2&&R.safeEarned(haul,st.best)){safe=R.rollSafe(rnd,{first:firstSafe,bestRush:st.best,commons});firstSafe=false;commons=safe==='common'?commons+1:0;safeCash=R.SAFE_PAY[safe];}
     if(safe==='rare'||safe==='legendary'||st.best>=5)returnBoost=R.RETURN_BOOST;
-    if(st.box)boxSeen=true;dry=(st.box||safe)?0:dry+1;if((st.box||safe)&&!fb)fb=ui+1;if(ui===19){firstBonusAt.push(fb);firstRushAt.push(fr);}
+    if(st.box)boxSeen=true;dry=(st.box||safe)?0:dry+1;if((st.box||safe)&&!fb)fb=ui+1;if(ui===YARD1.units.length-1){firstBonusAt.push(fb);firstRushAt.push(fr);}
     const a=agg[ui]=agg[ui]||{n:0,win:0,rush:0,r2:0,r3:0,r5:0,box:0,safe:0,rare:0,plain:0,bonus:0};
     a.gap=Math.max(a.gap||0,dry);a.n++;a.win+=wins===u.boards.length?1:0;a.rush+=st.rushes;a.r2+=st.best>=2;a.r3+=st.best>=3;a.r5+=st.best>=5;a.box+=st.box;a.safe+=!!safe;a.rare+=safe&&safe!=='common';
     a.plain+=plain;a.bonus+=extra+boxCash+safeCash;fTot+=plain+extra+boxCash+safeCash;pTot+=plain;
@@ -50,7 +50,7 @@ console.log('unit rooms  rush/unit  any  3X+  5X   box  safe rare+  plain$   bon
 agg.forEach((a,i)=>console.log(('U'+(i+1)).padEnd(5),String(YARD1.units[i].boards.length).padStart(4),(a.rush/a.n).toFixed(2).padStart(9),pc(a.r2/a.n),pc(a.r3/a.n),pc(a.r5/a.n),pc(a.box/a.n),pc(a.safe/a.n),pc(a.rare/a.n),String(Math.round(a.plain/a.n)).padStart(8),String(Math.round(a.bonus/a.n)).padStart(8)));
 const tb=agg.reduce((s,a)=>s+a.bonus/a.n,0),tp=agg.reduce((s,a)=>s+a.plain/a.n,0);
 console.log('Sunnyvale per-run: plain $'+Math.round(tp)+'  bonus $'+Math.round(tb)+'  bonus factor f = '+(fTot/pTot).toFixed(2));
-agg.forEach((a,i)=>{if([1,2,5,10,15,20].includes(i+1))console.log('after U'+(i+1)+': bank $'+Math.round(a.bank/a.n)+'  town '+Math.round(a.pct/a.n)+'% built');});
+console.log('(plain$/bonus$ use the old flat price table and only give the bonus ratio f. Real dollars on the new curve: node test/econ.js)');
 const hist=(arr)=>{const o={};arr.forEach(x=>o[x||'never']=(o[x||'never']||0)+1);return Object.entries(o).map(([k,v])=>'U'+k+': '+Math.round(v/arr.length*100)+'%').join('  ');};
 console.log((CASUAL?'CASUAL player':'Good player')+'. First bonus game (box or safe) at '+hist(firstBonusAt));console.log('First Rush at '+hist(firstRushAt));console.log('Longest run of units without a bonus game (Unit 3+): '+Math.max(...agg.slice(2).map(a=>a.gap||0)));
-console.log('Unit 1 sale: $'+R.FIRST_SALE+' - stall $'+R.STALL_COST+' = $'+(R.FIRST_SALE-R.STALL_COST)+' left; Unit 2 costs $0 to enter.');
+console.log('Unit 1 sale: $'+R.FIRST_SALE+' - stall $'+R.STALL_COST+' = $'+(R.FIRST_SALE-R.STALL_COST)+' left. Unit 2 locker $1, paid once from its haul.');

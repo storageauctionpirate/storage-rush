@@ -1,0 +1,52 @@
+PASS source never uses the banned word
+PASS no "No Home" copy anywhere
+PASS start rung is The Pickup
+PASS 10 Sunnyvale levels in the campaign
+PASS no ads/analytics/payment/network code
+PASS CSP kept: self-only scripts, no network, local fonts  — default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; frame-src 'none'; object-src 'none'
+PASS display font is bundled locally
+PASS every truck level has its own art
+PASS room ramp: Units 1-2 one room, 3-5 two rooms, 6+ three rooms
+PASS Unit 1 teaches tarps with real goals (rip all 3 tarps, uncover the hook safe)
+PASS economy: Unit 1 sale is exactly $47, first stall $40, $7 left
+PASS Rush Meter: earned 2X, 3X, then 5X (never higher in the prototype)
+PASS Rush Meter fills from cascades, not from single matches
+PASS Mystery Box is earned only by a 5+ chain or a Gavel
+PASS first bonus game is guaranteed by clearing a room in Unit 3+, then one at least every 2 units (earned by clearing, never sold)
+PASS Rush lasts 6 moves with a draining bar; the first Rush ever comes sooner
+PASS Safe Cracker is earned only by a Safe find or a 3X Rush
+PASS Mystery Box odds disclosed and add up to 100%
+PASS every Mystery Box pays cash plus a bonus
+PASS Safe guarantees: first safe and 5X-Rush safe are Rare+, never 4 Commons in a row
+PASS no purchase prompts or paid moves/chances anywhere (store, paid continue, ads all off)
+PASS art-sheet assets shipped
+PASS fence + door signs kept
+PASS locked door says Unlock coming soon
+PASS Desert Gold is the next-world tease
+PASS Safe Cracking is earned only: no prices, IAP or ads in its code
+PASS 1280x800 rhythm: no Rush Meter during the Unit 1 tutorial
+PASS 1280x800 Rush Meter shows on Unit 4, between the board and the boosters  — {"rr":[487,635,307,30],"boardBottom":569,"pbotTop":716}
+PASS 1280x800 Rush Meter goes HOT at 50% (cart pays 1.5X)  — HOT · CART 1.5X
+PASS 1280x800 full meter starts RUSH 2X
+PASS 1280x800 Rush starts with a screen-wide 2X RUSH! banner  — 2X RUSH!
+PASS 1280x800 Rush pays extra cash on cleared items  — +$0.1271283790160479
+PASS 1280x800 Rush bar drains one move at a time  — RUSH 2X · 4 MOVES
+PASS 1280x800 Rush ends clearly after 6 moves (RUSH OVER + what it paid)  — RUSH OVER +$0.51 extra from your 2X Rush
+PASS 1280x800 Mystery Box earned in play waits for the room to clear
+PASS 1280x800 room clear shows one clear card: cleared, saved, bonus earned, what is next  — SAVEDRoom 1 cleared!BONUS GAME EARNED!Mystery BoxNext: Room 2 of 2 · find 2 in 27 movesTap to keep going
+PASS 1280x800 Mystery Box opens between rooms
+PASS 1280x800 Mystery Box pays cash + bonus, saved with the room  — +$14 bank 900→914
+PASS 1280x800 map says the room is saved after a reload  — Unit 4 · room 2 of 2 saved
+PASS 1280x800 reload resumes at room 2, cleared room not replayed  — {"mode":"door","bi":1,"bank":914}
+PASS 1280x800 a 2nd Rush is 3X and earns the Safe Cracker  — {"best":3,"safe":"rare"}
+PASS 1280x800 reload after the clear goes straight to the saved cleared card
+PASS 1280x800 saved safe keeps its rarity after reload (no reroll)  — rare
+PASS 1280x800 flip banks once, clears the saved run, shows the next build  — {"bank":[914,943],"haul":" FrameFlip total$1Next build: Office · you can build it now!"}
+PASS 1280x800 reload after the flip never pays twice
+PASS 1280x800 rhythm: no page errors
+PASS 1280x800 desktop: phone-shaped frame centered, nothing cropped  — {"a":[461.671875,14,356.65625,772],"c":[356.65625,772],"inside":true}
+PASS 1280x800 desktop: no landmark overlaps on the map
+PASS 1280x800 desktop: map centered on the current stop  — y 260
+PASS 1280x800 desktop: board opens inside the frame
+PASS 1280x800 desktop: no page errors
+51/51 passed  (11/22/2026, 2:11:38 PM PT, http://127.0.0.1:8872/index.html)

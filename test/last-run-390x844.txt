@@ -1,0 +1,143 @@
+PASS source never uses the banned word
+PASS no "No Home" copy anywhere
+PASS start rung is The Pickup
+PASS 10 Sunnyvale levels in the campaign
+PASS no ads/analytics/payment/network code
+PASS CSP kept: self-only scripts, no network, local fonts  — default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'; font-src 'self'; frame-src 'none'; object-src 'none'
+PASS display font is bundled locally
+PASS every truck level has its own art
+PASS room ramp: Units 1-2 one room, 3-5 two rooms, 6+ three rooms
+PASS Unit 1 teaches tarps with real goals (rip all 3 tarps, uncover the hook safe)
+PASS economy: Unit 1 sale is exactly $47, first stall $40, $7 left
+PASS Rush Meter: earned 2X, 3X, then 5X (never higher in the prototype)
+PASS Rush Meter fills from cascades, not from single matches
+PASS Mystery Box is earned only by a 5+ chain or a Gavel
+PASS first bonus game is guaranteed by clearing a room in Unit 3+, then one at least every 2 units (earned by clearing, never sold)
+PASS Rush lasts 6 moves with a draining bar; the first Rush ever comes sooner
+PASS Safe Cracker is earned only by a Safe find or a 3X Rush
+PASS Mystery Box odds disclosed and add up to 100%
+PASS every Mystery Box pays cash plus a bonus
+PASS Safe guarantees: first safe and 5X-Rush safe are Rare+, never 4 Commons in a row
+PASS no purchase prompts or paid moves/chances anywhere (store, paid continue, ads all off)
+PASS art-sheet assets shipped
+PASS fence + door signs kept
+PASS locked door says Unlock coming soon
+PASS Desert Gold is the next-world tease
+PASS Safe Cracking is earned only: no prices, IAP or ads in its code
+PASS 390x844 rhythm: no Rush Meter during the Unit 1 tutorial
+PASS 390x844 Rush Meter shows on Unit 4, between the board and the boosters  — {"rr":[27,682,335,30],"boardBottom":619,"pbotTop":774}
+PASS 390x844 Rush Meter goes HOT at 50% (cart pays 1.5X)  — HOT · CART 1.5X
+PASS 390x844 full meter starts RUSH 2X
+PASS 390x844 Rush starts with a screen-wide 2X RUSH! banner  — 2X RUSH!
+PASS 390x844 Rush pays extra cash on cleared items  — +$0.44494932655616765
+PASS 390x844 Rush bar drains one move at a time  — RUSH 2X · 4 MOVES
+PASS 390x844 Rush ends clearly after 6 moves (RUSH OVER + what it paid)  — RUSH OVER +$0.95 extra from your 2X Rush
+PASS 390x844 Mystery Box earned in play waits for the room to clear
+PASS 390x844 room clear shows one clear card: cleared, saved, bonus earned, what is next  — SAVEDRoom 1 cleared!BONUS GAME EARNED!Mystery BoxNext: Room 2 of 2 · find 2 in 27 movesTap to keep going
+PASS 390x844 Mystery Box opens between rooms
+PASS 390x844 Mystery Box pays cash + bonus, saved with the room  — +$14 bank 900→914
+PASS 390x844 map says the room is saved after a reload  — Unit 4 · room 2 of 2 saved
+PASS 390x844 reload resumes at room 2, cleared room not replayed  — {"mode":"door","bi":1,"bank":914}
+PASS 390x844 a 2nd Rush is 3X and earns the Safe Cracker  — {"best":3,"safe":"rare"}
+PASS 390x844 reload after the clear goes straight to the saved cleared card
+PASS 390x844 saved safe keeps its rarity after reload (no reroll)  — rare
+PASS 390x844 flip banks once, clears the saved run, shows the next build  — {"bank":[914,943],"haul":"3 moreFlip total$1Next build: Office · you can build it now!"}
+PASS 390x844 reload after the flip never pays twice
+PASS 390x844 rhythm: no page errors
+PASS 390x844 v1 save migrates to v3 with bank rescaled  — {"v":3,"bank":25,"unit":0}
+PASS 390x844 old v1 key left alone
+PASS 390x844 fresh save gifts boosters 2/1/0
+PASS 390x844 title: Open Unit, no Start over on a fresh save
+PASS 390x844 display font loaded from same origin
+PASS 390x844 sound toggle flips and saves (music + sfx share it)
+PASS 390x844 map art is loaded before the map shows (no pop-in)
+PASS 390x844 world map opens on Sunnyvale Storage
+PASS 390x844 no "No Home" text on screen
+PASS 390x844 map: one tall path with all 10 stops in order  — worldH 2448
+PASS 390x844 map: camera starts on stop 1  — y 665
+PASS 390x844 map: Sunnyvale 0% built bar
+PASS 390x844 map: no landmark touches a stop, tag, other landmark, the hustler or the Unit button
+PASS 390x844 door closed with padlock
+PASS 390x844 lock tap starts jiggle/snap
+PASS 390x844 door rolls up into the framed board
+PASS 390x844 tutorial tip + finger shown on board 1
+PASS 390x844 header: SUNNYVALE STORAGE sign art is not covered by a title pill  — UNIT 1 · RIP 3 TARPS
+PASS 390x844 no-match swap bounces back free  — used=0
+PASS 390x844 swipe swap spends one move
+PASS 390x844 Unit 1 teaches the tarp with highlighted tiles  — Match right next to a tarp to rip it.
+PASS 390x844 Unit 1 (tutorial) won
+PASS 390x844 find collected onto the cart
+PASS 390x844 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Cart of stuff (56) · lot price$8Locker bid (won at auction) · paid once−$1In the cart: 👟 Old Sneakers, 📚 Paperback Books, Dusty Rug ($0), 🧩 Jigsaw Puzzle, 🪴 Potted Plant, 🧩 Jigsaw Puzzle, 🧢 Ball Cap, 🎲 Dice Set and 6 moreUnder a tarp: an old locked safe. Crack it open!"}
+PASS 390x844 CLEARED stamp does not cover the title  — {"a":[82,267,308,300],"b":[269,200,379,258],"hit":false}
+PASS 390x844 Unit 1: Safe Cracking Bonus pays earned game cash  — +$40
+PASS 390x844 Unit 1: flea market FLIP, itemized haul  — Tin Robot (from the safe)$40 bankedCart of stuff (56) · lot price$8Locker bid (w
+PASS 390x844 bank grew from the flip  — $47
+PASS 390x844 back on the map, next unit is 2
+PASS 390x844 hustler walk finishes, next unit offered
+PASS 390x844 Unit 1 sale banks exactly $47 and offers the $40 Flea Market Stall  — 47 · BuildFlea Market Stall · $40
+PASS 390x844 Unit 2 is open without any extra cash (before the stall is built)
+PASS 390x844 paying $40 builds the first stall, $7 left, town moves  — $7 · 6%
+PASS 390x844 Unit pill stays put once shown (first tap lands)  — [[120,395,"visible"],[120,395,"visible"]]
+PASS 390x844 map: Unit pills never cover a stop number
+PASS 390x844 no Pickup tasks before 3 flips
+PASS 390x844 tutorial board: out of moves skips +5 offer
+PASS 390x844 fail text matches progress  — 0 finds: No finds pulled yet. Match right next to a tarp to rip it open.Retry is free. The locker bid is only paid once, when you clear the unit.
+PASS 390x844 Unit 2: flea market FLIP, itemized haul  — Roller Skates$2Scissors$1Desk Lamp$1Cart of stuff (80)$1Locker bid · paid once−$
+PASS 390x844 Unit 3: flea market FLIP, itemized haul  — Screwdriver Set$1Umbrella$1Glass Marbles$6Ball Cap$1Hourglass$2Coffee Mug$1Cart 
+PASS 390x844 3 flips earns the free Pickup upgrade scene  — {"mode":"map","unit":3,"unitId":"Unit 3","bi":1,"msg":""}
+PASS 390x844 map: camera follows the hustler to stop 4  — y 439
+PASS 390x844 village: truck landmark upgraded by the Pickup milestone  — 15%
+PASS 390x844 village: earned cash fixes up the next landmark  — 27% · bank 32→22
+PASS 390x844 Upgrades: Pickup tasks panel
+PASS 390x844 buying an upgrade plays the truck before/after
+PASS 390x844 truck shows Level N → N+1 with new art  — Pickup Level 1 → 2
+PASS 390x844 upgrade celebration has a continue button
+PASS 390x844 back on Upgrades after the celebration
+PASS 390x844 glove box daily booster offered
+PASS 390x844 glove box adds one booster
+PASS 390x844 board 4 teaches the Dolly
+PASS 390x844 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
+PASS 390x844 Flashlight x-rays tarps
+PASS 390x844 out of moves offers free +5 before the fail card
+PASS 390x844 +5 moves granted once
+PASS 390x844 Unit 4: flea market FLIP, itemized haul  — Claw Hammer$1Tin Robot$17Paperback Books$1Bento Lunchbox$2Cart of stuff (146)$3H
+PASS 390x844 Unit 5 opens correct door  — {"mode":"door","id":"Unit 5"}
+PASS 390x844 Unit 5 cleared  — 0 retries
+PASS 390x844 Unit 5: Safe Cracking Bonus pays earned game cash  — +$32
+PASS 390x844 Unit 5: flea market FLIP, itemized haul  — Rare Stamp (from the safe)$32 bankedUmbrella$1Picnic Basket$1Kite$1Cart of stuff
+PASS 390x844 Unit 6 opens correct door  — {"mode":"door","id":"Unit 6"}
+PASS 390x844 Unit 6 cleared  — 0 retries
+PASS 390x844 Unit 6: flea market FLIP, itemized haul  — Alarm Clock$1Toolbox$3Scissors$1Chess Set$3Screwdriver Set$1Baseball$2Alarm Cloc
+PASS 390x844 Unit 7 opens correct door  — {"mode":"door","id":"Unit 7"}
+PASS 390x844 Unit 7 cleared  — 1 retries
+PASS 390x844 Unit 7: Safe Cracking Bonus pays earned game cash  — +$16
+PASS 390x844 Unit 7: flea market FLIP, itemized haul  — Paper Lantern (from the safe)$16 bankedPicture Frame$1Ball Cap$1Desk Lamp$1Dice 
+PASS 390x844 Unit 8 opens correct door  — {"mode":"door","id":"Unit 8"}
+PASS 390x844 Unit 8 cleared  — 0 retries
+PASS 390x844 Unit 8: Safe Cracking Bonus pays earned game cash  — +$18
+PASS 390x844 Unit 8: flea market FLIP, itemized haul  — Tennis Racket (from the safe)$18 bankedScissors$1Roller Skates$5Cookie Jar$1Glas
+PASS 390x844 Unit 9 opens correct door  — {"mode":"door","id":"Unit 9"}
+PASS 390x844 Unit 9 cleared  — 1 retries
+PASS 390x844 Unit 9: Safe Cracking Bonus pays earned game cash  — +$50
+PASS 390x844 Unit 9: flea market FLIP, itemized haul  — Tin Robot (from the safe)$50 bankedHourglass$5Kite$2Roller Skates$5Tennis Racket
+PASS 390x844 Unit 10 opens correct door  — {"mode":"door","id":"Unit 10"}
+PASS 390x844 Unit 10 cleared  — 0 retries
+PASS 390x844 Unit 10: Safe Cracking Bonus pays earned game cash  — +$23
+PASS 390x844 Unit 10: flea market FLIP, itemized haul  — Roller Skates (from the safe)$23 bankedRookie Card$21Glass Marbles$13Silver Doll
+PASS 390x844 village keeps building as you play  — 100% built
+PASS 390x844 all 10 Sunnyvale levels cleared
+PASS 390x844 Dolly / Bubble Wrap / Gavel all showed up  — dolly,wrap,gavel
+PASS 390x844 Scrapper teach near-miss played
+PASS 390x844 map offers Desert Gold after Unit 10
+PASS 390x844 Desert Gold is locked after unit 10
+PASS 390x844 tapping the locked Desert Gold door does not open a store
+PASS 390x844 Daily Auction screen opens  — opened or already past title
+PASS 390x844 Start over button on title for a played save
+PASS 390x844 Start over asks to confirm
+PASS 390x844 "Keep my stuff" keeps the save
+PASS 390x844 "Wipe it" starts fresh
+PASS 390x844 no store, prices or pay-to-play hooks on the Desert Gold screen
+PASS 390x844 every visible button on screen and >=44px
+PASS 390x844 no console errors/warnings
+PASS 390x844 no external requests
+142/142 passed  (11/22/2026, 2:00:42 PM PT, http://127.0.0.1:8872/index.html)

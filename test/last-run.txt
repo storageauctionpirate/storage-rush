@@ -184,4 +184,5 @@ PASS 1280x800 desktop: no landmark overlaps on the map
 PASS 1280x800 desktop: map centered on the current stop  — y 415
 PASS 1280x800 desktop: board opens inside the frame
 PASS 1280x800 desktop: no page errors
+
 186/186 passed  (11/21/2026, 6:04:25 PM PT, http://127.0.0.1:8872/index.html)

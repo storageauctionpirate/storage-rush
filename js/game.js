@@ -674,7 +674,7 @@ window.SR={
   debugSafe:r=>{if(!DEBUG)return;S.run=S.run||{kind:'campaign',unit:UNITS[2],bi:0,haul:['guitar','safe'],cart:85};S.run.safeDone=false;startSafe(r);},
   debugFlip:()=>{if(!DEBUG)return;S.run={kind:'campaign',unit:UNITS[2],bi:0,haul:['guitar','camera'],cart:50};startFlip();},
   debugTruck:(n)=>{if(!DEBUG)return;if(n==null){startTruck();return;}n=Math.max(1,Math.min(5,n));S.truck={t0:performance.now(),returnTo:'map',from:n-1,to:n,kind:'truck'};S.mode='truck';show('truckUI');$('truckTitle').textContent='Pickup Level '+(n-1)+' → '+n;$('truckSub').textContent=TRUCK_NAMES[n];$('bTruckNext').classList.add('hidden');},
-  truckLevel:()=>truckLv(),
+  truckLevel:()=>truckLv(),debugWin:()=>{if(!DEBUG||!S.eng||S.mode!=='play')return;S.busy=true;S.result='win';boardWon();},
   artReady:()=>IM.ready(),mapPath:()=>Array.from({length:20},(_,i)=>({n:i+1,...ofs(mapXY(i))}))};
 
 resize();boosterIcons();setSound(save.sound!==false);if(IM&&IM.load)IM.load(()=>{bgCache={};sprites={};boosterIcons();if(S.eng)buildGoals();});goTitle();requestAnimationFrame(frame);

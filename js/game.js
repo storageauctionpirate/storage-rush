@@ -152,7 +152,8 @@ function persistRun(){const r=S.run;if(!r||r.kind!=='campaign')return;
   save.run={u:UNITS.indexOf(r.unit),bi:r.bi,haul:r.haul.slice(),cart:r.cart,meter:r.meter,rushNo:r.rushNo,best:r.best,bonus:r.bonus,box:r.box,safe:r.safe,cleared:!!r.cleared};store();}
 function resumeRun(sv){const r=newRun('campaign',UNITS[sv.u],sv.bi);Object.assign(r,{haul:(sv.haul||[]).slice(),cart:sv.cart||0,meter:sv.meter||0,rushNo:sv.rushNo||0,best:sv.best||0,bonus:sv.bonus||0,box:sv.box||null,safe:sv.safe||null,cleared:!!sv.cleared});
   r.bi=Math.min(r.bi,r.unit.boards.length-1);S.run=r;r.resumed=true;
-  if(r.cleared){S.mode='door';S.door={t0:performance.now()-5000,phase:'open'};newEngine();show('doorUI');$('doorUI').querySelector('.tapme').classList.add('hidden');$('doorName').textContent=r.unit.id+' · '+r.unit.name;$('doorGoal').textContent='Cleared · saved';afterClear();return;}
+  if(r.cleared){S.mode='door';S.door={t0:performance.now()-5000,phase:'open'};newEngine();show('doorUI');$('doorUI').querySelector('.tapme').classList.add('hidden');$('doorName').textContent=r.unit.id+' · '+r.unit.name;$('doorGoal').textContent='Cleared · saved';if(r.box&&!r.box.opened)startBox(afterClear);else afterClear();return;}
+  if(r.box&&!r.box.opened){newEngine();startBox(()=>openDoorScene());return;}
   openDoorScene();}
 function rushOn(){return !!(S.run&&S.run.kind==='campaign'&&UNITS.indexOf(S.run.unit)>=RH.RUSH_FROM);}
 function boardDef(){return S.run.unit.boards[S.run.bi];}
@@ -309,7 +310,7 @@ function boardWon(){const run=S.run;run.cart+=S.eng.cart;const rx=run.rushX,rp=r
   if(run.box&&!run.box.opened){hype('BONUS GAME!','You earned a Mystery Box','box',1100);SFX.reveal();setTimeout(()=>startBox(afterClear),1000);return;}
   afterClear();}
 function cartPrice(run){return run.kind==='campaign'&&UNITS.indexOf(run.unit)===0?Math.max(0,RH.FIRST_SALE-run.haul.reduce((a,k)=>a+A.FINDS[k].price,0)):run.cart*JUNK_PRICE;}
-function afterClear(){const run=S.run;S.busy=true;S.result='win';
+function afterClear(){const run=S.run;S.mode='play';show('playUI');roomLabel();S.busy=true;S.result='win';updateHUD();placeRush();
   const first=run.kind==='campaign'&&UNITS.indexOf(run.unit)===0;
   const lines=run.haul.map(k=>'<div class="line"><span>'+A.FINDS[k].name+'</span><span>'+money(A.FINDS[k].price)+'</span></div>').join('')+'<div class="line"><span>Cart of stuff ('+run.cart+')'+(first?' · lot price':'')+'</span><span>'+money(cartPrice(run))+'</span></div>'+
     (run.bonus?'<div class="line"><span>Hot + Rush bonus</span><span>'+money(run.bonus)+'</span></div>':'');

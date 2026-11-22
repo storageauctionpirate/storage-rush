@@ -42,7 +42,7 @@ for(const V of VPS){
   const swipe=async(a,c2)=>{await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:a.x,y:a.y}]});for(let i=1;i<=5;i++){await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:a.x+(c2.x-a.x)*i/5,y:a.y+(c2.y-a.y)*i/5}]});await wait(16);}await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});};
   const tapSel=async s=>{const r=await pg.$eval(s,e=>{const b=e.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2}});await tap(r.x,r.y);};
   const st=()=>pg.evaluate(()=>SR.state());
-  const vis=s=>pg.$eval(s,e=>!e.classList.contains('hidden')&&e.offsetParent!==null).catch(()=>false);
+  const vis=s=>pg.$eval(s,e=>!e.classList.contains('hidden')&&e.offsetParent!==null&&getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).visibility!=='hidden').catch(()=>false);
   const txt=s=>pg.$eval(s,e=>e.textContent);
   const shot=async n=>{if(SHOTS){fs.mkdirSync(path.join(root,'shots','sunnyvale'),{recursive:true});await pg.screenshot({path:path.join(root,'shots','sunnyvale',`${T}-${n}.png`)});}};
   const untilIdle=async()=>{for(let i=0;i<150;i++){const s=await st();if((!s.busy||s.result)&&!(await vis('#msg')&&false))return s;await wait(80);}return st();};
@@ -199,7 +199,8 @@ for(const V of VPS){
       s=await until(async x=>x.mode==='map'&&!(x.map&&x.map.walking)&&await vis('#bLadNext'),6000);const name='Unit '+u;
       if(u%4===0){await tapSel('#bEmpire');await wait(300);const can=await pg.$$eval('#tasks button:not([disabled])',bs=>bs.map(b=>b.dataset.task)).catch(()=>[]);if(can.length&&await vis('#tasks')){await tapSel(`#tasks button[data-task="${can[0]}"]`);await wait(300);if((await st()).mode==='truck'){await pg.evaluate(()=>SR.finishTruck());await wait(300);}}await tapSel('#bEmpireBack');await wait(400);}
       if(await vis('#bBuild')&&!(await pg.$eval('#bBuild',e=>e.classList.contains('poor')))){await tapSel('#bBuild');await wait(2700);if(u===12)await shot('map-mid-progress');}
-      await tapSel('#bLadNext');await wait(400);
+      await until(async x=>x.mode==='map'&&!(x.map&&x.map.walking)&&!x.building&&await vis('#bLadNext'),8000);await wait(400);await tapSel('#bLadNext');await wait(400);
+      const started=await st();ok(`${T} ${name} opens correct door`,started.mode==='door'&&started.unitId===name,JSON.stringify({mode:started.mode,id:started.unitId}));
       const tries=await playUnit(name);s=await st();
       ok(`${T} ${name} cleared`,await vis('#msg')&&/cleared/.test(await txt('#msgH')),tries+' retries');
       s=await settleAfterWin(name);

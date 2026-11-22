@@ -10,62 +10,9 @@ PASS fence + door signs kept
 PASS locked door says Unlock coming soon
 PASS Desert Gold is the next-world tease
 PASS Safe Cracking is earned only: no prices, IAP or ads in its code
-PASS 375x667 v1 save migrates to v3 with bank intact  — {"v":3,"bank":1234,"unit":0}
-PASS 375x667 old v1 key left alone
-PASS 375x667 fresh save gifts boosters 2/1/0
-PASS 375x667 title: Open Unit, no Start over on a fresh save
-PASS 375x667 display font loaded from same origin
-PASS 375x667 sound toggle flips and saves (music + sfx share it)
-PASS 375x667 world map opens on Sunnyvale Storage
-PASS 375x667 no "No Home" text on screen
-PASS 375x667 map: one tall path with all 20 stops in order  — worldH 2354
-PASS 375x667 map: camera starts on stop 1  — y 495
-PASS 375x667 map: Sunnyvale 0% built bar
-PASS 375x667 door closed with padlock
-PASS 375x667 lock tap starts jiggle/snap
-PASS 375x667 door rolls up into the framed board
-PASS 375x667 tutorial tip + finger shown on board 1
-PASS 375x667 no-match swap bounces back free  — used=0
-PASS 375x667 swipe swap spends one move
-PASS 375x667 Unit 1 (tutorial) won
-PASS 375x667 find collected onto the cart
-PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Guitar$350Cart of stuff (40)$80"}
-PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Guitar$350Cart of stuff (40)$80Haul total$430
-PASS 375x667 bank grew from the flip  — $430
-PASS 375x667 back on the map, next unit is 2
-PASS 375x667 hustler walk finishes, next unit offered
-PASS 375x667 no Pickup tasks before 3 flips
-PASS 375x667 tutorial board: out of moves skips +5 offer
-PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Jewelry Box$240Vintage Camera$180Cart of stuff (137)$274Haul total$694
-PASS 375x667 Unit 3: Safe Cracking Bonus pays earned game cash  — +$300
-PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Safe$900Jewelry Box$240Guitar$350Cart of stuff (70)$140Haul total$1,630
-PASS 375x667 3 flips earns the free Pickup upgrade scene
-PASS 375x667 map: camera follows the hustler to stop 4  — y 400
-PASS 375x667 village: truck landmark upgraded by the Pickup milestone  — 11%
-PASS 375x667 village: earned cash fixes up the next landmark  — 22% · bank 3054→2804
-PASS 375x667 Upgrades: Pickup tasks panel
-PASS 375x667 buying an upgrade plays the truck before/after
-PASS 375x667 upgrade celebration has a continue button
-PASS 375x667 back on Upgrades after the celebration
-PASS 375x667 glove box daily booster offered
-PASS 375x667 glove box adds one booster
-PASS 375x667 board 4 teaches the Dolly
-PASS 375x667 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
-PASS 375x667 Flashlight x-rays tarps
-PASS 375x667 out of moves offers free +5 before the fail card
-PASS 375x667 +5 moves granted once
-PASS 375x667 saved progress resumes on the map at Unit 20
-PASS 375x667 Unit 20: Safe Cracking Bonus pays earned game cash  — +$300
-PASS 375x667 Unit 20: flea market FLIP, itemized haul  — Safe$900Vintage Camera$180Guitar$350Cart of stuff (68)$136Haul total$1,566
-PASS 375x667 Desert Gold after the last unit
-PASS 375x667 tapping the locked Desert Gold door does not open a store
-PASS 375x667 Daily Auction screen opens  — opened or already past title
-PASS 375x667 Start over button on title for a played save
-PASS 375x667 Start over asks to confirm
-PASS 375x667 "Keep my stuff" keeps the save
-PASS 375x667 "Wipe it" starts fresh
-PASS 375x667 no store, prices or pay-to-play hooks on the Desert Gold screen
-PASS 375x667 every visible button on screen and >=44px
-PASS 375x667 no console errors/warnings
-PASS 375x667 no external requests
-70/70 passed  (11/21/2026, 3:25:31 PM PT, http://127.0.0.1:8872/index.html)
+PASS 1280x800 desktop: phone-shaped frame centered, nothing cropped  — {"a":[461.671875,14,356.65625,772],"c":[356.65625,772],"inside":true}
+PASS 1280x800 desktop: no landmark overlaps on the map
+PASS 1280x800 desktop: map centered on the current stop  — y 415
+PASS 1280x800 desktop: board opens inside the frame
+PASS 1280x800 desktop: no page errors
+17/17 passed  (11/21/2026, 5:19:48 PM PT, http://127.0.0.1:8872/index.html)

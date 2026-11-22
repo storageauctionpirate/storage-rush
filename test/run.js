@@ -112,6 +112,7 @@ for(const V of VPS){
     ok(`${T} map: one tall path with all 20 stops in order`,v.stops.length===20&&v.stops.every((p,i)=>i===0||p.y<v.stops[i-1].y)&&v.worldH>H0*2.5,'worldH '+v.worldH);
     ok(`${T} map: camera starts on stop 1`,v.stops[0].y>0&&v.stops[0].y<H0,'y '+Math.round(v.stops[0].y));
     ok(`${T} map: Sunnyvale 0% built bar`,/Sunnyvale 0% built/.test(await txt('#builtTxt'))&&v.pct===0); }
+  { const bad=await pg.evaluate(()=>SR.mapCheck());ok(`${T} map: no landmark touches a stop, tag, other landmark, the hustler or the Unit button`,bad.length===0,bad.slice(0,6).join(' | ')); }
   await checkFit('map');await shot('world-map');await shot('map-start');seen.shots.map=1;
   /* ---- unit 1 ---- */
   await tapSel('#bLadNext');await wait(500);s=await st();ok(`${T} door closed with padlock`,s.mode==='door'&&s.door==='closed');await shot('door');
@@ -239,6 +240,7 @@ if(!ONLY||ONLY==='1280x800'){const T='1280x800';const pg=await b.newPage();const
   await pg.reload({waitUntil:'load'});await wait(700);await pg.click('#bOpen');await wait(1600);
   const r=await pg.evaluate(()=>{const a=document.getElementById('app').getBoundingClientRect(),c=document.getElementById('cv').getBoundingClientRect();const bs=[...document.querySelectorAll('#ladderUI button')].filter(b=>b.offsetParent).map(b=>b.getBoundingClientRect());return {a:[a.left,a.top,a.width,a.height],c:[c.width,c.height],inside:bs.every(b=>b.left>=a.left-1&&b.right<=a.right+1&&b.top>=a.top-1&&b.bottom<=a.bottom+1)};});
   ok(`${T} desktop: phone-shaped frame centered, nothing cropped`,r.a[2]<520&&r.a[3]<=800&&Math.abs(r.a[0]+r.a[2]/2-640)<2&&r.c[0]===r.a[2]&&r.c[1]===r.a[3]&&r.inside,JSON.stringify(r));
+  { const bad=await pg.evaluate(()=>SR.mapCheck());ok(`${T} desktop: no landmark overlaps on the map`,bad.length===0,bad.slice(0,6).join(' | ')); }
   const v=await pg.evaluate(()=>SR.village());ok(`${T} desktop: map centered on the current stop`,v.stops[9].y>0&&v.stops[9].y<800,'y '+Math.round(v.stops[9].y));
   if(SHOTS)await pg.screenshot({path:path.join(root,'shots','sunnyvale','1280x800-desktop-map.png')});
   await pg.evaluate(()=>document.getElementById('bLadNext').click());await wait(700);const L=await pg.evaluate(()=>SR.lockXY());await pg.mouse.click(L.x,L.y);await wait(2000);

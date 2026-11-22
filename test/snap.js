@@ -13,6 +13,7 @@ const shot=async n=>{await pg.screenshot({path:path.join(out,sz+'-'+n+'.png')});
 await setSave({});const sc=(process.env.SC||'title,map,board,safe,flea,truck,locked').split(',');
 if(sc.includes('title')){await setSave({});await wait(500);await shot('title');}
 if(sc.includes('map')){await setSave({unit:6,bank:850});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('map');}
+if(sc.includes('signarea')){for(const u of [1,2,3]){await setSave({unit:u,bank:300,truckSeen:u>=3});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('yard-sign-u'+(u+1));}}
 if(sc.includes('mapstart')){await setSave({unit:0,bank:0});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('map-start');}
 if(sc.includes('village')){await setSave({unit:9,bank:1450,truckSeen:true,built:['sign','office'],tasks:['wash']});await pg.evaluate(()=>document.getElementById('bOpen').click());await wait(1800);await shot('map-mid');
   await pg.evaluate(()=>document.getElementById('bBuild').click());await wait(500);await shot('map-building');await wait(1600);await shot('map-built');}

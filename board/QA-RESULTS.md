@@ -80,3 +80,5 @@ Re-run 9:35–9:58 PM PT Nov 22. Main-game files (`js/`, `index.html`, `assets/`
 - `test/group-version-nov22.js`: 85/86 on the first run. The one failure was a 390x844 timing check ("hook ends on its own"). A re-run at 390x844 passed **36/36**, so it was a timing flake while the machine was busy, not a regression.
 
 Live-game suite re-run 10:54 PM PT, after the no-refill change: 390x844 141/141, 375x667 141/141, 1280x800 51/51. The test count varies with random bonus safes. Game files are identical to d91e97e.
+
+Round 3 follow-up: a saved paid locker that reloads with 0 moves now opens the out-of-moves choice instead of hanging. `board/qa-round3.cjs` checks: exact resume, an exhausted locker resumes as a failure, retry is free and resets moves, keep gives finds + half salvage with no roll. All pass.

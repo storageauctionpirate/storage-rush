@@ -185,7 +185,7 @@ async function cleanout(o,resume){busy=true;hidePanel();document.body.classList.
   $('cleanTitle').textContent=o.title;$('cleanout').classList.remove('hidden');layoutGrid();updateClean();
   if(resume)toast('Welcome back! Your locker was saved: '+E.moves+' moves left.',2200);
   else if(def.peek){const f=[];E.each(t=>{if(t.k==='tarp'&&t.find)f.push(itemOf(t.find));});if(f.length)toast(`🏪 Flea regulars tip you off: ${f.map(x=>x.emoji+' '+x.name).join(', ')} under the tarps!`,2600);}
-  busy=false;return new Promise(r=>{CO.done=r;});}
+  busy=false;return new Promise(r=>{CO.done=r;if(resume&&E.status()!=='play')setTimeout(()=>checkEnd(),0);});}
 function layoutGrid(){const r=gcv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);gW=r.width;gcv.width=Math.round(r.width*d);gcv.height=Math.round(r.width*d);gx.setTransform(d,0,0,d,0,0);cell=gW/7;}
 addEventListener('resize',()=>{if(!$('cleanout').classList.contains('hidden'))layoutGrid();});
 function updateClean(){const mv=$('moves');mv.textContent=E.moves+(E.moves===1?' MOVE':' MOVES');mv.classList.toggle('low',E.moves<=5&&E.status()==='play');const p=1-E.left()/E.totalObjs;$('unloadBar').style.width=Math.round(p*100)+'%';S3.setLockerProgress(p);

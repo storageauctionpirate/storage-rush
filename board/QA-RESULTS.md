@@ -82,3 +82,5 @@ Re-run 9:35–9:58 PM PT Nov 22. Main-game files (`js/`, `index.html`, `assets/`
 Live-game suite re-run 10:54 PM PT, after the no-refill change: 390x844 141/141, 375x667 141/141, 1280x800 51/51. The test count varies with random bonus safes. Game files are identical to d91e97e.
 
 Round 3 follow-up: a saved paid locker that reloads with 0 moves now opens the out-of-moves choice instead of hanging. `board/qa-round3.cjs` checks: exact resume, an exhausted locker resumes as a failure, retry is free and resets moves, keep gives finds + half salvage with no roll. All pass.
+
+Live-game suite after round 3 (1:21–1:30 AM PT Nov 23): 390x844 141/141, 375x667 143/143, 1280x800 51/51. Game files are identical to d91e97e.

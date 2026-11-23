@@ -124,7 +124,7 @@ function setFleaStage(level,instant){const old=flea.children[0],ng=fleaStage(lev
   ng.scale.setScalar(.01);const wp=flea.getWorldPosition(new THREE.Vector3());dust(wp,26,1.8);
   return tween(380,t=>{if(old)old.scale.setScalar(1-ease(t));}).then(()=>{if(old)drop(flea,old);coinBurst(wp.clone().add(new THREE.Vector3(0,2.5,0)),24);
     return tween(720,t=>{ng.scale.setScalar(Math.max(.01,back(t)));});});}
-export function upgradeFlea(level){focus(flea.getWorldPosition(new THREE.Vector3()),{dist:9.5,h:6.5});return setFleaStage(level,false);}
+export function upgradeFlea(level){const p=flea.getWorldPosition(new THREE.Vector3());p.y+=1.4;const port=innerWidth<innerHeight;focus(p,{dist:port?15:11,h:port?8:6.5});return setFleaStage(level,false);}
 export function fleaPos(){return flea.getWorldPosition(new THREE.Vector3());}
 
 function buildPirate(){const g=new THREE.Group(),coat=mat(0x1d5f60,{roughness:.6}),coatTrim=mat(COL.brass,{metalness:.6,roughness:.3}),skin=mat(COL.skin),boot=mat(0x2a1e18),hat=mat(0x1e1a1b,{roughness:.55});

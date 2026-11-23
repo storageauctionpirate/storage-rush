@@ -128,7 +128,7 @@ async function fleaMarket(){if(!G.truck.length){bubble('Flea market: nothing to 
 handlers.fleaSell=d=>closeModal(d.i);
 
 // ---------- upgrades: the flea building transforms ----------
-async function upgrade(){S3.focus(S3.fleaPos(),{dist:9.5,h:6});label('BUSINESS UPGRADE','Build your empire.','Upgrades change what you can do.');
+async function upgrade(){const fp=S3.fleaPos();fp.y+=1.4;const port=innerWidth<innerHeight;S3.focus(fp,{dist:port?15:11,h:port?8:6.5});label('BUSINESS UPGRADE','Build your empire.','Upgrades change what you can do.');
   const f=cost.flea(),t=cost.truck();const names=['Yard sale table','Market stall','Pirate Flea shop'];
   const a=await modal(`<div class="eyebrow">BUSINESS UPGRADE · YOU HAVE ${fmt(G.cash)}</div><h2>Grow the business</h2>
     <div class="loot"><span class="emoji">🏪</span><span class="desc">${f?names[G.flea+1]:'Pirate Flea shop'}<small>${f?'+1 flea sale per visit, +10% flea prices':'fully built'}</small></span>${f?`<button class="secondary" data-act="upPick" data-k="flea" ${G.cash>=f?'':'disabled'}>${fmt(f)}</button>`:'<b>✓</b>'}</div>

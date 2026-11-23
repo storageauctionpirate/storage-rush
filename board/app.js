@@ -141,12 +141,13 @@ async function upgrade(){const fp=S3.fleaPos();fp.y+=1.4;const port=innerWidth<i
 handlers.upPick=d=>closeModal(d.k);
 
 // ---------- 12-case match bonus (earned by landing) ----------
+let caseDeck=null;
 async function cases(){label('BONUS GAME','Case Match','Flip two cases. A pair wins what is inside. 6 tries.');
   const cXS=Math.max(1,EC.nice(2*raw())),cS=EC.nice(4*raw()),cM=EC.nice(10*raw()),item=IT.pick('u',G.L,rnd,{});
   // six DIFFERENT prizes; each pair shares the exact same icon and label, so what looks the same always matches
   const prizes=[{k:'cash',v:cXS,e:'🪙',l:fmt(cXS)},{k:'cash',v:cS,e:'💵',l:fmt(cS)},{k:'cash',v:cM,e:'💰',l:fmt(cM)},{k:'item',id:item,e:itemOf(item).emoji,l:itemOf(item).name.split(' ')[0]},{k:'roll',e:'🎲',l:'+1 roll'},{k:'moves',e:'⭐',l:'+1 move'}];
   let deck=[];prizes.forEach((p,i)=>{deck.push({...p,pair:i},{...p,pair:i});});for(let i=deck.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
-  let tries=6,open=[],won=[],busyC=false,total=0;
+  caseDeck=deck;  let tries=6,open=[],won=[],busyC=false,total=0;
   const draw=()=>{$('modalBody').innerHTML=`<div class="eyebrow">BONUS · CASE MATCH · ${tries} TRIES LEFT</div><h2>Find the pairs</h2><div class="cases">${deck.map((c,i)=>`<button class="case ${c.open||c.won?'open':''} ${c.won?'won':''}" data-act="case" data-i="${i}" ${c.won||c.open?'disabled':''} aria-label="case ${i+1}">${c.open||c.won?c.e+'<small class="case-l">'+c.l+'</small>':'🧳'}</button>`).join('')}</div><p class="note">Won so far: ${won.length?won.join(', '):'nothing yet'}. Earned only, never sold.</p>${tries<=0?'<button class="primary" data-act="closeModal">COLLECT</button>':''}`;};
   handlers.case=async d=>{if(busyC||tries<=0)return;const c=deck[+d.i];if(c.open||c.won)return;c.open=true;open.push(c);sfx('flip');draw();
     if(open.length<2)return;busyC=true;tries--;await wait(650);const [a,b]=open;open=[];
@@ -271,4 +272,4 @@ else if(G.started){S3.followPirate();S3.snapCam();boardPanel();}else{S3.overview
 window.BP={state:()=>({G:JSON.parse(JSON.stringify(G)),busy,clean:!!E,moves:E&&E.moves,left:E&&E.left(),tier:E&&CO&&CO.def.tierName,shoves:E&&E.shoves,status:E&&E.status(),modal:!$('modal').classList.contains('hidden'),panel:$('panel').classList.contains('hidden')?null:$('panel').innerText.slice(0,120)}),
   perf:()=>{const f=[],cpu=[],P=S3.perf,n=Math.min(P.n,600);for(let i=n;i>=1;i--){const k=(P.fi-i+600)%600;f.push(P.frames[k]);cpu.push(P.cpu[k]);}return {readyMs:readyAt,moduleStartMs:T0,total:P.n,frames:f,cpu,lat:LAT.slice(),info:S3.info(),heap:performance.memory?performance.memory.usedJSHeapSize:null};},
   bestMove:()=>E&&E.bestMove(),cellXY:(r,c)=>{const b=gcv.getBoundingClientRect();return {x:b.left+(c+.5)*cell,y:b.top+(r+.5)*cell};},
-  debug:DEBUG?{set:(o)=>{Object.assign(G,o);hud();},win:()=>{if(E){haulRest('debug haul').then(checkEnd);}},land:()=>land(),panel:boardPanel}:null};
+  debug:DEBUG?{set:(o)=>{Object.assign(G,o);hud();},win:()=>{if(E){haulRest('debug haul').then(checkEnd);}},land:()=>land(),panel:boardPanel,deck:()=>caseDeck&&caseDeck.map(c=>({e:c.e,l:c.l,won:!!c.won}))}:null};

@@ -21,18 +21,25 @@ for(const S of SIZES){const b=await puppeteer.launch({executablePath:'/usr/bin/g
  await sleep(1500);await snap('intro-overview');
  const f0=(await p.evaluate(()=>BP.perf().total));await sleep(5000);const pf=await p.evaluate(()=>BP.perf());R.idleBoard=fpsStats(win(pf,f0));R.quality=pf.info.quality;R.renderer=pf.info;
  await click('[data-act=start]');await p.waitForFunction(()=>BP.state().clean&&!BP.state().busy,{timeout:30000});await sleep(600);await snap('cleanout-start');
+ // fix 2: a paid locker survives a reload
+ {const before=await st();const A=await p.evaluate(()=>{const m=BP.bestMove();return m;});const P1=await p.evaluate((r,c)=>BP.cellXY(r,c),...A.a),P2=await p.evaluate((r,c)=>BP.cellXY(r,c),...A.b);
+  if(S.m){await p.touchscreen.tap(P1.x,P1.y);await sleep(60);await p.touchscreen.tap(P2.x,P2.y);}else{await p.mouse.click(P1.x,P1.y);await sleep(60);await p.mouse.click(P2.x,P2.y);}await sleep(400);await idle();
+  const mid=await st();await p.goto(BASE+'?debug=1',{waitUntil:'load'});await p.waitForFunction(()=>window.BP&&BP.state().clean&&!BP.state().busy,{timeout:60000});await sleep(800);const after=await st();
+  R.reloadResume={before:{moves:before.moves,left:before.left},beforeReload:{moves:mid.moves,left:mid.left,cash:mid.G.cash},afterReload:{moves:after.moves,left:after.left,cash:after.G.cash},ok:after.clean&&after.moves===mid.moves&&after.left===mid.left&&after.G.cash===mid.G.cash};}
+ // fix 3: make the truck full so the find must be sold at the curb
+ await p.evaluate(()=>BP.debug.set({truck:['tinrobot','tinrobot','tinrobot','tinrobot','tinrobot','tinrobot'].map((x,i)=>i%2?ITEMS.pick('c',1,Math.random,{}):x)}));
  // play real moves by touch / mouse, measuring tap->next frame latency
  const fm=(await p.evaluate(()=>BP.perf().total));
- let nearShot=false,celeb=false;R.cleanout={startLeft:(await st()).left,startMoves:(await st()).moves};
+ let nearShot=false,celeb=false,lowShot=false;R.cleanout={startLeft:(await st()).left,startMoves:(await st()).moves};
  for(let i=0;i<40;i++){const s0=await st();if(!s0.clean||s0.status!=='play')break;const m=await p.evaluate(()=>BP.bestMove());if(!m){await sleep(400);continue;}const A=await p.evaluate((r,c)=>BP.cellXY(r,c),...m.a),B=await p.evaluate((r,c)=>BP.cellXY(r,c),...m.b);
   if(S.m){await p.touchscreen.tap(A.x,A.y);await sleep(60);await p.touchscreen.tap(B.x,B.y);}else{await p.mouse.click(A.x,A.y);await sleep(60);await p.mouse.click(B.x,B.y);}
   await sleep(300);if(i===2)await snap('cleanout-cascade');
   const t=Date.now();while(Date.now()-t<20000){const q=await st();if(q.status==='win'&&!celeb){celeb=true;await sleep(700);await snap('locker-empty-celebration');}if(!q.busy||q.modal)break;await sleep(120);}
-  const s1=await st();if(!nearShot&&s1.clean&&s1.left<=12&&s1.left>0&&s1.status==='play'){nearShot=true;await snap('cleanout-near-empty');}if(s1.modal||!s1.clean)break;}
+  const s1=await st();if(!lowShot&&s1.clean&&s1.moves<=5&&s1.status==='play'){lowShot=true;await sleep(150);await snap('low-moves-warning');}if(!nearShot&&s1.clean&&s1.left<=12&&s1.left>0&&s1.status==='play'){nearShot=true;await snap('cleanout-near-empty');}if(s1.modal||!s1.clean)break;}
  const se=await st();R.cleanout.endMovesLeft=se.moves;R.cleanout.shoves=se.shoves;R.cleanout.wonByPlay=celeb||se.modal;
  const pm=await p.evaluate(()=>BP.perf());R.cleanoutPlay=fpsStats(win(pm,fm));const L=pm.lat.slice().sort((a,b)=>a-b);R.tapLatencyMs={n:L.length,median:Math.round(L[Math.floor(L.length/2)]),p95:Math.round(L[Math.floor(L.length*.95)]),max:Math.round(L[L.length-1])};
- let s=await st();if(s.clean&&s.status==='play'&&!s.modal){await p.evaluate(()=>BP.debug.win());}
- await p.waitForFunction(()=>BP.state().modal,{timeout:20000});await sleep(500);await snap('locker-unloaded-summary');await click('[data-act=closeModal]');await idle();await sleep(1200);
+ R.cleanout.tier=se.tier;let s=await st();if(s.modal&&s.status==='out'){R.cleanout.result='out of moves';await snap('out-of-moves');await click('[data-act=retry][data-a=keep]');await sleep(900);}else if(s.clean&&s.status==='play'&&!s.modal){await p.evaluate(()=>BP.debug.win());}else R.cleanout.result='cleared';
+ await p.waitForFunction(()=>BP.state().modal,{timeout:20000});await sleep(500);await snap('locker-summary-curb-sale');R.summaryText=await p.evaluate(()=>document.querySelector('#modalBody').innerText.replace(/\s+/g,' ').slice(0,400));await click('[data-act=closeModal]');await idle();await sleep(1200);
  // roll and travel
  s=await st();R.rollsAfterFirstCleanout=s.G.rolls;await click('[data-act=roll]');await sleep(S.m?1800:1200);await snap('dice-and-hop');await sleep(4000);await idle(30000);s=await st();R.afterRoll={pos:s.G.pos,modal:s.modal};
  // close whatever the landing opened, generically
@@ -50,7 +57,12 @@ for(const S of SIZES){const b=await puppeteer.launch({executablePath:'/usr/bin/g
  await p.evaluate(()=>BP.debug.set({cash:150}));await goto(7);await snap('upgrade-menu');await click('[data-act=upPick][data-k=flea]');await sleep(900);await snap('upgrade-transform');await sleep(1300);await snap('flea-stage1');await idle();
  await goto(7);await click('[data-act=upPick][data-k=flea]');await sleep(2300);await snap('flea-stage2-pirate-flea');await idle();R.flea=(await st()).G.flea;
  // bonus: 12-case match
- await goto(4);await sleep(300);for(let i=0;i<12&&(await st()).modal;i++){const n=await p.$$('#modalBody .case:not([disabled])');if(!n.length)break;await n[0].click();await sleep(200);const n2=await p.$$('#modalBody .case:not([disabled])');if(n2.length)await n2[Math.min(n2.length-1,i%3)].click();await sleep(900);if(i===2)await snap('case-match');if(await p.$('#modalBody [data-act=closeModal]'))break;}
+ await goto(4);await sleep(400);
+ {const deck=await p.evaluate(()=>BP.debug.deck());const keys={};deck.forEach((c,i)=>{const k=c.e+'|'+c.l;(keys[k]=keys[k]||[]).push(i);});R.caseVisualsOk=Object.values(keys).every(v=>v.length===2)&&Object.keys(keys).length===6;
+  // flip one true pair, then a mismatched pair
+  const pair=Object.values(keys)[0];let n=await p.$$('#modalBody .case');await n[pair[0]].click();await sleep(250);n=await p.$$('#modalBody .case');await n[pair[1]].click();await sleep(1100);
+  R.casePairWon=(await p.evaluate(()=>BP.debug.deck())).filter(c=>c.won).length===2;await snap('case-match');
+  for(let t=0;t<5;t++){const d=await p.evaluate(()=>BP.debug.deck());const free=d.map((c,i)=>c.won?-1:i).filter(i=>i>=0);if(free.length<2)break;n=await p.$$('#modalBody .case');await n[free[0]].click();await sleep(250);n=await p.$$('#modalBody .case');await n[free[free.length-1]].click();await sleep(1100);if(await p.$('#modalBody [data-act=closeModal]'))break;}}
  await snap('case-match-end');await click('[data-act=closeModal]');await idle();
  // rival: Big Earl
  await p.evaluate(()=>BP.debug.set({cash:200}));await goto(8);await sleep(400);await snap('big-earl');for(let k=0;k<12;k++){if(await click('[data-act=earl][data-a=raise]')){await sleep(400);continue;}break;}

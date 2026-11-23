@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#102c32"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; media-src 'self'; object-src 'none'; base-uri 'self'"><title>Storage Auction Rush • Board Adventure</title><link rel="stylesheet" href="board.css"></head>
+<body><canvas id="world" aria-label="3D Sunnyvale auction board"></canvas><div id="vignette"></div>
+<header><a href="../" aria-label="Original game">‹ ORIGINAL</a><span class="proto">ISOLATED PLAYTEST</span><button id="sound" class="icon" aria-label="Toggle sound">♪</button></header>
+<div id="brand"><small>STORAGE AUCTION</small><strong>RUSH<span> BOARD ADVENTURE</span></strong></div>
+<div id="stats"><span><small>CASH</small><b id="cash">$10</b></span><span><small>EARNED ROLLS</small><b id="rolls">0</b></span><button id="truck"><small>TRUCK LOAD</small><b id="capacity">0 / 6</b></button></div>
+<div id="scene-label"><small id="chapter">SUNNYVALE • FIRST FORTUNE</small><h1 id="place">From dust to dollars.</h1><p id="subtitle">Your next big find is behind that door.</p></div>
+<div id="bubble" aria-live="polite"></div><div id="dice" class="hidden"></div>
+<section id="panel" aria-live="polite"></section>
+<section id="cleanout" class="hidden"><div class="clean-head"><span id="cleanTitle">THE $1 LOCKER</span><b id="moves">28 MOVES</b></div><div id="unload"><i id="unloadBar"></i></div><p id="gridTip">Tap two neighbors. Match 3. Rip the tarps.</p><canvas id="grid" aria-label="Match-3 locker cleanout. Tap two neighboring merchandise tiles to match three." role="application"></canvas><div class="clean-foot"><span id="rush">UNLOADING…</span><button id="hint">Show a move</button></div></section>
+<div id="modal" class="hidden"><div class="sheet" role="dialog" aria-modal="true"><button id="close" class="icon">×</button><div id="modalBody"></div></div></div>
+<div id="toast" aria-live="polite"></div><footer>ALL DICE EARNED · NO PURCHASES · SEPARATE SAVE</footer>
+<script src="../js/engine.js"></script><script src="../js/economy.js"></script><script src="../js/items.js"></script><script src="../js/levels.js"></script><script src="../js/rhythm.js"></script><script type="module" src="app.js"></script></body></html>

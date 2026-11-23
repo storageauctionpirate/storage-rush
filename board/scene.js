@@ -12,7 +12,7 @@ const anims=[];               // {t0,dur,fn,res}
 const parts=[];               // particles
 let pirate,earl,truck,dice,flea,fleaLevel=0,locker,spaces=[],curve,ring;
 const camState={pos:new THREE.Vector3(0,30,26),look:new THREE.Vector3(0,0,0),tPos:new THREE.Vector3(0,30,26),tLook:new THREE.Vector3(),mode:'overview',k:2.2};
-export const perf={frames:new Float32Array(600),fi:0,n:0,last:0};
+export const perf={frames:new Float32Array(600),cpu:new Float32Array(600),fi:0,n:0,last:0};
 let onFrame=null;
 
 function mat(c,o={}){return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.78,metalness:0},o));}
@@ -27,7 +27,7 @@ export function init(cv,opts={}){
   canvas=cv;const dpr=Math.min(window.devicePixelRatio||1,opts.maxDpr||2);
   renderer=new THREE.WebGLRenderer({canvas,antialias:dpr<2,powerPreference:'high-performance'});
   renderer.setPixelRatio(dpr);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   scene=new THREE.Scene();
   scene.background=canvasTex(8,256,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#2c6f78');g.addColorStop(.45,'#7fb3a6');g.addColorStop(.7,'#f3c98d');g.addColorStop(1,'#e59a62');x.fillStyle=g;x.fillRect(0,0,w,h);});
   scene.fog=new THREE.Fog(0xd8b98d,42,95);
@@ -237,5 +237,5 @@ function loop(){const now=performance.now(),dtMs=now-perf.last;perf.last=now;per
   spaces.forEach((s,i)=>{s.glow.material.opacity=s.hl?.55+.35*Math.sin(time*6):Math.max(0,s.glow.material.opacity-dt*2);});
   if(!anims.length||camState.mode!=='follow'){const b=pirate.userData.body;if(Math.abs(b.scale.y-1)<.01)b.position.y=Math.sin(time*3)*.03;}
   earl.rotation.z=Math.sin(time*1.7)*.03;lockerBeam.material.opacity=.06+.03*Math.sin(time*2);
-  updateCam(dt);if(onFrame)onFrame(dt);renderer.render(scene,camera);}
+  updateCam(dt);if(onFrame)onFrame(dt);if(renderer.shadowMap.enabled&&(perf.n%3===0||anims.length))renderer.shadowMap.needsUpdate=true;renderer.render(scene,camera);perf.cpu[(perf.fi+599)%600]=performance.now()-now;}
 export function info(){return {calls:renderer.info.render.calls,tris:renderer.info.render.triangles,geos:renderer.info.memory.geometries,tex:renderer.info.memory.textures,quality};}

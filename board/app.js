@@ -229,13 +229,12 @@ handlers.start=async()=>{if(busy)return;G.started=true;save();S3.followPirate();
 // ---------- perf / QA hooks ----------
 const LAT=[];document.addEventListener('pointerdown',ev=>{const t=ev.timeStamp;requestAnimationFrame(()=>{LAT.push(performance.now()-t);if(LAT.length>200)LAT.shift();});},{capture:true});
 let readyAt=null,qualityChecked=false;
-S3.init($('world'),{spaces:BOARD,maxDpr:QS.get('dpr')?+QS.get('dpr'):2});
+S3.init($('world'),{spaces:BOARD,maxDpr:QS.get('dpr')?+QS.get('dpr'):2});if(QS.get('q')==='low')S3.setQuality('low');
 S3.setFrameHook(()=>{drawGrid();if(!readyAt){readyAt=performance.now();}
-  if(!qualityChecked&&S3.perf.n>120){qualityChecked=true;let s=0;for(let i=0;i<90;i++)s+=S3.perf.frames[(S3.perf.fi-1-i+600)%600];if(s/90>30&&QS.get('q')!=='high'){S3.setQuality('low');}}});
+  if(!qualityChecked&&readyAt&&performance.now()-readyAt>2000){qualityChecked=true;const n=Math.min(S3.perf.n-1,90);let t=0;for(let i=1;i<=n;i++)t+=S3.perf.frames[(S3.perf.fi-i+600)%600];if(n>0&&t/n>25&&QS.get('q')!=='high')S3.setQuality('low');}});
 S3.placePirate(G.pos);hud();
 if(G.started){S3.followPirate();S3.snapCam();boardPanel();}else{S3.overview();S3.snapCam();intro();}
 window.BP={state:()=>({G:JSON.parse(JSON.stringify(G)),busy,clean:!!E,moves:E&&E.moves,status:E&&E.status(),modal:!$('modal').classList.contains('hidden'),panel:$('panel').classList.contains('hidden')?null:$('panel').innerText.slice(0,120)}),
-  perf:()=>{const f=[];for(let i=0;i<Math.min(S3.perf.n,600);i++)f.push(S3.perf.frames[i]);return {readyMs:readyAt?readyAt-T0:null,navStart:performance.timeOrigin,frames:f,lat:LAT.slice(),info:S3.info(),heap:performance.memory?performance.memory.usedJSHeapSize:null};},
+  perf:()=>{const f=[],cpu=[],P=S3.perf,n=Math.min(P.n,600);for(let i=n;i>=1;i--){const k=(P.fi-i+600)%600;f.push(P.frames[k]);cpu.push(P.cpu[k]);}return {readyMs:readyAt,moduleStartMs:T0,total:P.n,frames:f,cpu,lat:LAT.slice(),info:S3.info(),heap:performance.memory?performance.memory.usedJSHeapSize:null};},
   bestMove:()=>E&&E.bestMove(),cellXY:(r,c)=>{const b=gcv.getBoundingClientRect();return {x:b.left+(c+.5)*cell,y:b.top+(r+.5)*cell};},
-  debug:DEBUG?{set:(o)=>{Object.assign(G,o);hud();},roll:(v)=>{rnd.force=v;},win:()=>{if(E){E.collected.length=E.def.need;E.each((t,r,c)=>{if(t.k==='tarp')E.g[r][c]=null;});checkEnd();}},land:()=>land(),panel:boardPanel}:null};
-if(DEBUG){const orig=rnd;}
+  debug:DEBUG?{set:(o)=>{Object.assign(G,o);hud();},win:()=>{if(E){while(E.collected.length<E.def.need)E.collected.push('x');E.each((t,r,c)=>{if(t.k==='tarp')E.g[r][c]=null;});checkEnd();}},land:()=>land(),panel:boardPanel}:null};

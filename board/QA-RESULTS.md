@@ -1,5 +1,44 @@
 # Board prototype — QA results (Nov 22, 2026, PT)
 
+## Round 3, ~1:30 AM PT Nov 23: playtest fixes (3 reviewers, each 6/10)
+1. **Moves now come from one place:** `LOCKER_TIERS` in `board/clearout.js`, which throws an error if a locker has no move count. The old LEVELS counts (28 and so on) no longer reach the board. Tiers:
+   - **Starter:** 5 types, 14 moves. First $1 locker and the Curb Pile.
+   - **Normal:** 6 types, 14 moves. Locker levels 2–4.
+   - **Tough:** 5 types, 13 moves. Level 5 and up.
+   - Big lockers and Big Earl's lockers count one tier higher.
+2. **You can now fail.** Out of moves with pieces left means the locker is not cleared. Choose "Keep what you got" (your finds + half salvage, **no roll**) or "Retry free" (fresh layout; the bid is never charged again). A warning shows at 5 and 3 moves left (red pulsing badge + tip).
+3. **Simulated players** (`node test/board-sim.js 500`, 500 grids per tier). "Average" = best move half the time, a random legal move the other half.
+
+| Tier | Random player clear | Average clear | Skilled clear | Average: moves left when cleared | Average: share finishing with 0–3 left |
+|---|---|---|---|---|---|
+| Starter (5 types / 14) | 88% | 90% | 96% | 0:42 1:148 2:141 3:80 4:27 5:10 6:2 | 91% |
+| Normal (6 / 14) | 76% | 84% | 89% | 0:79 1:194 2:105 3:27 4:11 5:2 | 97% |
+| Tough (5 / 13) | 58% | 73% | 84% | 0:103 1:134 2:85 3:32 4:11 5:1 | 97% |
+
+A failed attempt leaves about 3–5 pieces. Starter is kept a bit easier on purpose, since it is the first locker.
+
+4. **Paid locker survives a reload:** the grid, moves, finds and salvage are saved in `storageRush.board.v1` after every move. QA made a move, reloaded and came back to the same locker (13 moves, 45 left, cash unchanged) at all 3 sizes.
+5. **Full truck:** a find is reported as "truck full: sold at curb price +$X", both in the on-grid message and in the summary. QA filled the truck to 6/6: "Tin Robot … truck full: sold at curb price +$5".
+6. **Case Match:** six different prizes (🪙 $, 💵 $, 💰 $, item, 🎲 +1 roll, ⭐ +1 move), each showing its icon plus a label. Matching uses that same icon and label, so cases that look alike always match. QA confirmed exactly 2 of each and that a real pair matches.
+7. **Shove and haul are explained** the first time each happens (one line in the grid tip + a message).
+   - **Locker perks, earned only:**
+     - Day Off: +2 moves on the next locker.
+     - Truck upgrade: +1 move in every locker, per level.
+     - Case Match ⭐: +1 move on the next locker.
+     - Rested-crew moves cap at +3.
+     - Flea stall level 1 and up: regulars tell you which finds are under the tarps, and the tarps show a faint icon.
+   - Still exactly 1 roll per fully cleared locker. The old fast-clear bonus roll was removed.
+   - QA: after Day Off, Big Earl's Tough locker showed "15 moves (+2 rested crew)", or 16 with the ⭐.
+
+| Size | First 3D frame ms | Load ms | Board FPS avg/1% | Match-3 FPS avg/1% | Frame JS median/p99 ms | Tap→frame median/p95 ms | Heap MB | First locker |
+|---|---|---|---|---|---|---|---|---|
+| 390x844 (4× CPU) | 717 | 1619 | 23.6 / 7.2 | 21.1 / 5.7 | 2.7 / 23.6 | 123 / 210 | 16.7 | cleared by taps, 2 moves to spare |
+| 375x667 (4× CPU) | 648 | 1485 | 28.4 / 9.3 | 28.4 / 9.2 | 2.3 / 14.7 | 79 / 153 | 17.5 | cleared by taps, 2 to spare |
+| 1280x800 | 714 | 1727 | 6.6 / 3.6 | 6.6 / 2.8 | 1.5 / 16.0 | 123 / 265 | 17.4 | cleared by taps, 2 to spare |
+
+0 errors and 0 failed requests; only `storageRush.board.v1` is used. Same no-GPU caveat as below: this box draws 3D in software.
+
+
 ## Re-run 10:40 PM PT after Mike's 10:25 PM change: no-refill clear-out
 Matched items now leave for good; nothing refills. The grid starts as sets of 3 (48 objects: 45 items + tarps) with 18 moves. If no move exists, a free shove packs the leftovers together. Stragglers that can't make a set get hauled out automatically. An empty grid is a cleared locker and earns the roll, with a "LOCKER EMPTY!" celebration. The 3D locker empties in step: progress = 1 − objects left / starting objects. Simulation: 300/300 grids cleared by a random-move player, in 12–14 moves.
 In QA the first locker was cleared by real taps at all 3 sizes, with 7 moves to spare and 4 free shoves.

@@ -64,9 +64,11 @@ for(const S of SIZES){const b=await puppeteer.launch({executablePath:'/usr/bin/g
   R.casePairWon=(await p.evaluate(()=>BP.debug.deck())).filter(c=>c.won).length===2;await snap('case-match');
   for(let t=0;t<5;t++){const d=await p.evaluate(()=>BP.debug.deck());const free=d.map((c,i)=>c.won?-1:i).filter(i=>i>=0);if(free.length<2)break;n=await p.$$('#modalBody .case');await n[free[0]].click();await sleep(250);n=await p.$$('#modalBody .case');await n[free[free.length-1]].click();await sleep(1100);if(await p.$('#modalBody [data-act=closeModal]'))break;}}
  await snap('case-match-end');await click('[data-act=closeModal]');await idle();
+ // perk: Day Off gives +2 moves to the next locker
+ await goto(2);await sleep(1800);await idle();R.perkAfterDayOff=(await st()).G.perk;
  // rival: Big Earl
  await p.evaluate(()=>BP.debug.set({cash:200}));await goto(8);await sleep(400);await snap('big-earl');for(let k=0;k<12;k++){if(await click('[data-act=earl][data-a=raise]')){await sleep(400);continue;}break;}
- await sleep(400);R.earl=await p.evaluate(()=>document.querySelector('#modalBody h2')?.innerText);await click('[data-act=closeModal]');await sleep(2500);s=await st();if(s.clean){await snap('earl-locker');await p.evaluate(()=>BP.debug.win());await p.waitForFunction(()=>BP.state().modal,{timeout:20000});await click('[data-act=closeModal]');}await idle();
+ await sleep(400);R.earl=await p.evaluate(()=>document.querySelector('#modalBody h2')?.innerText);await click('[data-act=closeModal]');await sleep(2500);s=await st();if(s.clean){await snap('earl-locker');{const e=await st();R.earlLocker={tier:e.tier,moves:e.moves,label:await p.evaluate(()=>document.getElementById('subtitle').innerText)};}await p.evaluate(()=>BP.debug.win());await p.waitForFunction(()=>BP.state().modal,{timeout:20000});await click('[data-act=closeModal]');}await idle();
  // curb pile: zero rolls
  await p.evaluate(()=>{BP.debug.set({rolls:0,pos:2});BP.debug.panel();});await sleep(600);await snap('curb-pile-never-stuck');R.curb=await p.evaluate(()=>!!document.querySelector('[data-act=curb]'));
  const fin=await p.evaluate(()=>BP.perf());R.heapMB=fin.heap?+(fin.heap/1048576).toFixed(1):null;R.rendererEnd=fin.info;R.session=fpsStats({f:fin.frames,c:fin.cpu});

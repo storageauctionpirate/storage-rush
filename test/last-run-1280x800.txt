@@ -31,7 +31,7 @@ PASS 1280x800 full meter starts RUSH 2X
 PASS 1280x800 Rush starts with a screen-wide 2X RUSH! banner  — 2X RUSH!
 PASS 1280x800 Rush pays extra cash on cleared items  — +$0.1271283790160479
 PASS 1280x800 Rush bar drains one move at a time  — RUSH 2X · 4 MOVES
-PASS 1280x800 Rush ends clearly after 6 moves (RUSH OVER + what it paid)  — RUSH OVER +$0.44 extra from your 2X Rush
+PASS 1280x800 Rush ends clearly after 6 moves (RUSH OVER + what it paid)  — RUSH OVER +$0.47 extra from your 2X Rush
 PASS 1280x800 Mystery Box earned in play waits for the room to clear
 PASS 1280x800 room clear shows one clear card: cleared, saved, bonus earned, what is next  — SAVEDRoom 1 cleared!BONUS GAME EARNED!Mystery BoxNext: Room 2 of 2 · find 2 in 27 movesTap to keep going
 PASS 1280x800 Mystery Box opens between rooms
@@ -41,7 +41,7 @@ PASS 1280x800 reload resumes at room 2, cleared room not replayed  — {"mode":"
 PASS 1280x800 a 2nd Rush is 3X and earns the Safe Cracker  — {"best":3,"safe":"rare"}
 PASS 1280x800 reload after the clear goes straight to the saved cleared card
 PASS 1280x800 saved safe keeps its rarity after reload (no reroll)  — rare
-PASS 1280x800 flip banks once, clears the saved run, shows the next build  — {"bank":[914,942],"haul":" Yo-YoFlip total$0Next build: Office · you can build it now!"}
+PASS 1280x800 flip banks once, clears the saved run, shows the next build  — {"bank":[914,942],"haul":"s ($0)Flip total$0Next build: Office · you can build it now!"}
 PASS 1280x800 reload after the flip never pays twice
 PASS 1280x800 rhythm: no page errors
 PASS 1280x800 desktop: phone-shaped frame centered, nothing cropped  — {"a":[461.671875,14,356.65625,772],"c":[356.65625,772],"inside":true}
@@ -49,4 +49,4 @@ PASS 1280x800 desktop: no landmark overlaps on the map
 PASS 1280x800 desktop: map centered on the current stop  — y 260
 PASS 1280x800 desktop: board opens inside the frame
 PASS 1280x800 desktop: no page errors
-51/51 passed  (11/22/2026, 9:51:27 PM PT, http://127.0.0.1:8872/index.html)
+51/51 passed  (11/22/2026, 10:53:53 PM PT, http://127.0.0.1:8872/index.html)

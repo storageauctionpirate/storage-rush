@@ -39,3 +39,5 @@ Screenshots: `docs/shots/board-proto-nov22/` (all 18 steps at 390x844; key steps
 Re-run 9:35–9:58 PM PT Nov 22. Main-game files (`js/`, `index.html`, `assets/`) are byte-identical to base d91e97e.
 - `test/run.js`: 390x844 **143/143**, 375x667 **142/142**, 1280x800 **51/51** (logs in `test/last-run-*.txt`).
 - `test/group-version-nov22.js`: 85/86 on the first run. The one failure was a 390x844 timing check ("hook ends on its own"). A re-run at 390x844 passed **36/36**, so it was a timing flake while the machine was busy, not a regression.
+
+Live-game suite re-run 10:54 PM PT, after the no-refill change: 390x844 141/141, 375x667 141/141, 1280x800 51/51. The test count varies with random bonus safes. Game files are identical to d91e97e.

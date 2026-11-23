@@ -43,8 +43,8 @@ for(const S of SIZES){const b=await puppeteer.launch({executablePath:'/usr/bin/g
  // flea market
  await goto(6);await sleep(800);await snap('flea-market');await click('[data-act=fleaSell][data-i=best]');await sleep(1200);await idle();
  // upgrade: building transforms twice
- await p.evaluate(()=>BP.debug.set({cash:150}));await goto(7);await snap('upgrade-menu');await click('[data-act=upPick][data-k=flea]');await sleep(900);await snap('upgrade-transform');await sleep(2600);await snap('flea-stage1');await idle();
- await goto(7);await click('[data-act=upPick][data-k=flea]');await sleep(3600);await snap('flea-stage2-pirate-flea');await idle();R.flea=(await st()).G.flea;
+ await p.evaluate(()=>BP.debug.set({cash:150}));await goto(7);await snap('upgrade-menu');await click('[data-act=upPick][data-k=flea]');await sleep(900);await snap('upgrade-transform');await sleep(1300);await snap('flea-stage1');await idle();
+ await goto(7);await click('[data-act=upPick][data-k=flea]');await sleep(2300);await snap('flea-stage2-pirate-flea');await idle();R.flea=(await st()).G.flea;
  // bonus: 12-case match
  await goto(4);await sleep(300);for(let i=0;i<12&&(await st()).modal;i++){const n=await p.$$('#modalBody .case:not([disabled])');if(!n.length)break;await n[0].click();await sleep(200);const n2=await p.$$('#modalBody .case:not([disabled])');if(n2.length)await n2[Math.min(n2.length-1,i%3)].click();await sleep(900);if(i===2)await snap('case-match');if(await p.$('#modalBody [data-act=closeModal]'))break;}
  await snap('case-match-end');await click('[data-act=closeModal]');await idle();

@@ -128,12 +128,13 @@ async function fleaMarket(){if(!G.truck.length){bubble('Flea market: nothing to 
 handlers.fleaSell=d=>closeModal(d.i);
 
 // ---------- upgrades: the flea building transforms ----------
-async function upgrade(){label('BUSINESS UPGRADE','Build your empire.','Upgrades change what you can do.');
+async function upgrade(){S3.focus(S3.fleaPos(),{dist:9.5,h:6});label('BUSINESS UPGRADE','Build your empire.','Upgrades change what you can do.');
   const f=cost.flea(),t=cost.truck();const names=['Yard sale table','Market stall','Pirate Flea shop'];
   const a=await modal(`<div class="eyebrow">BUSINESS UPGRADE · YOU HAVE ${fmt(G.cash)}</div><h2>Grow the business</h2>
     <div class="loot"><span class="emoji">🏪</span><span class="desc">${f?names[G.flea+1]:'Pirate Flea shop'}<small>${f?'+1 flea sale per visit, +10% flea prices':'fully built'}</small></span>${f?`<button class="secondary" data-act="upPick" data-k="flea" ${G.cash>=f?'':'disabled'}>${fmt(f)}</button>`:'<b>✓</b>'}</div>
     <div class="loot"><span class="emoji">🛻</span><span class="desc">${t?'Bigger truck bed':'Truck maxed'}<small>${t?'carry '+(G.cap+4)+' items':'carries '+G.cap}</small></span>${t?`<button class="secondary" data-act="upPick" data-k="truck" ${G.cash>=t?'':'disabled'}>${fmt(t)}</button>`:'<b>✓</b>'}</div><p class="note">Prices grow with your locker level, on the same money curve as the main game.</p>`);
-  if(a==='flea'){G.cash-=f;G.flea++;hud();sfx('up');await S3.upgradeFlea(G.flea);toast('🏪 '+names[G.flea]+' built!',2200);await wait(600);S3.followPirate();}
+  if(a==='flea'){G.cash-=f;G.flea++;hud();sfx('up');await S3.upgradeFlea(G.flea);toast('🏪 '+names[G.flea]+' built!',2200);await wait(1800);}
+  S3.followPirate();
   if(a==='truck'){G.cash-=t;G.truckLv++;G.cap+=4;hud();sfx('up');S3.pirateBurst();toast('🛻 Truck upgraded: carries '+G.cap+' items');}}
 handlers.upPick=d=>closeModal(d.k);
 

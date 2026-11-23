@@ -3,9 +3,13 @@
 // items come in sets of 3, a free "shove" rearranges leftovers if no move exists,
 // and stragglers that can no longer make a set are hauled out automatically.
 const R=7,C=7;
-function rng(s){s=s>>>0||1;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+function rng(o){return()=>{o.s=(o.s*1664525+1013904223)>>>0;return o.s/4294967296;};}
+// ONE source of truth for locker difficulty. Tier 0 = first lockers / Curb Pile. Moves are tuned with test/board-sim.js
+// so an average player clears about 70-85% on the first try and finishes with 0-3 moves left.
+export const LOCKER_TIERS=[{name:'Starter',types:5,moves:14},{name:'Normal',types:6,moves:14},{name:'Tough',types:5,moves:13}];
+export function tierFor(level,kind){let t=level<=1?0:level<=4?1:2;if(kind==='curb')t=0;if(kind==='big'||kind==='rival')t=Math.min(2,t+1);return t;}
 export class ClearOut{
-  constructor(def,seed){this.def=def;this.rnd=rng(seed);this.nid=1;this.collected=[];this.cart=0;this.shoves=0;this.hauled=0;
+  constructor(def,seed,saved){this.def=def;this.rs={s:(seed>>>0)||1};this.rnd=rng(this.rs);if(saved){this.load(saved);return;}if(!(def.clearMoves>0))throw new Error('ClearOut needs def.clearMoves (single source: LOCKER_TIERS)');this.nid=1;this.collected=[];this.cart=0;this.shoves=0;this.hauled=0;
     this.types=Math.min(6,def.types||6);
     const tarps=(def.tarps||[]).slice(0,4);
     const cells=R*C-tarps.length;this.sets=Math.floor(cells/3);const n=this.sets*3;
@@ -17,7 +21,9 @@ export class ClearOut{
     // fill bottom-up so the few spare cells (if any) are at the top
     let left=n;for(let r=R-1;r>=0;r--)for(let c=0;c<C;c++){if(this.g[r][c]||left<=0)continue;this.g[r][c]={id:this.nid++,k:'item',t:0};left--;}
     this.total=n;this.assign(bag);this.totalObjs=this.left();
-    this.moves=def.clearMoves||this.sets+3;this.startMoves=this.moves;}
+    this.moves=def.clearMoves;this.startMoves=this.moves;}
+  save(){return {g:this.g.map(row=>row.map(t=>t?{...t}:null)),moves:this.moves,startMoves:this.startMoves,totalObjs:this.totalObjs,total:this.total,sets:this.sets,types:this.types,collected:this.collected.slice(),cart:this.cart,shoves:this.shoves,hauled:this.hauled,nid:this.nid,rs:this.rs.s,totalFinds:this.totalFinds};}
+  load(o){Object.assign(this,{g:o.g,moves:o.moves,startMoves:o.startMoves,totalObjs:o.totalObjs,total:o.total,sets:o.sets,types:o.types,collected:o.collected,cart:o.cart,shoves:o.shoves,hauled:o.hauled,nid:o.nid,totalFinds:o.totalFinds});this.rs.s=o.rs;}
   each(fn){for(let r=0;r<R;r++)for(let c=0;c<C;c++){const t=this.g[r][c];if(t)fn(t,r,c);}}
   at(r,c){return r>=0&&r<R&&c>=0&&c<C?this.g[r][c]:null;}
   items(){const a=[];this.each((t,r,c)=>{if(t.k==='item')a.push(t);});return a;}
@@ -59,5 +65,7 @@ export class ClearOut{
   // stragglers: haul out whatever is left (items, tarps; finds go to the truck)
   haul(){const out=[];this.each((t,r,c)=>{out.push({r,c,tile:t});if(t.find&&(t.k==='tarp'||t.k==='find'))this.collected.push(t.find);if(t.k==='item')this.cart++;this.g[r][c]=null;});this.hauled+=out.length;return out;}
   shuffle(){return this.shove();}
-  status(){let left=0;this.each(()=>left++);if(!left)return 'win';if(this.moves<=0)return 'out';return 'play';}
+  // what the fair-finish rule says to do now: 'ok' | 'shove' (free, no move exists) | 'haul' (only stragglers or tarps left)
+  fairness(){if(!this.left())return 'ok';if(!this.remaining()||!this.canSet())return 'haul';return this.bestMove()?'ok':'shove';}
+  status(){if(!this.left())return 'win';if(this.moves<=0)return 'out';return 'play';}
 }

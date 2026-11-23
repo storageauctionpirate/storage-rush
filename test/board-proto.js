@@ -27,7 +27,7 @@ for(const S of SIZES){const b=await puppeteer.launch({executablePath:'/usr/bin/g
  for(let i=0;i<40;i++){const s0=await st();if(!s0.clean||s0.status!=='play')break;const m=await p.evaluate(()=>BP.bestMove());if(!m){await sleep(400);continue;}const A=await p.evaluate((r,c)=>BP.cellXY(r,c),...m.a),B=await p.evaluate((r,c)=>BP.cellXY(r,c),...m.b);
   if(S.m){await p.touchscreen.tap(A.x,A.y);await sleep(60);await p.touchscreen.tap(B.x,B.y);}else{await p.mouse.click(A.x,A.y);await sleep(60);await p.mouse.click(B.x,B.y);}
   await sleep(300);if(i===2)await snap('cleanout-cascade');
-  const t=Date.now();while(Date.now()-t<20000){const q=await st();if(q.status==='win'&&!celeb){celeb=true;await sleep(250);await snap('locker-empty-celebration');}if(!q.busy||q.modal)break;await sleep(120);}
+  const t=Date.now();while(Date.now()-t<20000){const q=await st();if(q.status==='win'&&!celeb){celeb=true;await sleep(700);await snap('locker-empty-celebration');}if(!q.busy||q.modal)break;await sleep(120);}
   const s1=await st();if(!nearShot&&s1.clean&&s1.left<=12&&s1.left>0&&s1.status==='play'){nearShot=true;await snap('cleanout-near-empty');}if(s1.modal||!s1.clean)break;}
  const se=await st();R.cleanout.endMovesLeft=se.moves;R.cleanout.shoves=se.shoves;R.cleanout.wonByPlay=celeb||se.modal;
  const pm=await p.evaluate(()=>BP.perf());R.cleanoutPlay=fpsStats(win(pm,fm));const L=pm.lat.slice().sort((a,b)=>a-b);R.tapLatencyMs={n:L.length,median:Math.round(L[Math.floor(L.length/2)]),p95:Math.round(L[Math.floor(L.length*.95)]),max:Math.round(L[L.length-1])};

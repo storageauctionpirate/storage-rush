@@ -1,6 +1,6 @@
 // Storage Auction Rush — Board Adventure (isolated playtest). Own save key; never touches the live game's storageRush.v3.
 import * as S3 from './scene.js';
-import {ClearOut} from './clearout.js';
+import {ClearOut,LOCKER_TIERS,tierFor} from './clearout.js';
 const EC=window.ECON,IT=window.ITEMS,LV=window.LEVELS,Engine=window.Engine;
 const KEY='storageRush.board.v1',QS=new URLSearchParams(location.search),DEBUG=QS.get('debug')==='1';
 const T0=performance.now();
@@ -12,7 +12,7 @@ const NAMES={payday:'Payday',auction:'Storage Auction',off:'Day Off',pawn:"Pawn 
 const PAWN_SETS=['tools','radio','music','jewelry','garage','games','designer','history'];
 const FLEA_SETS=['kitchen','toys','reading','sports','shelf',null];
 const MAX_ROLLS=5;
-function fresh(){return {v:1,cash:10,rolls:0,pos:0,truck:[],cap:6,flea:0,truckLv:0,L:1,lap:0,clean:0,earned:0,sold:0,earl:{beat:0,lost:0},seed:(Date.now()%100000)+7,started:false,checkpoint:false};}
+function fresh(){return {v:1,cash:10,rolls:0,pos:0,truck:[],cap:6,flea:0,truckLv:0,L:1,lap:0,clean:0,earned:0,sold:0,earl:{beat:0,lost:0},seed:(Date.now()%100000)+7,started:false,checkpoint:false,perk:{moves:0},seen:{},active:null};}
 let G=load();
 function load(){if(QS.get('fresh')==='1'){try{localStorage.removeItem(KEY);}catch(e){}return fresh();}try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===1)return Object.assign(fresh(),s);}catch(e){}return fresh();}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(G));}catch(e){}}
@@ -46,7 +46,8 @@ const valueOf=id=>Math.max(1,IT.value(id,G.L,EC));
 function pawnRate(id){return PAWN_SETS.includes(itemOf(id).set)?.8:.65;}
 function fleaRate(id){return (FLEA_SETS.includes(itemOf(id).set)?1:.7)*(1+.1*G.flea);}
 const fleaSlots=()=>3+G.flea;
-function addToTruck(id){if(G.truck.length<G.cap){G.truck.push(id);return true;}const curb=Math.max(1,Math.round(valueOf(id)*.4));G.cash+=curb;G.earned+=curb;toast('Truck full: '+itemOf(id).emoji+' sold at the curb for '+fmt(curb));return false;}
+const curbPrice=id=>Math.max(1,Math.round(valueOf(id)*.4));
+function addToTruck(id,quiet){if(G.truck.length<G.cap){G.truck.push(id);return {truck:true};}const curb=curbPrice(id);G.cash+=curb;G.earned+=curb;if(!quiet)toast('Truck full: '+itemOf(id).emoji+' sold at the curb for '+fmt(curb));return {truck:false,curb};}
 function rarityTag(id){const r=itemOf(id).rarity;return r==='common'?'':'<span class="badge">'+r.toUpperCase()+'</span>';}
 
 // ---------- upgrade prices on the money curve ----------
@@ -72,7 +73,7 @@ async function land(){const sp=BOARD[G.pos];S3.highlight(G.pos);
   else if(sp==='upgrade')await upgrade();
   else if(sp==='rival')await rival();
   else if(sp==='bonus')await cases();
-  else if(sp==='off'){bubble('Day off. Even pirates rest. ☕',1700);await wait(900);}
+  else if(sp==='off'){const had=G.perk.moves;G.perk.moves=Math.min(3,G.perk.moves+2);hud();bubble(had>=3?'Day off. The crew is already rested. ☕':'Day off. Rested crew: <b>+2 moves</b> in your next locker. ☕',2200);await wait(1200);}
   checkpoint();boardPanel();}
 function checkpoint(){if(G.checkpoint||(G.clean<4&&G.lap<1))return;G.checkpoint=true;save();
   modal(`<div class="eyebrow">PLAYTEST CHECKPOINT</div><h2>Your storage business is growing.</h2><div class="loot"><span class="emoji">🏚️</span><span class="desc">Lockers unloaded<small>each earned a roll</small></span><b>${G.clean}</b></div><div class="loot"><span class="emoji">💵</span><span class="desc">Cash earned<small>sales, salvage, Payday</small></span><b>${fmt(G.earned)}</b></div><div class="loot"><span class="emoji">🏷️</span><span class="desc">Items sold</span><b>${G.sold}</b></div><div class="loot"><span class="emoji">🏪</span><span class="desc">Flea stall</span><b>${['Yard sale','Market stall','Pirate Flea shop'][G.flea]}</b></div><p>Keep playing as long as you like. Mike: would you roll again?</p><button class="primary" data-act="closeModal">KEEP ROLLING</button>`);}
@@ -132,22 +133,24 @@ handlers.fleaSell=d=>closeModal(d.i);
 async function upgrade(){const fp=S3.fleaPos();fp.y+=1.4;const port=innerWidth<innerHeight;S3.focus(fp,{dist:port?15:11,h:port?8:6.5});label('BUSINESS UPGRADE','Build your empire.','Upgrades change what you can do.');
   const f=cost.flea(),t=cost.truck();const names=['Yard sale table','Market stall','Pirate Flea shop'];
   const a=await modal(`<div class="eyebrow">BUSINESS UPGRADE · YOU HAVE ${fmt(G.cash)}</div><h2>Grow the business</h2>
-    <div class="loot"><span class="emoji">🏪</span><span class="desc">${f?names[G.flea+1]:'Pirate Flea shop'}<small>${f?'+1 flea sale per visit, +10% flea prices':'fully built'}</small></span>${f?`<button class="secondary" data-act="upPick" data-k="flea" ${G.cash>=f?'':'disabled'}>${fmt(f)}</button>`:'<b>✓</b>'}</div>
-    <div class="loot"><span class="emoji">🛻</span><span class="desc">${t?'Bigger truck bed':'Truck maxed'}<small>${t?'carry '+(G.cap+4)+' items':'carries '+G.cap}</small></span>${t?`<button class="secondary" data-act="upPick" data-k="truck" ${G.cash>=t?'':'disabled'}>${fmt(t)}</button>`:'<b>✓</b>'}</div><p class="note">Prices grow with your locker level, on the same money curve as the main game.</p>`);
+    <div class="loot"><span class="emoji">🏪</span><span class="desc">${f?names[G.flea+1]:'Pirate Flea shop'}<small>${f?(G.flea===0?'+1 flea sale, +10% prices · regulars tip you what hides under the tarps':'+1 flea sale per visit, +10% flea prices'):'fully built'}</small></span>${f?`<button class="secondary" data-act="upPick" data-k="flea" ${G.cash>=f?'':'disabled'}>${fmt(f)}</button>`:'<b>✓</b>'}</div>
+    <div class="loot"><span class="emoji">🛻</span><span class="desc">${t?'Bigger truck bed':'Truck maxed'}<small>${t?'carry '+(G.cap+4)+' items · +1 move in every locker':'carries '+G.cap+' · +'+G.truckLv+' moves per locker'}</small></span>${t?`<button class="secondary" data-act="upPick" data-k="truck" ${G.cash>=t?'':'disabled'}>${fmt(t)}</button>`:'<b>✓</b>'}</div><p class="note">Prices grow with your locker level, on the same money curve as the main game.</p>`);
   if(a==='flea'){G.cash-=f;G.flea++;hud();sfx('up');await S3.upgradeFlea(G.flea);toast('🏪 '+names[G.flea]+' built!',2200);await wait(1800);}
   S3.followPirate();
-  if(a==='truck'){G.cash-=t;G.truckLv++;G.cap+=4;hud();sfx('up');S3.pirateBurst();toast('🛻 Truck upgraded: carries '+G.cap+' items');}}
+  if(a==='truck'){G.cash-=t;G.truckLv++;G.cap+=4;hud();sfx('up');S3.pirateBurst();toast('🛻 Truck upgraded: carries '+G.cap+' items and +1 move in every locker',2400);}}
 handlers.upPick=d=>closeModal(d.k);
 
 // ---------- 12-case match bonus (earned by landing) ----------
 async function cases(){label('BONUS GAME','Case Match','Flip two cases. A pair wins what is inside. 6 tries.');
-  const cS=EC.nice(4*raw()),cM=EC.nice(10*raw()),item=IT.pick('u',G.L,rnd,{});const prizes=[{k:'cash',v:cS,e:'💵'},{k:'cash',v:cS,e:'💵'},{k:'cash',v:cM,e:'💰'},{k:'item',id:item,e:itemOf(item).emoji},{k:'cash',v:cS,e:'🪙'},{k:'roll',e:'🎲'}];
+  const cXS=Math.max(1,EC.nice(2*raw())),cS=EC.nice(4*raw()),cM=EC.nice(10*raw()),item=IT.pick('u',G.L,rnd,{});
+  // six DIFFERENT prizes; each pair shares the exact same icon and label, so what looks the same always matches
+  const prizes=[{k:'cash',v:cXS,e:'🪙',l:fmt(cXS)},{k:'cash',v:cS,e:'💵',l:fmt(cS)},{k:'cash',v:cM,e:'💰',l:fmt(cM)},{k:'item',id:item,e:itemOf(item).emoji,l:itemOf(item).name.split(' ')[0]},{k:'roll',e:'🎲',l:'+1 roll'},{k:'moves',e:'⭐',l:'+1 move'}];
   let deck=[];prizes.forEach((p,i)=>{deck.push({...p,pair:i},{...p,pair:i});});for(let i=deck.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
   let tries=6,open=[],won=[],busyC=false,total=0;
-  const draw=()=>{$('modalBody').innerHTML=`<div class="eyebrow">BONUS · CASE MATCH · ${tries} TRIES LEFT</div><h2>Find the pairs</h2><div class="cases">${deck.map((c,i)=>`<button class="case ${c.open||c.won?'open':''} ${c.won?'won':''}" data-act="case" data-i="${i}" ${c.won||c.open?'disabled':''} aria-label="case ${i+1}">${c.open||c.won?c.e:'🧳'}</button>`).join('')}</div><p class="note">Won so far: ${won.length?won.join(', '):'nothing yet'}. Earned only, never sold.</p>${tries<=0?'<button class="primary" data-act="closeModal">COLLECT</button>':''}`;};
+  const draw=()=>{$('modalBody').innerHTML=`<div class="eyebrow">BONUS · CASE MATCH · ${tries} TRIES LEFT</div><h2>Find the pairs</h2><div class="cases">${deck.map((c,i)=>`<button class="case ${c.open||c.won?'open':''} ${c.won?'won':''}" data-act="case" data-i="${i}" ${c.won||c.open?'disabled':''} aria-label="case ${i+1}">${c.open||c.won?c.e+'<small class="case-l">'+c.l+'</small>':'🧳'}</button>`).join('')}</div><p class="note">Won so far: ${won.length?won.join(', '):'nothing yet'}. Earned only, never sold.</p>${tries<=0?'<button class="primary" data-act="closeModal">COLLECT</button>':''}`;};
   handlers.case=async d=>{if(busyC||tries<=0)return;const c=deck[+d.i];if(c.open||c.won)return;c.open=true;open.push(c);sfx('flip');draw();
     if(open.length<2)return;busyC=true;tries--;await wait(650);const [a,b]=open;open=[];
-    if(a.pair===b.pair){a.won=b.won=true;a.open=b.open=false;sfx('win');let t='';if(a.k==='cash'){G.cash+=a.v;G.earned+=a.v;total+=a.v;t=fmt(a.v);}else if(a.k==='item'){addToTruck(a.id);t=itemOf(a.id).name;}else{if(G.rolls<MAX_ROLLS)G.rolls++;t='+1 roll';}won.push(a.e+' '+t);hud();}
+    if(a.e===b.e&&a.l===b.l){a.won=b.won=true;a.open=b.open=false;sfx('win');let t='';if(a.k==='cash'){G.cash+=a.v;G.earned+=a.v;total+=a.v;t=fmt(a.v);}else if(a.k==='item'){addToTruck(a.id);t=itemOf(a.id).name;}else if(a.k==='moves'){G.perk.moves=Math.min(3,G.perk.moves+1);t='+1 move next locker';}else{if(G.rolls<MAX_ROLLS)G.rolls++;t='+1 roll';}won.push(a.e+' '+t);hud();}
     else{a.open=b.open=false;}busyC=false;draw();};
   const pr=modal('',false);draw();await pr;}
 
@@ -166,16 +169,28 @@ function boardDef(kind){const units=LV.YARD1.units;const ix=kind==='curb'?0:Math
   b.scrapper='off';b.tut=null;b.teach=null;b.seed=(b.seed||1)+G.clean*31+(kind==='curb'?997:0);
   const up=kind==='big'||kind==='rival';b.tarps=b.tarps.map(t=>{let s=t[3];if(s==='hook')s=G.clean===0?'tinrobot':'c';else if(s==='lock')s='c';if(up&&s==='c')s='u';if(up&&s==='u'&&kind==='rival')s='r';
     const id=s&&!IT.get(s)?IT.pick(s,G.L,rnd,{}):s;return [t[0],t[1],t[2],id];});
-  if(kind==='curb'){b.moves=Math.max(b.moves,24);b.need=Math.min(b.need,1);}if(up)b.moves+=2;return b;}
-async function cleanout(o){busy=true;hidePanel();document.body.classList.add('clean');CO={...o,collected:[],layers:0,totalLayers:0,cleared:0};
-  const def=boardDef(o.kind);CO.def=def;CO.totalLayers=def.tarps.reduce((a,t)=>a+t[2],0)||1;E=new ClearOut(def,def.seed*7+G.clean);disp.clear();pops=[];sel=null;
-  S3.fillLocker(def.seed);sfx('door');label('UNLOADING',o.title,'Matched stuff leaves for good. Empty the whole locker.');await S3.enterLocker();
-  $('cleanTitle').textContent=o.title;$('cleanout').classList.remove('hidden');layoutGrid();updateClean();busy=false;
-  return new Promise(r=>{CO.done=r;});}
+  // moves come from ONE place: LOCKER_TIERS (clearout.js). The old LEVELS move counts are ignored here.
+  const tier=tierFor(G.L,kind),T=LOCKER_TIERS[tier];b.tier=tier;b.tierName=T.name;b.types=T.types;
+  b.bonus=[];if(G.truckLv)b.bonus.push(['truck',G.truckLv]);if(G.perk.moves)b.bonus.push(['rested',G.perk.moves]);
+  b.clearMoves=T.moves+b.bonus.reduce((a,x)=>a+x[1],0);b.peek=G.flea>=1;delete b.moves;return b;}
+function saveActive(){if(!E||!CO)return;G.active={o:{kind:CO.kind,price:CO.price,title:CO.title},def:CO.def,eng:E.save(),collected:CO.collected.slice(),cleared:CO.cleared,attempt:CO.attempt||0};save();}
+async function cleanout(o,resume){busy=true;hidePanel();document.body.classList.add('clean');CO={...o,collected:[],layers:0,cleared:0,warned:{}};
+  let def;if(resume){def=resume.def;CO.collected=resume.collected;CO.cleared=resume.cleared;CO.attempt=resume.attempt;E=new ClearOut(def,1,resume.eng);}
+  else{def=boardDef(o.kind);G.perk.moves=0;E=new ClearOut(def,def.seed*7+G.clean);}
+  CO.def=def;disp.clear();pops=[];sel=null;saveActive();
+  S3.fillLocker(def.seed);if(resume)S3.setLockerProgress(1-E.left()/E.totalObjs);sfx('door');
+  const extra=def.bonus.map(([k,n])=>`+${n} ${k==='truck'?'bigger truck':'rested crew'}`).join(', ');
+  label(resume?'RESUMED · YOUR BID IS SAFE':'UNLOADING · '+def.tierName.toUpperCase(),o.title,`Empty the whole locker in ${def.clearMoves} moves${extra?' ('+extra+')':''}. Matched stuff leaves for good.`);await S3.enterLocker();
+  $('cleanTitle').textContent=o.title;$('cleanout').classList.remove('hidden');layoutGrid();updateClean();
+  if(resume)toast('Welcome back! Your locker was saved: '+E.moves+' moves left.',2200);
+  else if(def.peek){const f=[];E.each(t=>{if(t.k==='tarp'&&t.find)f.push(itemOf(t.find));});if(f.length)toast(`🏪 Flea regulars tip you off: ${f.map(x=>x.emoji+' '+x.name).join(', ')} under the tarps!`,2600);}
+  busy=false;return new Promise(r=>{CO.done=r;});}
 function layoutGrid(){const r=gcv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);gW=r.width;gcv.width=Math.round(r.width*d);gcv.height=Math.round(r.width*d);gx.setTransform(d,0,0,d,0,0);cell=gW/7;}
 addEventListener('resize',()=>{if(!$('cleanout').classList.contains('hidden'))layoutGrid();});
-function updateClean(){$('moves').textContent=E.moves+' MOVES';const p=1-E.left()/E.totalObjs;$('unloadBar').style.width=Math.round(p*100)+'%';S3.setLockerProgress(p);
+function updateClean(){const mv=$('moves');mv.textContent=E.moves+(E.moves===1?' MOVE':' MOVES');mv.classList.toggle('low',E.moves<=5&&E.status()==='play');const p=1-E.left()/E.totalObjs;$('unloadBar').style.width=Math.round(p*100)+'%';S3.setLockerProgress(p);
   $('rush').textContent=`${E.left()} LEFT IN THE LOCKER · FINDS ${CO.collected.length}`;}
+function tip(msg,ms=3200){const t=$('gridTip');t.innerHTML=msg;t.classList.add('flash');clearTimeout(tip.t);tip.t=setTimeout(()=>{t.classList.remove('flash');t.textContent='Tap two neighbors to match 3. Matched stuff leaves for good. Empty the locker!';},ms);}
+function lowWarn(){if(E.status()!=='play'||!E.left())return;for(const n of [5,3]){if(E.moves===n&&!CO.warned[n]){CO.warned[n]=1;sfx('bad');toast(`⚠️ ${n} MOVES LEFT · ${E.left()} still in the locker`,1800);tip(n===3?'Running low! Go for matches that set off chains.':'Running low! Plan your last moves.',2600);}}}
 function cellOf(ev){const r=gcv.getBoundingClientRect();const c=Math.floor((ev.clientX-r.left)/cell),rr=Math.floor((ev.clientY-r.top)/cell);return c>=0&&c<7&&rr>=0&&rr<7?[rr,c]:null;}
 let downAt=null;
 gcv.addEventListener('pointerdown',ev=>{if(busy||!E)return;const p=cellOf(ev);if(!p)return;downAt={p,x:ev.clientX,y:ev.clientY};gcv.setPointerCapture(ev.pointerId);
@@ -185,40 +200,49 @@ gcv.addEventListener('pointerup',()=>{downAt=null;});
 $('hint').onclick=()=>{if(!E||busy)return;const m=E.bestMove();if(m){CO.hint={...m,t:performance.now()};}};
 let swapAnim=null;
 async function trySwap(a,b){if(busy)return;busy=true;const r=E.swap(a,b);if(!r.ok){swapAnim={a,b,t:performance.now(),bad:true};sfx('bad');await wait(220);busy=false;return;}
-  swapAnim={a,b,t:performance.now()};await resolve();busy=false;await checkEnd();}
+  swapAnim={a,b,t:performance.now()};await resolve();saveActive();lowWarn();busy=false;await checkEnd();}
 async function resolve(){let chain=0;for(let guard=0;guard<40;guard++){const ev=E.step();
-    if(!ev){const f=E.findsOnBoard();if(f.length){for(const x of f){const t=E.collect(x.r,x.c);CO.collected.push(x.key);findFly(x.key,x.r,x.c);}E.gravity();await wait(200);continue;}break;}
+    if(!ev){const f=E.findsOnBoard();if(f.length){for(const x of f){E.collect(x.r,x.c);CO.collected.push(x.key);findFly(x.key,x.r,x.c);}E.gravity();await wait(200);continue;}break;}
     chain++;ev.cleared.forEach(c=>{pops.push({r:c.r,c:c.c,t:performance.now(),ty:c.tile.t});disp.delete(c.tile.id);});CO.cleared+=ev.cleared.length;
-    ev.hits.forEach(h=>{CO.layers++;pops.push({r:h.r,c:h.c,t:performance.now(),tarp:1});});sfx(chain>1?'chain':'pop');if(chain>2)toast('CHAIN x'+chain+'!',700);updateClean();await wait(150);E.gravity();await wait(170);}
+    ev.hits.forEach(h=>{pops.push({r:h.r,c:h.c,t:performance.now(),tarp:1});});sfx(chain>1?'chain':'pop');if(chain>2)toast('CHAIN x'+chain+'!',700);updateClean();await wait(150);E.gravity();await wait(170);}
   await fairFinish();updateClean();}
-// Never stuck: stragglers that cannot make a set get hauled out; otherwise a free shove re-packs the leftovers.
-async function fairFinish(){for(let k=0;k<3;k++){if(E.status()==='win')return;const items=E.remaining(),move=E.bestMove();
-    if(items===0||!E.canSet()||(!move&&items<=6)){await haulRest(items?'Last few stragglers hauled out!':'Tarps hauled out!');return;}
-    if(move)return;sfx('roll');toast('FREE SHOVE! Leftovers packed together.',1300);disp.clear();if(!E.shove()){await haulRest('Stragglers hauled out!');return;}await wait(450);}}
-async function haulRest(msg){const out=E.haul();const now=performance.now();out.forEach((o,i)=>{pops.push({r:o.r,c:o.c,t:now+i*40});if(o.tile.k==='item')CO.cleared++;disp.delete(o.tile.id);if(o.tile.find){CO.collected.push(o.tile.find);findFly(o.tile.find,o.r,o.c);}});
-  sfx('chain');toast(msg,1200);updateClean();await wait(450);}
-function findFly(id,r,c){const it=itemOf(id);sfx('win');toast(`${it.emoji} <b>${it.name}</b> found! worth about ${fmt(valueOf(id))}`,1900);pops.push({r,c,t:performance.now(),find:it.emoji});}
+// Fair finish (rule lives in clearout.js): no move left -> free shove; only stragglers that can't make 3 (or bare tarps) -> crew hauls them.
+async function fairFinish(){for(let k=0;k<4;k++){const f=E.fairness();if(f==='ok')return;
+    if(f==='haul'){await haulRest();return;}
+    sfx('roll');disp.clear();if(!G.seen.shove){G.seen.shove=1;save();tip('<b>FREE SHOVE:</b> no match was left, so we pushed the leftovers together. It costs no move.',4200);toast('🫸 FREE SHOVE! No matches left, so we packed the rest together.',2600);}else toast('🫸 Free shove',900);
+    if(!E.shove()){await haulRest();return;}await wait(450);}}
+async function haulRest(){const items=E.remaining();const out=E.haul();const now=performance.now();out.forEach((o,i)=>{pops.push({r:o.r,c:o.c,t:now+i*40});if(o.tile.k==='item')CO.cleared++;disp.delete(o.tile.id);if(o.tile.find){CO.collected.push(o.tile.find);findFly(o.tile.find,o.r,o.c);}});
+  sfx('chain');if(!G.seen.haul){G.seen.haul=1;save();tip(`<b>CREW HAUL:</b> ${items?'the last '+items+' pieces can\'t make 3 anymore':'only tarps were left'}, so the crew carried them out for you.`,4200);toast('🧑‍🔧 CREW HAUL! Leftovers that can\'t make 3 get carried out.',2600);}else toast('🧑‍🔧 Crew hauled the last '+out.length,1100);
+  updateClean();await wait(450);}
+function findFly(id,r,c){const it=itemOf(id);sfx('win');const full=G.truck.length+CO.collected.length>G.cap;
+  toast(full?`${it.emoji} <b>${it.name}</b> found! Truck is full (${G.truck.length}/${G.cap}): it sells at the curb for ${fmt(curbPrice(id))}`:`${it.emoji} <b>${it.name}</b> found! worth about ${fmt(valueOf(id))}`,2200);pops.push({r,c,t:performance.now(),find:it.emoji});}
+function lootRows(items){return items.map(id=>{const r=addToTruck(id,true);return `<div class="loot"><span class="emoji">${itemOf(id).emoji}</span><span class="desc">${itemOf(id).name} ${rarityTag(id)}<small>${r.truck?'into the truck':'truck full: sold at curb price'}</small></span><b>${r.truck?fmt(valueOf(id)):'+'+fmt(r.curb)}</b></div>`;}).join('');}
 async function checkEnd(){const st=E.status();if(st==='play')return;
   if(st==='win'){busy=true;CO.celebrate=performance.now();S3.lockerDone();sfx('win');setTimeout(()=>sfx('up'),350);toast('🎉 LOCKER EMPTY! Every last thing hauled out.',1800);$('unloadBar').style.width='100%';await wait(1500);
-    const salvage=Math.max(1,EC.nice(.03*CO.cleared*raw()));G.cash+=salvage;G.earned+=salvage;const fast=E.moves>=Math.ceil(E.startMoves*.4);
-    const items=CO.collected.slice();items.forEach(addToTruck);G.clean++;if(CO.kind!=='curb')G.L++;let rollsGot=0;if(G.rolls<MAX_ROLLS){G.rolls++;rollsGot++;}if(fast&&G.rolls<MAX_ROLLS){G.rolls++;rollsGot++;}hud();
+    const salvage=Math.max(1,EC.nice(.03*CO.cleared*raw()));G.cash+=salvage;G.earned+=salvage;G.active=null;
+    const rows=lootRows(CO.collected.slice());G.clean++;if(CO.kind!=='curb')G.L++;let rollsGot=0;if(G.rolls<MAX_ROLLS){G.rolls++;rollsGot++;}hud();
     $('cleanout').classList.add('hidden');
-    await modal(`<div class="eyebrow">LOCKER UNLOADED</div><h2>${CO.title}</h2>${items.map(id=>`<div class="loot"><span class="emoji">${itemOf(id).emoji}</span><span class="desc">${itemOf(id).name} ${rarityTag(id)}<small>into the truck</small></span><b>${fmt(valueOf(id))}</b></div>`).join('')}
+    await modal(`<div class="eyebrow">LOCKER UNLOADED · ${E.moves} MOVES TO SPARE</div><h2>${CO.title}</h2>${rows}
       <div class="loot"><span class="emoji">🧹</span><span class="desc">Junk salvage<small>${CO.cleared} pieces hauled out</small></span><b>+${fmt(salvage)}</b></div>
-      <div class="loot"><span class="emoji">🎲</span><span class="desc">${rollsGot>1?'Roll earned + fast-clear bonus roll':rollsGot?'Board roll earned':'Rolls are full (max 5)'}</span><b>+${rollsGot}</b></div><button class="primary" data-act="closeModal">BACK TO THE BOARD</button>`,false);
+      <div class="loot"><span class="emoji">🎲</span><span class="desc">${rollsGot?'Board roll earned':'Rolls are full (max 5)'}</span><b>+${rollsGot}</b></div><button class="primary" data-act="closeModal">BACK TO THE BOARD</button>`,false);
     await endClean();return;}
-  // out of moves: retry free, bid not charged again
-  busy=true;sfx('bad');const a=await modal(`<div class="eyebrow">OUT OF MOVES</div><h2>The locker isn't empty yet.</h2><p>Retry is free. You never pay this bid again.</p><div class="row"><button class="primary" data-act="retry" data-a="retry">RETRY FREE</button><button class="secondary" data-act="retry" data-a="leave">Leave it</button></div>`,false);
-  if(a==='retry'){E=new ClearOut(CO.def,CO.def.seed*7+G.clean+Math.floor(rnd()*99));CO.collected=[];CO.layers=0;CO.cleared=0;disp.clear();S3.fillLocker(CO.def.seed);await S3.enterLocker();updateClean();busy=false;return;}
+  // OUT OF MOVES with stuff left: the locker is NOT cleared. Fair outcome: keep what you dug out, but no roll; or retry free.
+  busy=true;sfx('bad');const left=E.left();const partial=Math.max(1,EC.nice(.03*CO.cleared*raw()*.5));
+  const a=await modal(`<div class="eyebrow">OUT OF MOVES · ${left} LEFT IN THE LOCKER</div><h2>Not fully cleared.</h2><p>Only a fully empty locker earns a board roll.</p>
+    <div class="loot"><span class="emoji">📦</span><span class="desc">Keep what you got<small>${CO.collected.length?CO.collected.length+' find'+(CO.collected.length>1?'s':'')+' + ':''}half salvage ${fmt(partial)} · <b>no roll</b></small></span><button class="secondary" data-act="retry" data-a="keep">Keep</button></div>
+    <div class="loot"><span class="emoji">🔁</span><span class="desc">Retry free<small>same locker, fresh layout. Your bid is never charged again.</small></span><button class="primary" data-act="retry" data-a="retry">Retry</button></div>`,false);
+  if(a==='retry'){CO.attempt=(CO.attempt||0)+1;E=new ClearOut(CO.def,CO.def.seed*7+G.clean+CO.attempt*101);CO.collected=[];CO.layers=0;CO.cleared=0;CO.warned={};disp.clear();S3.fillLocker(CO.def.seed);await S3.enterLocker();updateClean();saveActive();busy=false;return;}
+  G.cash+=partial;G.earned+=partial;G.active=null;const rows=lootRows(CO.collected.slice());G.clean++;hud();$('cleanout').classList.add('hidden');
+  await modal(`<div class="eyebrow">PARTLY UNLOADED · NO ROLL</div><h2>${CO.title}</h2>${rows}<div class="loot"><span class="emoji">🧹</span><span class="desc">Half salvage<small>${CO.cleared} pieces hauled out</small></span><b>+${fmt(partial)}</b></div><p class="note">${G.rolls?'You still have '+G.rolls+' roll'+(G.rolls>1?'s':'')+'.':'Out of rolls? The free Curb Pile always pays a roll when you empty it.'}</p><button class="primary" data-act="closeModal">BACK TO THE BOARD</button>`,false);
   await endClean();}
 handlers.retry=d=>closeModal(d.a);
-async function endClean(){$('cleanout').classList.add('hidden');document.body.classList.remove('clean');await S3.exitLocker();S3.followPirate();E=null;busy=false;G.usedHere=true;save();const d=CO.done;CO=null;if(d)d();}
+async function endClean(){$('cleanout').classList.add('hidden');document.body.classList.remove('clean');G.active=null;await S3.exitLocker();S3.followPirate();E=null;busy=false;G.usedHere=true;save();const d=CO.done;CO=null;if(d)d();}
 function drawGrid(){if(!E||$('cleanout').classList.contains('hidden'))return;const now=performance.now();gx.clearRect(0,0,gW,gW);
   for(let r=0;r<7;r++)for(let c=0;c<7;c++){gx.fillStyle=(r+c)%2?'#2a5650':'#244d48';gx.fillRect(c*cell,r*cell,cell,cell);}
   for(let r=0;r<7;r++)for(let c=0;c<7;c++){const t=E.g[r][c];if(!t)continue;let d=disp.get(t.id);if(!d){d={x:c,y:-1-(6-r)*.15-Math.random()*.2};disp.set(t.id,d);}
     d.x+=(c-d.x)*.35;d.y+=(r-d.y)*.3;let x=d.x*cell,y=d.y*cell,s=cell;
     if(swapAnim&&now-swapAnim.t<200&&swapAnim.bad){const k=Math.sin((now-swapAnim.t)/200*Math.PI)*.25;if(r===swapAnim.a[0]&&c===swapAnim.a[1]){x+=(swapAnim.b[1]-c)*k*cell;y+=(swapAnim.b[0]-r)*k*cell;}if(r===swapAnim.b[0]&&c===swapAnim.b[1]){x+=(swapAnim.a[1]-c)*k*cell;y+=(swapAnim.a[0]-r)*k*cell;}}
-    if(t.k==='tarp'){gx.drawImage(IMG.tarp,x+2,y+2,s-4,s-4);gx.fillStyle='#fff3d6';gx.font='900 '+(cell*.28)+'px system-ui';gx.textAlign='right';gx.fillText(t.layers>1?'×'+t.layers:'',x+s-5,y+s-6);if(t.find){gx.fillStyle='#ffd36b';gx.beginPath();gx.arc(x+s*.18,y+s*.2,3,0,7);gx.fill();}continue;}
+    if(t.k==='tarp'){gx.drawImage(IMG.tarp,x+2,y+2,s-4,s-4);gx.fillStyle='#fff3d6';gx.font='900 '+(cell*.28)+'px system-ui';gx.textAlign='right';gx.fillText(t.layers>1?'×'+t.layers:'',x+s-5,y+s-6);if(t.find&&CO&&CO.def.peek){gx.globalAlpha=.75;gx.font=(cell*.36)+'px system-ui';gx.textAlign='left';gx.fillText(itemOf(t.find).emoji,x+4,y+cell*.38);gx.globalAlpha=1;}continue;}
     if(t.k==='find'){gx.font=(cell*.7)+'px system-ui';gx.textAlign='center';gx.fillText(itemOf(t.find).emoji,x+s/2,y+s*.75);continue;}
     const img=t.sp==='dolly'?IMG.dolly:t.sp==='gavel'?IMG.gavel:IMG[t.t];const sc=(sel&&sel[0]===r&&sel[1]===c)?1.08:.92;const pad=s*(1-sc)/2;if(sel&&sel[0]===r&&sel[1]===c){gx.fillStyle='#fff3c466';gx.fillRect(x,y,s,s);}
     if(img&&img.complete)gx.drawImage(img,x+pad,y+pad,s*sc,s*sc);if(t.sp==='wrap'){gx.strokeStyle='#9be8ff';gx.lineWidth=3;gx.strokeRect(x+4,y+4,s-8,s-8);}
@@ -242,8 +266,9 @@ S3.init($('world'),{spaces:BOARD,maxDpr:QS.get('dpr')?+QS.get('dpr'):2});if(QS.g
 S3.setFrameHook(()=>{drawGrid();if(!readyAt){readyAt=performance.now();}
   if(!qualityChecked&&readyAt&&performance.now()-readyAt>2000){qualityChecked=true;const n=Math.min(S3.perf.n-1,90);let t=0;for(let i=1;i<=n;i++)t+=S3.perf.frames[(S3.perf.fi-i+600)%600];if(n>0&&t/n>25&&QS.get('q')!=='high')S3.setQuality('low');}});
 S3.placePirate(G.pos);hud();
-if(G.started){S3.followPirate();S3.snapCam();boardPanel();}else{S3.overview();S3.snapCam();intro();}
-window.BP={state:()=>({G:JSON.parse(JSON.stringify(G)),busy,clean:!!E,moves:E&&E.moves,left:E&&E.left(),shoves:E&&E.shoves,status:E&&E.status(),modal:!$('modal').classList.contains('hidden'),panel:$('panel').classList.contains('hidden')?null:$('panel').innerText.slice(0,120)}),
+if(G.active&&G.active.eng){const A=G.active;S3.followPirate();S3.snapCam();cleanout(A.o,A).then(()=>{checkpoint();boardPanel();});}
+else if(G.started){S3.followPirate();S3.snapCam();boardPanel();}else{S3.overview();S3.snapCam();intro();}
+window.BP={state:()=>({G:JSON.parse(JSON.stringify(G)),busy,clean:!!E,moves:E&&E.moves,left:E&&E.left(),tier:E&&CO&&CO.def.tierName,shoves:E&&E.shoves,status:E&&E.status(),modal:!$('modal').classList.contains('hidden'),panel:$('panel').classList.contains('hidden')?null:$('panel').innerText.slice(0,120)}),
   perf:()=>{const f=[],cpu=[],P=S3.perf,n=Math.min(P.n,600);for(let i=n;i>=1;i--){const k=(P.fi-i+600)%600;f.push(P.frames[k]);cpu.push(P.cpu[k]);}return {readyMs:readyAt,moduleStartMs:T0,total:P.n,frames:f,cpu,lat:LAT.slice(),info:S3.info(),heap:performance.memory?performance.memory.usedJSHeapSize:null};},
   bestMove:()=>E&&E.bestMove(),cellXY:(r,c)=>{const b=gcv.getBoundingClientRect();return {x:b.left+(c+.5)*cell,y:b.top+(r+.5)*cell};},
   debug:DEBUG?{set:(o)=>{Object.assign(G,o);hud();},win:()=>{if(E){haulRest('debug haul').then(checkEnd);}},land:()=>land(),panel:boardPanel}:null};

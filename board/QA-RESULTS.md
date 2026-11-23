@@ -1,5 +1,18 @@
 # Board prototype — QA results (Nov 22, 2026, PT)
 
+## Re-run 10:40 PM PT after Mike's 10:25 PM change: no-refill clear-out
+Matched items now leave for good; nothing refills. The grid starts as sets of 3 (48 objects: 45 items + tarps) with 18 moves. If no move exists, a free shove packs the leftovers together. Stragglers that can't make a set get hauled out automatically. An empty grid is a cleared locker and earns the roll, with a "LOCKER EMPTY!" celebration. The 3D locker empties in step: progress = 1 − objects left / starting objects. Simulation: 300/300 grids cleared by a random-move player, in 12–14 moves.
+In QA the first locker was cleared by real taps at all 3 sizes, with 7 moves to spare and 4 free shoves.
+
+| Size | First 3D frame ms | Load ms | Board FPS avg/1% | Match-3 FPS avg/1% | Frame JS median/p99 ms | Tap→frame median/p95 ms | Heap MB |
+|---|---|---|---|---|---|---|---|
+| 390x844 (4× CPU) | 951 | 1907 | 23.4 / 10.1 | 23.0 / 6.3 | 2.1 / 19.1 | 91 / 150 | 12.6 |
+| 375x667 (4× CPU) | 606 | 1450 | 30.1 / 13.9 | 29.4 / 7.0 | 2.1 / 13.9 | 84 / 159 | 12.9 |
+| 1280x800 | 667 | 1819 | 7.8 / 4.1 | 6.9 / 2.7 | 1.3 / 19.3 | 105 / 274 | 10.8 |
+0 errors, 0 failed requests; only the `storageRush.board.v1` key is used. Same software-GL caveat as below.
+
+## First run (with refill, superseded)
+
 Script: `test/board-proto.js` (puppeteer-core, headless Chrome). It plays the real loop on each size: intro → $1 locker → 10 real match-3 moves by touch/mouse → locker unloaded (earned rolls) → roll + hop → Pawn (offer, push) → Flea (sell best) → Upgrade ×2 (building transforms twice) → 12-case match → Big Earl rival (raise until he folds) → his locker → Curb Pile at 0 rolls. Debug helpers only finish a cleanout early and jump to a space; every screen is the real one.
 
 Phones: mobile emulation, touch, DPR 3, **CDP CPU throttle 4×**. Desktop: no throttle, DPR 1.

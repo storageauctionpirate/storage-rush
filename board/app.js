@@ -1,5 +1,6 @@
 // Storage Auction Rush — Board Adventure (isolated playtest). Own save key; never touches the live game's storageRush.v3.
 import * as S3 from './scene.js';
+import {ClearOut} from './clearout.js';
 const EC=window.ECON,IT=window.ITEMS,LV=window.LEVELS,Engine=window.Engine;
 const KEY='storageRush.board.v1',QS=new URLSearchParams(location.search),DEBUG=QS.get('debug')==='1';
 const T0=performance.now();
@@ -167,14 +168,14 @@ function boardDef(kind){const units=LV.YARD1.units;const ix=kind==='curb'?0:Math
     const id=s&&!IT.get(s)?IT.pick(s,G.L,rnd,{}):s;return [t[0],t[1],t[2],id];});
   if(kind==='curb'){b.moves=Math.max(b.moves,24);b.need=Math.min(b.need,1);}if(up)b.moves+=2;return b;}
 async function cleanout(o){busy=true;hidePanel();document.body.classList.add('clean');CO={...o,collected:[],layers:0,totalLayers:0,cleared:0};
-  const def=boardDef(o.kind);CO.def=def;CO.totalLayers=def.tarps.reduce((a,t)=>a+t[2],0)||1;E=new Engine(def,def.seed*7+G.clean);disp.clear();pops=[];sel=null;
-  S3.fillLocker(def.seed);sfx('door');label('UNLOADING',o.title,'Every match hauls merchandise out to your truck.');await S3.enterLocker();
+  const def=boardDef(o.kind);CO.def=def;CO.totalLayers=def.tarps.reduce((a,t)=>a+t[2],0)||1;E=new ClearOut(def,def.seed*7+G.clean);disp.clear();pops=[];sel=null;
+  S3.fillLocker(def.seed);sfx('door');label('UNLOADING',o.title,'Matched stuff leaves for good. Empty the whole locker.');await S3.enterLocker();
   $('cleanTitle').textContent=o.title;$('cleanout').classList.remove('hidden');layoutGrid();updateClean();busy=false;
   return new Promise(r=>{CO.done=r;});}
 function layoutGrid(){const r=gcv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);gW=r.width;gcv.width=Math.round(r.width*d);gcv.height=Math.round(r.width*d);gx.setTransform(d,0,0,d,0,0);cell=gW/7;}
 addEventListener('resize',()=>{if(!$('cleanout').classList.contains('hidden'))layoutGrid();});
-function updateClean(){$('moves').textContent=E.moves+' MOVES';const p=Math.min(.96,.12+.58*(CO.layers/CO.totalLayers)+.3*Math.min(1,CO.cleared/50));$('unloadBar').style.width=Math.round(p*100)+'%';S3.setLockerProgress(p);
-  $('rush').textContent=`FINDS ${E.collected.length}/${E.def.need}${E.def.clearTarps?' · RIP ALL TARPS':''} · LOCKER ${Math.round(p*100)}% EMPTY`;}
+function updateClean(){$('moves').textContent=E.moves+' MOVES';const p=1-E.left()/E.totalObjs;$('unloadBar').style.width=Math.round(p*100)+'%';S3.setLockerProgress(p);
+  $('rush').textContent=`${E.left()} LEFT IN THE LOCKER · FINDS ${CO.collected.length}`;}
 function cellOf(ev){const r=gcv.getBoundingClientRect();const c=Math.floor((ev.clientX-r.left)/cell),rr=Math.floor((ev.clientY-r.top)/cell);return c>=0&&c<7&&rr>=0&&rr<7?[rr,c]:null;}
 let downAt=null;
 gcv.addEventListener('pointerdown',ev=>{if(busy||!E)return;const p=cellOf(ev);if(!p)return;downAt={p,x:ev.clientX,y:ev.clientY};gcv.setPointerCapture(ev.pointerId);
@@ -189,11 +190,17 @@ async function resolve(){let chain=0;for(let guard=0;guard<40;guard++){const ev=
     if(!ev){const f=E.findsOnBoard();if(f.length){for(const x of f){const t=E.collect(x.r,x.c);CO.collected.push(x.key);findFly(x.key,x.r,x.c);}E.gravity();await wait(200);continue;}break;}
     chain++;ev.cleared.forEach(c=>{pops.push({r:c.r,c:c.c,t:performance.now(),ty:c.tile.t});disp.delete(c.tile.id);});CO.cleared+=ev.cleared.length;
     ev.hits.forEach(h=>{CO.layers++;pops.push({r:h.r,c:h.c,t:performance.now(),tarp:1});});sfx(chain>1?'chain':'pop');if(chain>2)toast('CHAIN x'+chain+'!',700);updateClean();await wait(150);E.gravity();await wait(170);}
-  if(!E.bestMove())E.shuffle();updateClean();}
+  await fairFinish();updateClean();}
+// Never stuck: stragglers that cannot make a set get hauled out; otherwise a free shove re-packs the leftovers.
+async function fairFinish(){for(let k=0;k<3;k++){if(E.status()==='win')return;const items=E.remaining(),move=E.bestMove();
+    if(items===0||!E.canSet()||(!move&&items<=6)){await haulRest(items?'Last few stragglers hauled out!':'Tarps hauled out!');return;}
+    if(move)return;sfx('roll');toast('FREE SHOVE! Leftovers packed together.',1300);disp.clear();if(!E.shove()){await haulRest('Stragglers hauled out!');return;}await wait(450);}}
+async function haulRest(msg){const out=E.haul();const now=performance.now();out.forEach((o,i)=>{pops.push({r:o.r,c:o.c,t:now+i*40});if(o.tile.k==='item')CO.cleared++;disp.delete(o.tile.id);if(o.tile.find){CO.collected.push(o.tile.find);findFly(o.tile.find,o.r,o.c);}});
+  sfx('chain');toast(msg,1200);updateClean();await wait(450);}
 function findFly(id,r,c){const it=itemOf(id);sfx('win');toast(`${it.emoji} <b>${it.name}</b> found! worth about ${fmt(valueOf(id))}`,1900);pops.push({r,c,t:performance.now(),find:it.emoji});}
 async function checkEnd(){const st=E.status();if(st==='play')return;
-  if(st==='win'){busy=true;S3.lockerDone();sfx('win');$('unloadBar').style.width='100%';await wait(900);
-    const salvage=Math.max(1,EC.nice(.03*CO.cleared*raw()));G.cash+=salvage;G.earned+=salvage;const fast=E.moves>=Math.ceil(CO.def.moves/2);
+  if(st==='win'){busy=true;CO.celebrate=performance.now();S3.lockerDone();sfx('win');setTimeout(()=>sfx('up'),350);toast('🎉 LOCKER EMPTY! Every last thing hauled out.',1800);$('unloadBar').style.width='100%';await wait(1500);
+    const salvage=Math.max(1,EC.nice(.03*CO.cleared*raw()));G.cash+=salvage;G.earned+=salvage;const fast=E.moves>=Math.ceil(E.startMoves*.4);
     const items=CO.collected.slice();items.forEach(addToTruck);G.clean++;if(CO.kind!=='curb')G.L++;let rollsGot=0;if(G.rolls<MAX_ROLLS){G.rolls++;rollsGot++;}if(fast&&G.rolls<MAX_ROLLS){G.rolls++;rollsGot++;}hud();
     $('cleanout').classList.add('hidden');
     await modal(`<div class="eyebrow">LOCKER UNLOADED</div><h2>${CO.title}</h2>${items.map(id=>`<div class="loot"><span class="emoji">${itemOf(id).emoji}</span><span class="desc">${itemOf(id).name} ${rarityTag(id)}<small>into the truck</small></span><b>${fmt(valueOf(id))}</b></div>`).join('')}
@@ -202,7 +209,7 @@ async function checkEnd(){const st=E.status();if(st==='play')return;
     await endClean();return;}
   // out of moves: retry free, bid not charged again
   busy=true;sfx('bad');const a=await modal(`<div class="eyebrow">OUT OF MOVES</div><h2>The locker isn't empty yet.</h2><p>Retry is free. You never pay this bid again.</p><div class="row"><button class="primary" data-act="retry" data-a="retry">RETRY FREE</button><button class="secondary" data-act="retry" data-a="leave">Leave it</button></div>`,false);
-  if(a==='retry'){E=new Engine(CO.def,CO.def.seed*7+G.clean+Math.floor(rnd()*99));CO.collected=[];CO.layers=0;CO.cleared=0;disp.clear();S3.fillLocker(CO.def.seed);await S3.enterLocker();updateClean();busy=false;return;}
+  if(a==='retry'){E=new ClearOut(CO.def,CO.def.seed*7+G.clean+Math.floor(rnd()*99));CO.collected=[];CO.layers=0;CO.cleared=0;disp.clear();S3.fillLocker(CO.def.seed);await S3.enterLocker();updateClean();busy=false;return;}
   await endClean();}
 handlers.retry=d=>closeModal(d.a);
 async function endClean(){$('cleanout').classList.add('hidden');document.body.classList.remove('clean');await S3.exitLocker();S3.followPirate();E=null;busy=false;G.usedHere=true;save();const d=CO.done;CO=null;if(d)d();}
@@ -217,11 +224,12 @@ function drawGrid(){if(!E||$('cleanout').classList.contains('hidden'))return;con
     if(img&&img.complete)gx.drawImage(img,x+pad,y+pad,s*sc,s*sc);if(t.sp==='wrap'){gx.strokeStyle='#9be8ff';gx.lineWidth=3;gx.strokeRect(x+4,y+4,s-8,s-8);}
     if(t.sp==='dolly'){gx.strokeStyle='#ffd36b';gx.lineWidth=2;gx.beginPath();t.dir==='h'?(gx.moveTo(x+3,y+s/2),gx.lineTo(x+s-3,y+s/2)):(gx.moveTo(x+s/2,y+3),gx.lineTo(x+s/2,y+s-3));gx.stroke();}}
   if(CO&&CO.hint&&now-CO.hint.t<1600){const h=CO.hint,a=Math.abs(Math.sin(now/180));gx.strokeStyle=`rgba(255,226,140,${a})`;gx.lineWidth=3;[h.a,h.b].forEach(p=>gx.strokeRect(p[1]*cell+3,p[0]*cell+3,cell-6,cell-6));}
-  for(let i=pops.length-1;i>=0;i--){const p=pops[i],k=(now-p.t)/420;if(k>1){pops.splice(i,1);continue;}const x=(p.c+.5)*cell,y=(p.r+.5)*cell;
+  for(let i=pops.length-1;i>=0;i--){const p=pops[i],k=(now-p.t)/420;if(k>1){pops.splice(i,1);continue;}if(k<0)continue;const x=(p.c+.5)*cell,y=(p.r+.5)*cell;
     if(p.find){gx.globalAlpha=1-k;gx.font=(cell*(1+k))+'px system-ui';gx.textAlign='center';gx.fillText(p.find,x,y-k*cell*1.5);gx.globalAlpha=1;continue;}
     gx.strokeStyle=p.tarp?`rgba(255,200,120,${1-k})`:`rgba(255,240,200,${1-k})`;gx.lineWidth=3;gx.beginPath();gx.arc(x,y,cell*.2+k*cell*.45,0,7);gx.stroke();
-    gx.fillStyle=`rgba(255,215,120,${1-k})`;for(let j=0;j<5;j++){const a=j/5*6.28+p.r;gx.fillRect(x+Math.cos(a)*k*cell*.6,y+Math.sin(a)*k*cell*.6,3,3);}}}
-
+    gx.fillStyle=`rgba(255,215,120,${1-k})`;for(let j=0;j<5;j++){const a=j/5*6.28+p.r;gx.fillRect(x+Math.cos(a)*k*cell*.6,y+Math.sin(a)*k*cell*.6,3,3);}}
+  if(CO&&CO.celebrate&&now-CO.celebrate<1500){const k=(now-CO.celebrate)/1500;for(let n=0;n<60;n++){const a=n*2.39996,rad=k*gW*.7*(.4+(n%7)/10);gx.fillStyle=['#ffd36b','#6de1bd','#ff7a59','#fff3d6'][n%4];gx.globalAlpha=1-k;gx.fillRect(gW/2+Math.cos(a)*rad,gW/2+Math.sin(a)*rad+k*k*gW*.3,6,6);}
+    gx.globalAlpha=Math.min(1,(1-k)*2);gx.fillStyle='#fff3d6';gx.strokeStyle='#17373a';gx.lineWidth=6;gx.textAlign='center';gx.font='900 '+Math.round(cell*.75)+'px system-ui';const y=gW/2+Math.sin(Math.min(1,k*4)*Math.PI/2)*0;gx.strokeText('LOCKER EMPTY!',gW/2,y);gx.fillText('LOCKER EMPTY!',gW/2,y);gx.globalAlpha=1;}}
 // ---------- start ----------
 function intro(){label('SUNNYVALE · FIRST FORTUNE','From $10 to an empire.','You have $10, a rusty pickup and a dream. The first locker is up for auction.');
   panel(`<div class="eyebrow">BOARD ADVENTURE · PLAYTEST</div><h2>Ten bucks. One rusty truck.</h2><p>Unload lockers with match-3 to earn rolls. Travel the board to sell, haggle and build your flea market into an empire.</p><button class="primary" data-act="start">START · BID $1 ON YOUR FIRST LOCKER</button><p class="note">Dice are earned only. Nothing is sold. Separate test save.</p>`);}
@@ -235,7 +243,7 @@ S3.setFrameHook(()=>{drawGrid();if(!readyAt){readyAt=performance.now();}
   if(!qualityChecked&&readyAt&&performance.now()-readyAt>2000){qualityChecked=true;const n=Math.min(S3.perf.n-1,90);let t=0;for(let i=1;i<=n;i++)t+=S3.perf.frames[(S3.perf.fi-i+600)%600];if(n>0&&t/n>25&&QS.get('q')!=='high')S3.setQuality('low');}});
 S3.placePirate(G.pos);hud();
 if(G.started){S3.followPirate();S3.snapCam();boardPanel();}else{S3.overview();S3.snapCam();intro();}
-window.BP={state:()=>({G:JSON.parse(JSON.stringify(G)),busy,clean:!!E,moves:E&&E.moves,status:E&&E.status(),modal:!$('modal').classList.contains('hidden'),panel:$('panel').classList.contains('hidden')?null:$('panel').innerText.slice(0,120)}),
+window.BP={state:()=>({G:JSON.parse(JSON.stringify(G)),busy,clean:!!E,moves:E&&E.moves,left:E&&E.left(),shoves:E&&E.shoves,status:E&&E.status(),modal:!$('modal').classList.contains('hidden'),panel:$('panel').classList.contains('hidden')?null:$('panel').innerText.slice(0,120)}),
   perf:()=>{const f=[],cpu=[],P=S3.perf,n=Math.min(P.n,600);for(let i=n;i>=1;i--){const k=(P.fi-i+600)%600;f.push(P.frames[k]);cpu.push(P.cpu[k]);}return {readyMs:readyAt,moduleStartMs:T0,total:P.n,frames:f,cpu,lat:LAT.slice(),info:S3.info(),heap:performance.memory?performance.memory.usedJSHeapSize:null};},
   bestMove:()=>E&&E.bestMove(),cellXY:(r,c)=>{const b=gcv.getBoundingClientRect();return {x:b.left+(c+.5)*cell,y:b.top+(r+.5)*cell};},
-  debug:DEBUG?{set:(o)=>{Object.assign(G,o);hud();},win:()=>{if(E){while(E.collected.length<E.def.need)E.collected.push('x');E.each((t,r,c)=>{if(t.k==='tarp')E.g[r][c]=null;});checkEnd();}},land:()=>land(),panel:boardPanel}:null};
+  debug:DEBUG?{set:(o)=>{Object.assign(G,o);hud();},win:()=>{if(E){haulRest('debug haul').then(checkEnd);}},land:()=>land(),panel:boardPanel}:null};

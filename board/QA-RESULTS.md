@@ -23,3 +23,6 @@ Other checks, all 3 sizes:
 Screenshots: `docs/shots/board-proto-nov22/` (all 18 steps at 390x844; key steps at 375x667 and 1280x800; the rest moved to `/workspace/storage-rush/board-shots-archive-nov22/`).
 
 ## Existing suite (live game unchanged)
+Re-run 9:35–9:58 PM PT Nov 22. Main-game files (`js/`, `index.html`, `assets/`) are byte-identical to base d91e97e.
+- `test/run.js`: 390x844 **143/143**, 375x667 **142/142**, 1280x800 **51/51** (logs in `test/last-run-*.txt`).
+- `test/group-version-nov22.js`: 85/86 on the first run. The one failure was a 390x844 timing check ("hook ends on its own"). A re-run at 390x844 passed **36/36**, so it was a timing flake while the machine was busy, not a regression.

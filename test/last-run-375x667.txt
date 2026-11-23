@@ -29,9 +29,9 @@ PASS 375x667 Rush Meter shows on Unit 4, between the board and the boosters  —
 PASS 375x667 Rush Meter goes HOT at 50% (cart pays 1.5X)  — HOT · CART 1.5X
 PASS 375x667 full meter starts RUSH 2X
 PASS 375x667 Rush starts with a screen-wide 2X RUSH! banner  — 2X RUSH!
-PASS 375x667 Rush pays extra cash on cleared items  — +$0.1271283790160479
+PASS 375x667 Rush pays extra cash on cleared items  — +$0.4237612633868263
 PASS 375x667 Rush bar drains one move at a time  — RUSH 2X · 4 MOVES
-PASS 375x667 Rush ends clearly after 6 moves (RUSH OVER + what it paid)  — RUSH OVER +$0.44 extra from your 2X Rush
+PASS 375x667 Rush ends clearly after 6 moves (RUSH OVER + what it paid)  — RUSH OVER +$0.68 extra from your 2X Rush
 PASS 375x667 Mystery Box earned in play waits for the room to clear
 PASS 375x667 room clear shows one clear card: cleared, saved, bonus earned, what is next  — SAVEDRoom 1 cleared!BONUS GAME EARNED!Mystery BoxNext: Room 2 of 2 · find 2 in 27 movesTap to keep going
 PASS 375x667 Mystery Box opens between rooms
@@ -41,7 +41,7 @@ PASS 375x667 reload resumes at room 2, cleared room not replayed  — {"mode":"d
 PASS 375x667 a 2nd Rush is 3X and earns the Safe Cracker  — {"best":3,"safe":"rare"}
 PASS 375x667 reload after the clear goes straight to the saved cleared card
 PASS 375x667 saved safe keeps its rarity after reload (no reroll)  — rare
-PASS 375x667 flip banks once, clears the saved run, shows the next build  — {"bank":[914,942],"haul":"WrenchFlip total$0Next build: Office · you can build it now!"}
+PASS 375x667 flip banks once, clears the saved run, shows the next build  — {"bank":[914,943],"haul":"HammerFlip total$1Next build: Office · you can build it now!"}
 PASS 375x667 reload after the flip never pays twice
 PASS 375x667 rhythm: no page errors
 PASS 375x667 v1 save migrates to v3 with bank rescaled  — {"v":3,"bank":25,"unit":0}
@@ -67,10 +67,10 @@ PASS 375x667 swipe swap spends one move
 PASS 375x667 Unit 1 teaches the tarp with highlighted tiles  — Match right next to a tarp to rip it.
 PASS 375x667 Unit 1 (tutorial) won
 PASS 375x667 find collected onto the cart
-PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Cart of stuff (141) · lot price$8Locker bid (won at auction) · paid once−$1In the cart: 🔧 Wrench, Empty Jar ($0), 🔧 Wrench, 🔧 Wrench, Dusty Rug ($0), Cracked Plate ($0), 🍪 Cookie Jar, Odd Socks ($0) and 7 moreUnder a tarp: an old locked safe. Crack it open!"}
-PASS 375x667 CLEARED stamp does not cover the title  — {"a":[74,178,301,211],"b":[257,111,366,169],"hit":false}
+PASS 375x667 cleared card is a stamped work order with itemized lines  — {"stamp":"CLEARED","h":"Unit 1 cleared!","p":"Cart of stuff (120) · lot price$8Locker bid (won at auction) · paid once−$1In the cart: 👟 Old Sneakers, ⏰ Alarm Clock, Lone Shoe ($0), 📚 Paperback Books, 🍪 Cookie Jar, 🧺 Picnic Basket, 🧸 Teddy Bear, 🪛 Screwdriver Set and 7 moreUnder a tarp: an old locked safe. Crack it open!"}
+PASS 375x667 CLEARED stamp does not cover the title  — {"a":[74,171,301,204],"b":[257,104,366,162],"hit":false}
 PASS 375x667 Unit 1: Safe Cracking Bonus pays earned game cash  — +$40
-PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Tin Robot (from the safe)$40 bankedCart of stuff (141) · lot price$8Locker bid (
+PASS 375x667 Unit 1: flea market FLIP, itemized haul  — Tin Robot (from the safe)$40 bankedCart of stuff (120) · lot price$8Locker bid (
 PASS 375x667 bank grew from the flip  — $47
 PASS 375x667 back on the map, next unit is 2
 PASS 375x667 hustler walk finishes, next unit offered
@@ -82,12 +82,12 @@ PASS 375x667 map: Unit pills never cover a stop number
 PASS 375x667 no Pickup tasks before 3 flips
 PASS 375x667 tutorial board: out of moves skips +5 offer
 PASS 375x667 fail text matches progress  — 0 finds: No finds pulled yet. Match right next to a tarp to rip it open.Retry is free. The locker bid is only paid once, when you clear the unit.
-PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Tennis Racket$2Potted Plant$1Dice Set$1Cart of stuff (105)$2Locker bid · paid on
-PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Basketball$2Hourglass$2Rookie Card$9Roller Skates$3Kite$1Old Sneakers$1Cart of s
+PASS 375x667 Unit 2: flea market FLIP, itemized haul  — Paper Lantern$1Claw Hammer$1Teddy Bear$1Cart of stuff (73)$1Locker bid · paid on
+PASS 375x667 Unit 3: flea market FLIP, itemized haul  — Teddy Bear$1Roller Skates$3Picnic Basket$1Chess Set$2Coffee Mug$1Potted Plant$1C
 PASS 375x667 3 flips earns the free Pickup upgrade scene  — {"mode":"map","unit":3,"unitId":"Unit 3","bi":1,"msg":""}
 PASS 375x667 map: camera follows the hustler to stop 4  — y 347
 PASS 375x667 village: truck landmark upgraded by the Pickup milestone  — 15%
-PASS 375x667 village: earned cash fixes up the next landmark  — 27% · bank 39→29
+PASS 375x667 village: earned cash fixes up the next landmark  — 27% · bank 31→21
 PASS 375x667 Upgrades: Pickup tasks panel
 PASS 375x667 buying an upgrade plays the truck before/after
 PASS 375x667 truck shows Level N → N+1 with new art  — Pickup Level 1 → 2
@@ -100,30 +100,30 @@ PASS 375x667 Bolt Cutters cut one tarp layer, no move spent  — {"before":1}
 PASS 375x667 Flashlight x-rays tarps
 PASS 375x667 out of moves offers free +5 before the fail card
 PASS 375x667 +5 moves granted once
-PASS 375x667 Unit 4: flea market FLIP, itemized haul  — Frying Pan$1Roller Skates$3Dice Set$1Roller Skates$3Cart of stuff (206)$4Hot + R
+PASS 375x667 Unit 4: flea market FLIP, itemized haul  — Cookie Jar$1Basketball$2Claw Hammer$1Bento Lunchbox$2Cart of stuff (105)$2Hot + 
 PASS 375x667 Unit 5 opens correct door  — {"mode":"door","id":"Unit 5"}
 PASS 375x667 Unit 5 cleared  — 0 retries
 PASS 375x667 Unit 5: Safe Cracking Bonus pays earned game cash  — +$32
-PASS 375x667 Unit 5: flea market FLIP, itemized haul  — Silver Dollar (from the safe)$32 bankedFrying Pan$1Tennis Racket$3Tennis Racket$
+PASS 375x667 Unit 5: flea market FLIP, itemized haul  — Rare Stamp (from the safe)$32 bankedJigsaw Puzzle$1Yo-Yo$1Baseball$2Cart of stuf
 PASS 375x667 Unit 6 opens correct door  — {"mode":"door","id":"Unit 6"}
-PASS 375x667 Unit 6 cleared  — 1 retries
-PASS 375x667 Unit 6: flea market FLIP, itemized haul  — Jigsaw Puzzle$1Baseball$2Yo-Yo$1Hourglass$3Dice Set$1Bento Lunchbox$2Flashlight$
+PASS 375x667 Unit 6 cleared  — 0 retries
+PASS 375x667 Unit 6: flea market FLIP, itemized haul  — Alarm Clock$1Tennis Racket$3Desk Lamp$1Toolbox$3Yo-Yo$1Basketball$3Chess Set$3Ca
 PASS 375x667 Unit 7 opens correct door  — {"mode":"door","id":"Unit 7"}
 PASS 375x667 Unit 7 cleared  — 0 retries
 PASS 375x667 Unit 7: Safe Cracking Bonus pays earned game cash  — +$16
-PASS 375x667 Unit 7: flea market FLIP, itemized haul  — Chess Set (from the safe)$16 bankedAlarm Clock$1Picture Frame$1Ball Cap$1Paperba
+PASS 375x667 Unit 7: flea market FLIP, itemized haul  — Baseball (from the safe)$16 bankedPaperback Books$1Ball Cap$1Claw Hammer$1Yo-Yo$
 PASS 375x667 Unit 8 opens correct door  — {"mode":"door","id":"Unit 8"}
 PASS 375x667 Unit 8 cleared  — 0 retries
-PASS 375x667 Unit 8: Safe Cracking Bonus pays earned game cash  — +$45
-PASS 375x667 Unit 8: flea market FLIP, itemized haul  — Tin Robot (from the safe)$45 bankedBento Lunchbox$3Rookie Card$17Desk Lamp$1Ches
+PASS 375x667 Unit 8: Safe Cracking Bonus pays earned game cash  — +$18
+PASS 375x667 Unit 8: flea market FLIP, itemized haul  — Roller Skates (from the safe)$18 bankedBaseball$3Ball Cap$1Picture Frame$1Paper 
 PASS 375x667 Unit 9 opens correct door  — {"mode":"door","id":"Unit 9"}
 PASS 375x667 Unit 9 cleared  — 0 retries
-PASS 375x667 Unit 9: Safe Cracking Bonus pays earned game cash  — +$20
-PASS 375x667 Unit 9: flea market FLIP, itemized haul  — Glass Marbles (from the safe)$20 bankedRookie Card$19Wrench$2Hourglass$5Paper La
+PASS 375x667 Unit 9: Safe Cracking Bonus pays earned game cash  — +$50
+PASS 375x667 Unit 9: flea market FLIP, itemized haul  — Silver Dollar (from the safe)$50 bankedHourglass$5Screwdriver Set$2Paper Lantern
 PASS 375x667 Unit 10 opens correct door  — {"mode":"door","id":"Unit 10"}
-PASS 375x667 Unit 10 cleared  — 3 retries
-PASS 375x667 Unit 10: Safe Cracking Bonus pays earned game cash  — +$140
-PASS 375x667 Unit 10: flea market FLIP, itemized haul  — Tin Robot (from the safe)$140 bankedTin Robot$34Tin Robot$34Tin Robot$34Rare Sta
+PASS 375x667 Unit 10 cleared  — 0 retries
+PASS 375x667 Unit 10: Safe Cracking Bonus pays earned game cash  — +$56
+PASS 375x667 Unit 10: flea market FLIP, itemized haul  — Rare Stamp (from the safe)$56 bankedSilver Dollar$25Tin Robot$34Silver Dollar$25
 PASS 375x667 village keeps building as you play  — 100% built
 PASS 375x667 all 10 Sunnyvale levels cleared
 PASS 375x667 Dolly / Bubble Wrap / Gavel all showed up  — wrap,dolly,gavel
@@ -140,4 +140,4 @@ PASS 375x667 no store, prices or pay-to-play hooks on the Desert Gold screen
 PASS 375x667 every visible button on screen and >=44px
 PASS 375x667 no console errors/warnings
 PASS 375x667 no external requests
-142/142 passed  (11/22/2026, 2:10:48 PM PT, http://127.0.0.1:8872/index.html)
+142/142 passed  (11/22/2026, 9:50:48 PM PT, http://127.0.0.1:8872/index.html)

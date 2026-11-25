@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102e2d">
+<title>Storage Auction Rush — Board Adventure</title>
+<style>
+:root{color-scheme:dark;--ink:#102e2d;--deep:#0b2424;--panel:#173a38;--line:#40615a;--cream:#fff0cd;--mint:#aaf0c9;--gold:#ffc466;--muted:#a9c4b5;--red:#ffad9b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 52% 0%,#24504a 0%,var(--deep) 72%);color:var(--cream);font:500 16px/1.4 system-ui,sans-serif;min-height:100dvh}button{font:inherit;cursor:pointer;color:inherit;touch-action:manipulation}button:disabled{opacity:.48;cursor:default}button:focus-visible{outline:3px solid white;outline-offset:3px}h1,h2,p{margin:0}h1,h2,.sign{font-family:Georgia,serif;font-weight:900;letter-spacing:-.04em}h1{font-size:clamp(1.55rem,4.3vw,2.75rem);line-height:.95}h2{font-size:clamp(1.65rem,5vw,2.45rem);line-height:1.02}small{font-size:.78rem}.label{font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--mint)}.muted{color:var(--muted)}
+.shell{max-width:1080px;margin:auto;padding:clamp(10px,2vw,24px)}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.brand{display:flex;align-items:center;gap:10px}.brandmark{display:grid;place-items:center;width:clamp(36px,6vw,54px);aspect-ratio:1;background:var(--gold);color:#193630;border-radius:13px 13px 19px 19px;font-size:clamp(20px,4vw,32px);box-shadow:inset 0 0 0 3px #ffffff45,0 4px #85552e;flex:none}.brand .label{margin-bottom:4px}.sound{width:44px;height:44px;border-radius:12px;background:var(--panel);border:1px solid var(--line);flex:none}
+.hud{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}.stat{background:#153734;border:1px solid var(--line);border-radius:12px;padding:7px 12px;min-width:0}.stat strong{display:block;color:var(--cream);font-size:clamp(1.03rem,3vw,1.44rem);overflow-wrap:anywhere}.stat:first-child strong{color:var(--gold)}
+.yard,.console{border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 28px #071c1c66}.yard{position:relative;background:#c0d9ba}.yard canvas{display:block;width:100%;height:auto;aspect-ratio:800/500}.yard-tag{position:absolute;top:9px;left:9px;padding:5px 9px;border-radius:6px;background:#102e2de8;color:var(--cream);font-weight:800;font-size:.75rem}.console{margin-top:10px;background:var(--panel);padding:clamp(11px,2vw,20px);display:flex;align-items:center;justify-content:space-between;gap:12px}.console h2{font-size:clamp(1.3rem,4.7vw,1.95rem)}.console p{margin-top:4px}
+.btn{border:1px solid #ffffff24;background:#284b46;padding:9px 14px;min-height:42px;border-radius:10px;font-weight:800;line-height:1.16}.btn:hover{filter:brightness(1.12)}.primary{background:var(--gold);color:#2b2a1c;border-color:#ffdb93;box-shadow:0 3px #966036}.mint{background:var(--mint);color:#173831;border-color:#daeec9}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.console .actions{margin:0;justify-content:flex-end;flex-shrink:0}.foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--muted);font-size:.8rem}
+.overlay{position:fixed;inset:0;z-index:3;background:#081d1de0;display:grid;justify-items:center;align-items:center;padding:8px;overflow:auto;overscroll-behavior:contain}.overlay[hidden]{display:none}.sheet{width:min(100%,520px);background:#173936;border:1px solid #648376;border-radius:19px;box-shadow:0 15px 65px #0008;padding:clamp(12px,3vw,21px);max-height:100%;overflow:auto;scrollbar-width:thin}.sheet p{margin-top:6px}.sheet .eyebrow{margin-bottom:4px}.sheet header{margin-bottom:7px}.options{display:grid;gap:7px;margin-top:10px}.option{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#214641;border:1px solid var(--line);border-radius:10px;padding:7px 9px}.option small{display:block;color:var(--muted)}.option b{color:var(--gold)}
+.cleanout{width:min(100%,475px)}.puzzle-head{display:flex;align-items:center;justify-content:space-between;gap:6px}.moves{text-align:center;background:#274e46;padding:5px 9px;border-radius:9px;white-space:nowrap;font-weight:900;color:var(--mint);font-size:.85rem}.moves.warn{background:#732e29;color:#ffe6dd;animation:pulse 1.3s infinite}@keyframes pulse{50%{box-shadow:0 0 0 4px #ff826857}}
+.locker{position:relative;isolation:isolate;margin:8px auto 0;width:min(100%,390px, calc(100dvh - 245px));min-width:min(100%,245px);padding:7px;border:3px solid #b1804e;border-radius:10px;background:#3b392c;box-shadow:inset 0 0 0 2px #1f231c,0 4px #0c2423;overflow:hidden}.locker::before{position:absolute;inset:0;content:"";z-index:-1;background:repeating-linear-gradient(0deg,#fbd49416 0 3px,transparent 3px 15px),linear-gradient(110deg,#86643c,#232a26 55%,#684f36);opacity:calc(.22 + var(--clutter,0)*.78)}.locker::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(#a5895f 0 8px,#67543a 8px 10px);animation:door .49s ease forwards;transform-origin:top;z-index:2}@keyframes door{to{transform:scaleY(0)}}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;touch-action:none}.tile{display:grid;place-items:center;position:relative;aspect-ratio:1;min-width:0;padding:0;border:1px solid #ffffff41;border-radius:7px;background:var(--tile);box-shadow:inset 0 -3px #0003;font-size:clamp(17px,5.25vw,27px);line-height:1;user-select:none;-webkit-user-select:none}.tile.empty{background:#10181546;box-shadow:none;border-color:#c7ba921d;pointer-events:none}.tile.tarp{background:repeating-linear-gradient(135deg,#68766a 0 5px,#56665d 5px 10px);color:white}.tile.tarp small{position:absolute;right:3px;bottom:2px;font-size:9px;text-shadow:0 1px #000}.tile.tarp span{opacity:.38}.tile.selected,.tile.hint{outline:2px solid #fff7ab;outline-offset:-2px;z-index:1}.tile.hint{animation:pulse 1s infinite}.tile.bump{animation:bump .24s}.tile.pop{animation:pop .28s forwards}@keyframes bump{30%{transform:translateX(4px)}70%{transform:translateX(-4px)}}@keyframes pop{50%{transform:scale(1.25);filter:brightness(1.6)}100%{transform:scale(.35);opacity:0}}
+.gridnote{min-height:2.7em;font-size:.88rem;color:var(--mint)}.cleanout .actions{margin-top:6px;justify-content:space-between}.cases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px}.case{min-height:67px;padding:4px;font-size:.72rem;background:#694e36;border-color:#a7814d}.case span{display:block;font-size:1.25rem}.case.face{background:#406b5c;color:#fff;opacity:1}.case.matched{background:#255246;color:#c5ecd2;opacity:1}.case:disabled:not(.face):not(.matched){opacity:.7}.summary{color:var(--gold);font-size:1.15rem;font-weight:800}.roll-face{display:inline-block;min-width:1.3em;text-align:center}
+@media(min-width:760px){.yard canvas{aspect-ratio:800/408}.shell{padding-top:19px}.yard-tag{top:13px;left:14px}.hud{gap:10px}}@media(max-width:440px){.console{flex-wrap:wrap}.console .actions{justify-content:flex-start}.stat{padding-inline:8px}.sheet .actions .btn{padding-inline:10px}.foot{font-size:.72rem}}@media(max-height:690px){.cleanout{padding:10px}.cleanout .gridnote{font-size:.8rem}.cleanout .actions .btn{min-height:38px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01s!important}}
+.tile.hint{outline:3px solid #ffda75;outline-offset:-3px;animation:none}
+.tile.hint-match{box-shadow:inset 0 0 0 2px #aaf0c9}
+.tile.hint::after{content:attr(data-step);position:absolute;top:2px;right:2px;min-width:16px;height:16px;border-radius:50%;background:#ffda75;color:#202d24;font:900 11px/16px system-ui;text-align:center}
+.tile.hint.selected{outline-color:white}
+.tile.dragging{z-index:2;pointer-events:none}
+.tile.neighbor-slide{z-index:1;pointer-events:none}
+.coach{font-size:.83rem;color:var(--cream)}
+.gridnote{min-height:2.7em}
+</style>
+</head>
+<body>
+<main class="shell" id="main">
+<header><div class="brand"><div class="brandmark" aria-hidden="true">⚓</div><div><div class="label">Sunnyvale / First Fortune</div><h1>Storage Auction Rush</h1></div></div><button class="sound" id="sound" aria-label="Toggle sound" aria-pressed="false">🔈</button></header>
+<div class="hud" aria-label="Your haul"><div class="stat"><div class="label">Cash</div><strong id="cash"></strong></div><div class="stat"><div class="label">Earned rolls</div><strong id="rolls"></strong></div><div class="stat"><div class="label">Truck load</div><strong id="load"></strong></div></div>
+<div class="yard"><canvas id="yard" width="800" height="500" role="img" aria-label="Isometric Sunnyvale auction yard and sixteen-space board"></canvas><div class="yard-tag" id="yardTag"></div></div>
+<section class="console"><div><div class="label" id="where"></div><h2 id="boardTitle"></h2><p id="boardNote" class="muted"></p></div><div class="actions" id="boardActions"></div></section>
+<div class="foot"><span>Board Adventure</span><span id="saveInfo">Saved in this browser</span></div>
+</main>
+<div class="overlay" id="overlay" hidden><section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"></section></div>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const key = 'storage-auction-rush-board-v1';
+const spaces = ['Payday','Auction','Day Off','Pawn','Case Match','Auction','Flea','Upgrade','Big Earl','Day Off','Auction','Pawn','Case Match','Flea','Upgrade','Auction'];
+const spaceIcons = {'Payday':'$','Auction':'▥','Day Off':'☕','Pawn':'◆','Case Match':'▣','Flea':'⚑','Upgrade':'↑','Big Earl':'★'};
+const sets = [
+ ['tools','🔧','Tool Chest'],['radios','📻','Tube Radio'],['music','🎸','Travel Guitar'],['jewelry','💍','Silver Ring'],
+ ['garage','⚙️','Chrome Horn'],['games','🕹️','Arcade Stick'],['designer','👜','Leather Satchel'],['history','🏺','Old Stoneware'],
+ ['kitchen','🫖','Enamel Teapot'],['toys','🤖','Tin Robot'],['reading','📚','Adventure Annuals'],['sports','⚾','Signed Baseball'],['shelf','🪴','Ceramic Planter']
+];
+const tiles = [['📦','Crate','#bc784a'],['🛞','Tire','#596787'],['📼','Tape','#a0668a'],['🧰','Toolbox','#b65b4d'],['🏺','Pot','#498579'],['🪑','Chair','#9b8546']];
+const shuffle = values => {
+ const result = [...values];
+ for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
+ return result;
+};
+const format = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+const money = amount => '$'+format.format(amount);
+function fresh(){
+ return {cash:10, rolls:0, truck:[], truckLevel:0, flea:0, level:1, lap:0, position:0, clears:0, rest:0, star:0, serial:0, intro:true, checkpoint:false, taughtShove:false, taughtHaul:false, sound:true, note:'Ten bucks and a rusty pickup. That first door is yours for a dollar.', event:null, locker:null};
+}
+let state = fresh();
+try{const saved=localStorage.getItem(key);if(saved) state=JSON.parse(saved);}catch{}
+let saveOK=true;
+function save(){
+ try{localStorage.setItem(key,JSON.stringify(state));saveOK=true;}catch{saveOK=false;}
+ $('saveInfo').textContent=saveOK?'Saved in this browser':'Browser storage unavailable';
+}
+const curve = () => Math.round(10 ** (Math.min(state.level-1,59)/20 + Math.max(0,state.level-60)/32));
+const capacity = () => 6+4*state.truckLevel;
+const addRoll = () => {if(state.rolls>=5)return false;state.rolls++;return true;};
+const sealedBid = () => 3*curve();
+const round = value => Math.max(1,Math.round(value));
+function newFind(kind=Math.floor(Math.random()*sets.length), value=round(curve()*(6+Math.random()*12))){
+ const [set,icon,name]=sets[kind];
+ return {id:++state.serial,set,icon,name,value};
+}
+function loadFind(find){
+ if(state.truck.length<capacity()){
+  state.truck.push(find);
+  return find.name+' loaded.';
+ }
+ const sale=round(find.value*.4);
+ state.cash+=sale;
+ return find.name+' · truck full: sold at curb price +'+money(sale);
+}
+function takeItem(id){return state.truck.splice(state.truck.findIndex(item=>item.id===id),1)[0];}
+
+let audio;
+function sound(kind){
+ if(!state.sound)return;
+ try{
+  const Audio=window.AudioContext||window.webkitAudioContext;
+  audio ||= new Audio();
+  if(audio.state==='suspended')audio.resume().catch(()=>{});
+  const patterns={door:[83,68,105],pop:[370,535,720],chain:[620,350,540,245],win:[392,494,587,784],hop:[225],bad:[110,80]};
+  patterns[kind].forEach((hz,i)=>{
+   const oscillator=audio.createOscillator(), gain=audio.createGain(), time=audio.currentTime+i*.063;
+   oscillator.type=kind==='chain'?'triangle':'sine';
+   oscillator.frequency.setValueAtTime(hz,time);
+   oscillator.frequency.exponentialRampToValueAtTime(hz*.76,time+.09);
+   gain.gain.setValueAtTime(.0001,time);
+   gain.gain.exponentialRampToValueAtTime(.075,time+.012);
+   gain.gain.exponentialRampToValueAtTime(.0001,time+.12);
+   oscillator.connect(gain);gain.connect(audio.destination);
+   oscillator.start(time);oscillator.stop(time+.13);
+  });
+ }catch{}
+}
+
+function tarp(cell){return cell!==null&&typeof cell==='object';}
+function item(cell){return typeof cell==='number';}
+function matches(grid){
+ const hits=new Set();
+ for(let r=0;r<7;r++)for(let c=0;c<7;c++){
+  const i=r*7+c, value=grid[i];
+  if(!item(value))continue;
+  if(c<=4&&grid[i+1]===value&&grid[i+2]===value){hits.add(i);hits.add(i+1);hits.add(i+2);}
+  if(r<=4&&grid[i+7]===value&&grid[i+14]===value){hits.add(i);hits.add(i+7);hits.add(i+14);}
+ }
+ return hits;
+}
+function neighbors(i){
+ return [i%7?i-1:-1,i%7<6?i+1:-1,i>=7?i-7:-1,i<42?i+7:-1].filter(j=>j>=0);
+}
+function exchange(grid,a,b){[grid[a],grid[b]]=[grid[b],grid[a]];}
+function legal(grid){
+ for(let a=0;a<49;a++){
+  if(!item(grid[a]))continue;
+  for(const b of neighbors(a)){
+   if(b<=a||!item(grid[b])||grid[a]===grid[b])continue;
+   exchange(grid,a,b);
+   const hits=matches(grid);
+   exchange(grid,a,b);
+   if(hits.has(a)||hits.has(b))return [a,b];
+  }
+ }
+ return null;
+}
+function gravity(grid){
+ for(let c=0;c<7;c++){
+  let write=6;
+  for(let r=6;r>=0;r--){
+   const i=r*7+c;
+   if(tarp(grid[i])){write=r-1;continue;}
+   if(!item(grid[i]))continue;
+   const value=grid[i];
+   grid[i]=null;
+   grid[write*7+c]=value;
+   write--;
+  }
+ }
+}
+function packed(values,tarps){
+ // Keep tarp identities and distribute the junk among seven falling columns.
+ for(let attempt=0;attempt<180;attempt++){
+  const grid=Array(49).fill(null);
+  const positions=shuffle(Array.from({length:28},(_,i)=>i+7)).slice(0,tarps.length);
+  tarps.forEach((cell,i)=>{grid[positions[i]]=cell;});
+  const slots=Array.from({length:7},(_,c)=>Array.from({length:7},(_,r)=>(6-r)*7+c).filter(i=>!tarp(grid[i])));
+  for(const value of shuffle(values)){
+   const columns=slots.filter(col=>col.length);
+   const col=columns[Math.floor(Math.random()*columns.length)];
+   grid[col.shift()]=value;
+  }
+  const occupied=grid.flatMap((cell,i)=>item(cell)?[i]:[]);
+  let hits=matches(grid);
+  // Repair random runs without changing the exact inventory or tarp positions.
+  for(let repair=0;hits.size&&repair<90;repair++){
+   const marked=[...hits];
+   const a=marked[Math.floor(Math.random()*marked.length)];
+   const b=occupied[Math.floor(Math.random()*occupied.length)];
+   if(grid[a]===grid[b])continue;
+   exchange(grid,a,b);
+   const result=matches(grid);
+   if(result.size<hits.size||(result.size===hits.size&&Math.random()<.25))hits=result;
+   else exchange(grid,a,b);
+  }
+  if(!hits.size&&legal(grid))return grid;
+ }
+ return null;
+}
+function lockerSpecs(kind){
+ if(kind==='first'||kind==='curb')return {tier:'Starter',types:5,base:14};
+ const normal=state.level>=2;
+ const elevated=kind==='estate'||kind==='rival';
+ if(state.level>=5||(normal&&elevated))return {tier:'Tough',types:5,base:13};
+ if(normal||elevated)return {tier:'Normal',types:6,base:14};
+ return {tier:'Starter',types:5,base:14};
+}
+const lockerNames={first:'The $1 Locker',curb:'Curb Pile',garage:'Dusty Garage',estate:'Sealed Estate',rival:'Big Earl’s Locker'};
+function makeLayout(locker){
+ const clutter=[];
+ for(let set=0;set<15;set++){
+  const type=set%locker.types;
+  clutter.push(type,type,type);
+ }
+ const tarps=Array.from({length:locker.tarps},(_,i)=>({
+  layers:i===0?1:1+Math.floor(Math.random()*2),
+  find:locker.prizes[i]||null
+ }));
+ let grid;
+ while(!grid)grid=packed(clutter,tarps);
+ return grid;
+}
+function openLocker(kind,bid){
+ if(state.cash<bid||state.locker)return;
+ const spec=lockerSpecs(kind), bonus=Math.min(3,state.rest+state.star), budget=spec.base+bonus+state.truckLevel;
+ const prize=kind==='first'?newFind(9,12):newFind();
+ const extra=kind==='estate'||kind==='rival'||(kind==='garage'&&Math.random()<.35);
+ const locker={...spec,kind,bid,budget,bonus,truckBonus:state.truckLevel,moves:budget,rate:curve(),
+  tarps:kind==='curb'?2:kind==='first'?3:4,prizes:[prize,extra?newFind():null],finds:[],cleared:0,
+  note:'Swap neighboring items to line up three. Tap twice or swipe.',lesson:''};
+ locker.grid=makeLayout(locker);
+ locker.initial=locker.grid.filter(cell=>cell!==null).length;
+ state.cash-=bid;
+ state.rest=0;state.star=0;
+ state.event=null;
+ state.locker=locker;
+ selected=null; hints=[];
+ sound('door');
+ commit();
+}
+function collect(locker,cell){
+ if(!cell.find)return;
+ locker.finds.push({find:cell.find,message:loadFind(cell.find)});
+}
+function resolveMatches(locker,hits){
+ while(hits.size){
+  const chipped=new Set();
+  for(const i of hits){
+   for(const j of neighbors(i))if(tarp(locker.grid[j]))chipped.add(j);
+   locker.grid[i]=null;
+   locker.cleared++;
+  }
+  for(const i of chipped){
+   const cell=locker.grid[i];
+   if(--cell.layers===0){
+    collect(locker,cell);
+    locker.grid[i]=null;
+   }
+  }
+  gravity(locker.grid);
+  hits=matches(locker.grid);
+ }
+}
+function settle(locker){
+ const notes=[];
+ while(locker.grid.some(cell=>cell!==null)){
+  const values=locker.grid.filter(item);
+  const counts=Array(locker.types).fill(0);
+  for(const value of values)counts[value]++;
+  const triple=counts.findIndex(count=>count>=3);
+  if(triple<0){
+   if(!state.taughtHaul){notes.push('Crew haul-out: no triples left. They pull the tarps and save any finds.');state.taughtHaul=true;}
+   else notes.push('Crew hauled out the leftovers.');
+   for(const cell of locker.grid)if(tarp(cell))collect(locker,cell);
+   locker.cleared+=values.length;
+   locker.grid.fill(null);
+   break;
+  }
+  if(locker.moves===0||legal(locker.grid))break;
+  if(!state.taughtShove){notes.push('Free shove: the crew repacks the junk when there’s no legal swap.');state.taughtShove=true;}
+  else if(!notes.includes('Free shove!'))notes.push('Free shove!');
+  const repacked=packed(values,locker.grid.filter(tarp));
+  if(repacked){locker.grid=repacked;break;}
+  // A stack with no exchangeable pattern can still be lined up by the crew.
+  const aligned=[42,43,44];
+  notes.push('The crew lined up a triple.');
+  for(const i of aligned){
+   if(locker.grid[i]===triple)continue;
+   const j=locker.grid.findIndex((cell,index)=>cell===triple&&!aligned.includes(index));
+   exchange(locker.grid,i,j);
+  }
+  resolveMatches(locker,matches(locker.grid));
+ }
+ return notes;
+}
+function finishLocker(won){
+ const locker=state.locker;
+ const haul=round(.03*locker.cleared*locker.rate*(won?1:.5));
+ state.cash+=haul;
+ const roll=won&&addRoll();
+ if(won){
+  state.clears++;
+  if(locker.kind!=='curb')state.level++;
+ }
+ if(locker.kind==='first')state.intro=false;
+ state.event={type:'summary',won,haul,roll,finds:locker.finds.map(entry=>entry.message),note:locker.lesson};
+ state.locker=null;
+ selected=null;hints=[];
+ if(won)sound('win');
+}
+function retry(){
+ const locker=state.locker;
+ locker.grid=makeLayout(locker);
+ // A retry keeps finds already loaded or sold and removes their prize markers.
+ locker.moves=locker.budget;locker.cleared=0;locker.lesson='';
+ locker.note='Fresh stack. Your bid is already paid.';
+ selected=null;hints=[];
+ sound('door');commit();
+}
+let selected=null,hints=[],busy=false,rolling=false,hop=null,die=null;
+function previewSwap(grid,a,b){
+ exchange(grid,a,b);
+ const hits=matches(grid);
+ const kinds=[...new Set([...hits].map(i=>grid[i]))];
+ exchange(grid,a,b);
+ return {hits,kinds};
+}
+function suggestMove(locker){
+ hints=legal(locker.grid)||[];
+ selected=null;
+}
+function hintText(grid){
+ const [a,b]=hints;
+ const {kinds}=previewSwap(grid,a,b);
+ const icons=kinds.map(kind=>tiles[kind][0]).join(' ');
+ return 'Drag 1 toward 2, or tap both, to line up '+icons+'. Mint outlines mark matching tiles already in place.';
+}
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+function readySwap(a,b){
+ const locker=state.locker;
+ if(!locker||busy||locker.moves<=0||!neighbors(a).includes(b)||!item(locker.grid[a])||!item(locker.grid[b]))return false;
+ exchange(locker.grid,a,b);
+ const hits=matches(locker.grid);
+ const swapped=[locker.grid[a],locker.grid[b]];
+ if(!hits.size){
+  exchange(locker.grid,a,b);locker.note='That swap needs three identical items straight across or down. No move spent.';sound('bad');
+  selected=null;hints=[];commit();bump(a,b);return false;
+ }
+ const from=locker.finds.length;
+ locker.moves--;
+ resolveMatches(locker,hits);
+ const notes=settle(locker);
+ locker.lesson=notes.join(' ');
+ for(const {find,message} of locker.finds.slice(from)){
+  locker.prizes=locker.prizes.map(prize=>prize?.id===find.id?null:prize);
+  notes.push(message);
+ }
+ locker.note=notes.join(' ')||'Cleared '+hits.size+' tiles. Look for the next line of three.';
+ selected=null;hints=[];
+ if(locker.moves===5||locker.moves===3)locker.note+=' '+locker.moves+' moves left. Use Show a move to spot a match.';
+ sound(notes.some(note=>note.includes('loaded')||note.includes('curb price'))?'chain':'pop');
+ const won=locker.grid.every(cell=>cell===null);
+ if($('gridnote'))$('gridnote').textContent=locker.note;
+ if(won)finishLocker(true);
+ save();
+ const oldGrid=$('grid');
+ if(oldGrid){
+  [a,b].forEach((index,i)=>{
+   const [icon,,color]=tiles[swapped[i]];
+   const tile=oldGrid.children[index];
+   tile.textContent=icon;
+   tile.style.setProperty('--tile',color);
+   tile.classList.remove('hint','hint-match','selected');
+  });
+  for(const i of hits)oldGrid.children[i].classList.add('pop');
+ }
+ busy=true;
+ setTimeout(()=>{busy=false;render();},reduced.matches?0:290);
+ return true;
+}
+function bump(...indices){for(const i of indices)$('grid')?.children[i]?.classList.add('bump');}
+
+function checkCheckpoint(){
+ if(!state.checkpoint&&!state.event&&!state.locker&&!state.intro&&(state.clears>=4||state.lap>=1)){
+  state.checkpoint=true;
+  state.event={type:'checkpoint'};
+ }
+}
+function commit(){checkCheckpoint();save();render();}
+function dismiss(note){
+ state.event=null;
+ if(note)state.note=note;
+ commit();
+}
+function land(){
+ switch(spaces[state.position]){
+  case 'Payday': break;
+  case 'Auction': state.event={type:'auction'};break;
+  case 'Day Off': {
+   const old=Math.min(3,state.rest+state.star);
+   state.rest=Math.min(3,state.rest+2);
+   const gain=Math.min(3,state.rest+state.star)-old;
+   state.event={type:'dayoff',gain};break;
+  }
+  case 'Pawn': state.event={type:'pawn'};break;
+  case 'Case Match':
+   state.event={type:'cases',deck:shuffle([0,0,1,1,2,2,3,3,4,4,5,5]),open:[],matched:[],tries:6,rate:curve()};
+   break;
+  case 'Flea': state.event={type:'flea',sold:0};break;
+  case 'Upgrade':state.event={type:'upgrade'};break;
+  case 'Big Earl': {
+   const base=sealedBid();
+   state.event={type:'earl',base,step:Math.ceil(base*.5),limit:base*(1.25+Math.random()*1.2),bid:base};
+   break;
+  }
+ }
+}
+function roll(){
+ if(rolling||state.event||state.locker||state.rolls<1)return;
+ const steps=1+Math.floor(Math.random()*6), from=state.position;
+ die=steps;
+ state.rolls--;
+ state.position=(from+steps)%16;
+ const payday=from+steps>=16;
+ state.note='Rolled '+steps+'. You’re at '+spaces[state.position]+'.';
+ if(payday){
+  state.lap++;
+  const cash=5*curve();
+  state.cash+=cash;
+  const bonus=addRoll();
+  state.note='Payday! +'+money(cash)+(bonus?' and +1 roll.':'.')+' Landed at '+spaces[state.position]+'.';
+ }
+ land();
+ rolling=true;
+ checkCheckpoint();save();render();
+ if(!reduced.matches)hop={from,steps,start:performance.now(),duration:145};
+ sound('hop');
+ setTimeout(()=>{rolling=false;hop=null;render();},reduced.matches?50:steps*145+125);
+}
+function pawnOffer(find){return round(find.value*(sets.findIndex(([set])=>set===find.set)<8?.8:.65));}
+function fleaOffer(find){return round(find.value*((sets.findIndex(([set])=>set===find.set)>=8?1:.7)+.1*state.flea));}
+function sellFlea(ids){
+ const event=state.event;
+ const remaining=3+state.flea-event.sold;
+ let cash=0;
+ for(const id of ids.slice(0,remaining)){
+  const find=takeItem(id);
+  cash+=fleaOffer(find);
+  event.sold++;
+ }
+ state.cash+=cash;
+ event.note='Coins on the table. +'+money(cash);
+ sound('chain');commit();
+}
+const casePrizes=[['🪙','Coins'],['💵','Bills'],['💰','Money Bag'],['🎁','Mystery Find'],['🎲','Earned Roll'],['⭐','Crew Move']];
+let caseTimer;
+function pickCase(index){
+ const event=state.event;
+ if(event.tries===0||event.open.length>=2||event.open.includes(index)||event.matched.includes(index))return;
+ event.open.push(index);
+ if(event.open.length===2)event.tries--;
+ commit();
+ scheduleCase();
+}
+function scheduleCase(){
+ const event=state.event;
+ if(event?.type!=='cases'||event.open.length!==2||caseTimer)return;
+ caseTimer=setTimeout(()=>{
+  caseTimer=null;
+  const [a,b]=event.open;
+  if(event.deck[a]===event.deck[b]){event.matched.push(a,b);sound('pop');}
+  event.open=[];
+  commit();
+ },reduced.matches?270:700);
+}
+function collectCases(){
+ const {matched,deck,rate}=state.event;
+ const found=new Set(matched.map(i=>deck[i]));
+ let cash=0;
+ [2,4,10].forEach((multiple,i)=>{if(found.has(i))cash+=round(rate*multiple);});
+ state.cash+=cash;
+ const notes=[];
+ if(cash)notes.push('+'+money(cash));
+ if(found.has(3))notes.push(loadFind(newFind()));
+ if(found.has(4))notes.push(addRoll()?'+1 earned roll':'Roll pouch full');
+ if(found.has(5)){
+  if(state.rest+state.star<3){state.star++;notes.push('+1 move next locker');}
+  else notes.push('Crew already fully rested');
+ }
+ state.event={type:'caseSummary',note:notes.join(' · ')||'Empty cases. Shake it off.'};
+ if(found.size)sound('chain');
+ commit();
+}
+function element(tag,cls,text){
+ const e=document.createElement(tag);
+ if(cls)e.className=cls;
+ if(text!==undefined)e.textContent=text;
+ return e;
+}
+function button(text,action,kind='',disabled=false){
+ const e=element('button','btn '+kind,text);
+ e.type='button';e.disabled=disabled;e.addEventListener('click',action);
+ return e;
+}
+function paragraph(parent,text,cls=''){parent.append(element('p',cls,text));}
+function actions(parent,...buttons){const row=element('div','actions');row.append(...buttons);parent.append(row);}
+function header(title,kicker){
+ const section=$('sheet');
+ section.className='sheet';
+ section.replaceChildren(element('div','label eyebrow',kicker));
+ const h=element('h2','',title);h.id='dialogTitle';h.tabIndex=-1;section.append(h);
+ return section;
+}
+function options(parent,rows){
+ const list=element('div','options');
+ for(const [name,detail,control] of rows){
+  const row=element('div','option'), title=element('div');
+  title.append(element('b','',name),element('small','',detail));row.append(title,control);list.append(row);
+ }
+ parent.append(list);
+}
+function showLocker(locker){
+ if(!locker.moves){
+  const panel=header('Out of moves',lockerNames[locker.kind]);
+  paragraph(panel,'Pieces left on the floor. Bag what you got or take a fresh crack at it.');
+  paragraph(panel,'Keep your finds and half salvage. A full cleanout earns your roll.','muted');
+  if(locker.note)paragraph(panel,locker.note,'muted');
+  actions(panel,button('Retry free',retry,'primary'),button('Keep what you got',()=>{finishLocker(false);commit();}));
+  return;
+ }
+ const panel=$('sheet');
+ if(locker.kind==='first'&&locker.moves===locker.budget&&!hints.length&&selected===null&&
+    (locker.note.startsWith('Swap neighboring')||locker.note.startsWith('Fresh stack'))){
+  suggestMove(locker);
+ }
+ if(!$('grid')){
+  panel.className='sheet cleanout';
+  panel.replaceChildren();
+  const top=element('div','puzzle-head'), title=element('div'), h=element('h2','',lockerNames[locker.kind]);
+  h.id='dialogTitle';h.tabIndex=-1;
+  const budget=element('div','moves');budget.id='budget';
+  top.append(title,budget);
+  title.append(element('div','label',locker.tier+' cleanout'),h);
+  const lockerBox=element('div','locker');lockerBox.id='lockerBox';
+  const grid=element('div','grid');grid.id='grid';grid.setAttribute('aria-label','7 by 7 locker grid');
+  lockerBox.append(grid);
+  const note=element('p','gridnote');note.id='gridnote';note.setAttribute('aria-live','polite');
+  const details=element('small','muted');
+  details.textContent=locker.base+' base'+(locker.bonus?' · +'+locker.bonus+' rested crew':'')+(locker.truckBonus?' · +'+locker.truckBonus+' truck':'')+' · '+locker.types+' tile types';
+  const rule=element('p','coach','Drag or swipe a tile in any direction. Line up three identical items across or down.');
+  panel.append(top,rule,lockerBox,note,details);
+  actions(panel,button('Show a move',()=>{
+   if(busy)return;
+   suggestMove(state.locker);
+   showLocker(state.locker);
+  },'mint'));
+ }
+ const budget=$('budget');
+ budget.textContent=locker.moves+' / '+locker.budget+' moves';
+ budget.classList.toggle('warn',locker.moves<=5);
+ $('gridnote').textContent=hints.length?hintText(locker.grid):locker.note;
+ $('lockerBox').style.setProperty('--clutter',locker.grid.filter(cell=>cell!==null).length/locker.initial);
+ const grid=$('grid');
+ const stationary=hints.length?previewSwap(locker.grid,...hints).hits:new Set();
+ const focused=document.activeElement?.dataset?.tile;
+ grid.replaceChildren();
+ locker.grid.forEach((cell,index)=>{
+  const e=element('button','tile');e.type='button';e.dataset.tile=index;
+  if(item(cell)){
+   const [icon,label,color]=tiles[cell];
+   e.textContent=icon;e.style.setProperty('--tile',color);
+   const step=hints.indexOf(index)+1;
+   e.setAttribute('aria-label',(step?'Suggested tile '+step+', ':'')+label+', row '+(Math.floor(index/7)+1)+', column '+(index%7+1));
+   if(selected===index){e.classList.add('selected');e.setAttribute('aria-pressed','true');}
+   if(step){e.classList.add('hint');e.dataset.step=step;}
+   else if(stationary.has(index))e.classList.add('hint-match');
+   e.addEventListener('click',()=>{
+    if(busy)return;
+    if(selected===null||selected===index){selected=selected===index?null:index;if(!step&&selected!==null)hints=[];showLocker(locker);return;}
+    if(neighbors(selected).includes(index)){readySwap(selected,index);return;}
+    const previous=selected;selected=null;hints=[];
+    locker.note='Neighbors only. No move spent.';commit();bump(previous,index);
+   });
+  }else{
+   e.disabled=true;
+   e.classList.add(cell?'tarp':'empty');
+   e.setAttribute('aria-label',cell?'Tarp with '+cell.layers+' layer'+(cell.layers===1?'':'s')+(state.flea&&cell.find?' hiding '+cell.find.name:''):'Empty');
+   if(cell)e.append(element('span','',state.flea&&cell.find?cell.find.icon:'▧'),element('small','',String(cell.layers)));
+  }
+  grid.append(e);
+ });
+ if(focused!==undefined)grid.children[Number(focused)]?.focus({preventScroll:true});
+}
+let drag=null, suppressTileClick=false;
+function swipeNeighbor(index,dx,dy){
+ const offset=Math.abs(dx)>=Math.abs(dy)?Math.sign(dx):7*Math.sign(dy);
+ const next=index+offset;
+ return neighbors(index).includes(next)?next:-1;
+}
+function clearDragPreview(gesture){
+ gesture.tile.style.transform='';
+ gesture.tile.classList.remove('dragging');
+ if(gesture.other){
+  gesture.other.style.transform='';
+  gesture.other.classList.remove('neighbor-slide');
+  gesture.other=null;
+ }
+}
+$('sheet').addEventListener('pointerdown',e=>{
+ if(!e.isPrimary||e.button!==0)return;
+ suppressTileClick=false;
+ const tile=e.target.closest('.tile:not(:disabled)');
+ if(!tile||busy)return;
+ drag={id:e.pointerId,index:Number(tile.dataset.tile),x:e.clientX,y:e.clientY,tile,other:null,moved:false};
+ tile.setPointerCapture(e.pointerId);
+});
+$('sheet').addEventListener('pointermove',e=>{
+ if(!drag||drag.id!==e.pointerId)return;
+ const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+ if(!drag.moved&&Math.max(Math.abs(dx),Math.abs(dy))<9)return;
+ drag.moved=true;
+ clearDragPreview(drag);
+ const index=swipeNeighbor(drag.index,dx,dy);
+ if(!item(state.locker?.grid[index]))return;
+ const other=$('grid').children[index];
+ const x=other.offsetLeft-drag.tile.offsetLeft,y=other.offsetTop-drag.tile.offsetTop;
+ const fraction=Math.min(1,Math.max(Math.abs(dx),Math.abs(dy))/Math.hypot(x,y));
+ drag.other=other;
+ drag.tile.classList.add('dragging');
+ other.classList.add('neighbor-slide');
+ drag.tile.style.transform='translate('+x*fraction+'px,'+y*fraction+'px)';
+ other.style.transform='translate('+(-x*fraction)+'px,'+(-y*fraction)+'px)';
+});
+function cancelDrag(e){
+ if(drag?.id!==e.pointerId)return;
+ clearDragPreview(drag);
+ drag=null;
+}
+$('sheet').addEventListener('pointercancel',cancelDrag);
+$('sheet').addEventListener('lostpointercapture',cancelDrag);
+$('sheet').addEventListener('click',e=>{
+ if(suppressTileClick&&e.detail&&e.target.closest('.tile')){
+  e.stopImmediatePropagation();
+  suppressTileClick=false;
+ }
+},true);
+$('sheet').addEventListener('pointerup',e=>{
+ if(!drag||drag.id!==e.pointerId)return;
+ const gesture=drag;
+ const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
+ clearDragPreview(gesture);
+ drag=null;
+ const distance=Math.max(Math.abs(dx),Math.abs(dy));
+ if(distance<9&&!gesture.moved)return;
+ suppressTileClick=true;
+ if(distance<9)return;
+ const index=swipeNeighbor(gesture.index,dx,dy);
+ if(item(state.locker?.grid[index])){
+  readySwap(gesture.index,index);
+ }else if(!busy&&state.locker){
+  selected=null;hints=[];
+  state.locker.note='Drag toward an item next to this tile. No move spent.';
+  commit();bump(gesture.index);
+ }
+},true);
+function renderEvent(event){
+ let panel;
+ const leave=()=>button('Back to the board',()=>dismiss());
+ switch(event.type){
+  case 'auction':
+   panel=header('Doors up, pirate!','Sunnyvale Auctions');
+   paragraph(panel,'Pick a locker. Pay once and keep the haul.');
+   options(panel,[
+    ['Dusty Garage',lockerSpecs('garage').tier+' cleanout',button('Bid '+money(curve()),()=>openLocker('garage',curve()),'primary',state.cash<curve())],
+    ['Sealed Estate',lockerSpecs('estate').tier+' cleanout',button('Bid '+money(sealedBid()),()=>openLocker('estate',sealedBid()),'mint',state.cash<sealedBid())]
+   ]);
+   actions(panel,button('Decline',()=>dismiss('You passed on the auction.')));break;
+  case 'summary':
+   panel=header(event.won?'LOCKER EMPTY!':'Haul salvaged',event.won?'Cleanout complete':'Cleanout ended');
+   paragraph(panel,'+'+money(event.haul)+' salvage'+(event.roll?' · +1 earned roll':event.won?' · Roll pouch full':''),'summary');
+   for(const message of event.finds)paragraph(panel,message);
+   if(event.note)paragraph(panel,event.note,'muted');
+   actions(panel,button('Back to the board',()=>dismiss(event.won?'Clean door. Take your next roll.':'The curb crew is here if you need a roll.'),'primary'));break;
+  case 'checkpoint':
+   panel=header('First Fortune','Sunnyvale checkpoint');
+   paragraph(panel,'You got your start, pirate. Sunnyvale’s got plenty more doors.');
+   paragraph(panel,state.clears+' lockers cleared · '+state.lap+' laps · '+money(state.cash)+' cash','summary');
+   actions(panel,button('Keep rolling',()=>dismiss(),'primary'));break;
+  case 'dayoff':
+   panel=header('Day Off','Crew break');
+   paragraph(panel,event.gain?'Feet up. +'+event.gain+' moves on the next locker.':'The crew’s fully rested. +3 moves on the next locker.');
+   actions(panel,leave());break;
+  case 'pawn':{
+   panel=header('Sunnyvale Pawn','One sale per visit');
+   const find=state.truck.find(item=>item.id===event.id);
+   if(event.walked){
+    paragraph(panel,'He walked. Your find stays on the truck.');
+   }else if(event.sold){
+    paragraph(panel,event.sold,'summary');
+   }else if(find){
+    paragraph(panel,find.icon+' '+find.name+' · value '+money(find.value));
+    paragraph(panel,event.note||'“Here’s my offer.”','muted');
+    const take=button('Take '+money(event.offer),()=>{
+     takeItem(find.id);state.cash+=event.offer;event.sold='Sold for '+money(event.offer)+'.';sound('chain');commit();
+    },'primary');
+    const push=button('Push for +'+money(round(.15*find.value))+' · '+(event.pushes===0?75:50)+'%',()=>{
+     const success=Math.random()<(event.pushes===0?.75:.5);
+     event.pushes++;
+     if(success){event.offer+=round(.15*find.value);event.note='“Fine. I’ll bump it.”';}
+     else if(event.failed){event.walked=true;}
+     else{event.failed=true;event.offer=round(event.offer-round(.10*find.value));event.note='“Too rich. My offer just went down.”';}
+     commit();
+    },'',event.pushes>=2);
+    actions(panel,take,push);
+    actions(panel,button('Walk away',()=>dismiss('You kept your find.')));break;
+   }else if(state.truck.length){
+    paragraph(panel,'Pick a find to put on the counter.');
+    options(panel,state.truck.map(item=>[item.icon+' '+item.name,'Value '+money(item.value),button('Ask · '+money(pawnOffer(item)),()=>{
+     Object.assign(event,{id:item.id,offer:pawnOffer(item),pushes:0,failed:false});
+     commit();
+    },'mint')]));
+   }else paragraph(panel,'Empty truck. Nothing for the counter.');
+   actions(panel,leave());break;
+  }
+  case 'flea':{
+   panel=header(fleaNames[state.flea],'Flea Market');
+   const remaining=3+state.flea-event.sold;
+   paragraph(panel,remaining+' sale slots left this visit.'+(event.note?' '+event.note:'') ,'muted');
+   if(remaining&&state.truck.length){
+    const best=[...state.truck].sort((a,b)=>fleaOffer(b)-fleaOffer(a)).slice(0,remaining);
+    actions(panel,button('Sell the best '+best.length,()=>sellFlea(best.map(item=>item.id)),'primary'));
+    options(panel,state.truck.map(item=>[item.icon+' '+item.name,'Value '+money(item.value),button('Sell '+money(fleaOffer(item)),()=>sellFlea([item.id]),'mint')]));
+   }else if(!state.truck.length)paragraph(panel,'Nothing left on the truck.');
+   actions(panel,leave());break;
+  }
+  case 'upgrade':
+   panel=header('Fix up your outfit','Sunnyvale Upgrades');
+   paragraph(panel,event.note||'Make room for bigger hauls and better sales.');
+   options(panel,[['flea','Flea stall',[20,45],'+1 sale slot, +10% prices'+(state.flea?'':' and tarp tips')],['truckLevel','Pickup',[25,55],'+4 truck slots and +1 move per cleanout']].map(([field,name,multipliers,detail])=>{
+    const level=state[field],price=multipliers[level]*curve();
+    return [name+' · '+level+'/2',detail,button(level===2?'Maxed':'Buy '+money(price),()=>{
+     state.cash-=price;state[field]++;event.note=name+' upgraded.';sound('chain');commit();
+    },'mint',level===2||state.cash<price)];
+   }));
+   actions(panel,leave());break;
+  case 'earl':{
+   panel=header('Big Earl','Rival auction');
+   if(state.cash<event.base){
+    paragraph(panel,'Earl opens at '+money(event.base)+'. You’re short this round.');actions(panel,leave());break;
+   }
+   const next=event.bid+event.step;
+   paragraph(panel,'“I’ve got '+money(event.bid)+'. What’ve you got, pirate?”');
+   paragraph(panel,'Pay your last bid if he folds.','muted');
+   actions(panel,button('Raise to '+money(next),()=>{
+    if(next>event.limit){state.note='Earl folded. Sealed door’s yours.';openLocker('rival',next);}
+    else{event.bid=next;commit();}
+   },'primary',state.cash<next),button('Fold',()=>dismiss('You folded. Earl gets the door.')));break;
+  }
+  case 'cases':{
+   panel=header('Case Match','Sunnyvale Bonus');
+   paragraph(panel,event.tries+' / 6 tries · '+event.matched.length/2+' pairs. Flip two cases.','muted');
+   const grid=element('div','cases');
+   event.deck.forEach((prize,index)=>{
+    const matched=event.matched.includes(index),face=matched||event.open.includes(index),[icon,name]=casePrizes[prize];
+    const e=button('',()=>pickCase(index),'case '+(matched?'matched':face?'face':''),face||event.open.length===2||!event.tries);
+    e.append(element('span','',face?icon:'▣'),element('div','',face?name:'Case '+(index+1)));
+    grid.append(e);
+   });
+   panel.append(grid);
+   if((event.tries===0||event.matched.length===12)&&!event.open.length)actions(panel,button('Collect rewards',collectCases,'primary'));
+   break;
+  }
+  case 'caseSummary':
+   panel=header('Case haul','Case Match');
+   paragraph(panel,event.note,'summary');actions(panel,leave());break;
+ }
+}
+const fleaNames=['Yard-sale table','Market stall','Pirate Flea shop'];
+function render(){
+ $('cash').textContent=money(state.cash);
+ $('rolls').textContent=state.rolls+' / 5';
+ $('load').textContent=state.truck.length+' / '+capacity();
+ $('sound').textContent=state.sound?'🔊':'🔇';
+ $('sound').setAttribute('aria-pressed',String(state.sound));
+ $('yardTag').textContent='Locker Lv. '+state.level+'  /  Lap '+state.lap;
+ $('where').textContent='Space '+(state.position+1)+' of 16';
+ $('boardTitle').textContent=state.intro?'The $1 Locker':spaces[state.position];
+ $('boardNote').textContent=state.note;
+ const controls=$('boardActions');
+ controls.replaceChildren();
+ if(state.intro)controls.append(button('Bid $1',()=>openLocker('first',1),'primary',!!state.locker));
+ else if(!state.rolls&&!rolling)controls.append(button('Open free Curb Pile',()=>openLocker('curb',0),'primary'));
+ else controls.append(button(rolling?'Rolled '+die:'⚄ Roll the die',roll,'primary',rolling));
+ const overlay=$('overlay'), wasHidden=overlay.hidden;
+ overlay.hidden=rolling||!(state.locker||state.event);
+ $('main').inert=!overlay.hidden;
+ if(!overlay.hidden){
+  if(state.locker)showLocker(state.locker);
+  else renderEvent(state.event);
+  if(wasHidden)$('dialogTitle')?.focus({preventScroll:true});
+ }else{
+  $('sheet').replaceChildren();
+  if(!wasHidden)controls.querySelector('button')?.focus({preventScroll:true});
+ }
+}
+$('sound').addEventListener('click',()=>{state.sound=!state.sound;if(state.sound)sound('hop');commit();});
+
+const canvas=$('yard'), ctx=canvas.getContext('2d');
+const points=[[111,420],[214,420],[317,420],[420,420],[523,420],[626,420],[686,349],[583,332],[480,332],[377,332],[274,332],[171,332],[122,260],[225,245],[328,245],[431,245]];
+const boardColors={'Payday':'#fbca6d','Auction':'#f0bb84','Day Off':'#a8d9b0','Pawn':'#ead6a5','Case Match':'#b7c8dd','Flea':'#a9dec2','Upgrade':'#d4dca0','Big Earl':'#eaa194'};
+function shape(vertices,fill,stroke){
+ ctx.beginPath();
+ vertices.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+ ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+ if(stroke){ctx.strokeStyle=stroke;ctx.stroke();}
+}
+function box(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h);}
+function ellipse(x,y,rx,ry,color){
+ ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+}
+function line(points,color,width){
+ ctx.beginPath();
+ points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+ ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+}
+function label(value,x,y,size,color='#173937',font='bold'){
+ ctx.font=font+' '+size+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(value,x,y);
+}
+function house(x,y,w,h,front,side,roof){
+ const d=24;
+ shape([[x-9,y+5],[x+w+4,y+5],[x+w+d+18,y-15],[x+d,y-15]],'#324a3540');
+ shape([[x+w,y],[x+w+d,y-17],[x+w+d,y-h-17],[x+w,y-h]],side);
+ box(x,y-h,w,h,front);
+ shape([[x-7,y-h],[x+w+5,y-h],[x+w+d+6,y-h-18],[x+d-4,y-h-18]],roof);
+ box(x-7,y-h,w+12,6,'#3c5044');
+}
+function door(x,y,w,h,color){
+ box(x-4,y-h-4,w+8,h+4,'#394535');box(x,y-h,w,h,color);
+ for(let i=5;i<h;i+=7)box(x,y-h+i,w,1,'#293d3977');
+ box(x+w/2-5,y-9,10,3,'#f9cf86');
+}
+function banner(text,x,y,w,color='#1d4f48'){
+ box(x-w/2-2,y-11,w+4,23,'#493f2e');
+ box(x-w/2,y-9,w,18,color);
+ label(text,x,y,11,'#fff1cd','900');
+}
+function tree(x,y,s){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ ellipse(7,4,18,6,'#405d383b');box(-3,-33,6,33,'#6c5334');
+ shape([[-18,-20],[0,-52],[17,-20]],'#47745c');
+ shape([[-15,-31],[0,-60],[14,-31]],'#5a8666');
+ shape([[-10,-43],[0,-66],[11,-43]],'#6a9470');ctx.restore();
+}
+function pawnBuilding(){
+ house(76,194,124,67,'#e8b96f','#b67b4f','#638171');
+ box(84,152,48,28,'#31534c');box(87,155,42,22,'#6e9b83');
+ box(106,154,3,24,'#d5ba7c');box(87,165,42,2,'#d5ba7c');
+ door(151,193,29,40,'#587765');
+ banner('SUNNYVALE PAWN',137,135,111);
+ for(let i=0;i<6;i++)shape([[80+i*10,147],[90+i*10,147],[86+i*10,154],[76+i*10,154]],i%2?'#f8db97':'#b4674d');
+}
+function fleaBuilding(){
+ const x=643,y=217,level=state.flea;
+ ellipse(x+45,y+2,67,12,'#455f3a38');
+ if(level===2){
+  house(x,y,89,67,'#d0e5b8','#719171','#39735f');
+  door(x+12,y,28,41,'#285949');
+  box(x+50,y-40,29,23,'#6e9e83');
+  banner('PIRATE FLEA',x+45,y-56,84);
+ }else{
+  if(level===1){
+   box(x+3,y-61,4,59,'#604b36');box(x+81,y-62,4,60,'#604b36');
+   for(let i=0;i<8;i++)shape([[x+i*11,y-66],[x+11+i*11,y-66],[x+6+i*11,y-48],[x-5+i*11,y-48]],i%2?'#f5d999':'#408e77');
+   banner('MARKET STALL',x+44,y-41,87);
+  }
+  box(x+11,y-19,6,20,'#604b36');box(x+68,y-19,6,20,'#604b36');
+  shape([[x+2,y-20],[x+78,y-20],[x+93,y-28],[x+16,y-28]],'#dfab6c');
+  box(x+2,y-20,76,6,'#a47046');
+  for(let i=0;i<5;i++)box(x+12+i*14,y-31-(i%2)*3,9,8+(i%2)*3,['#679785','#d58464','#dfaf61'][i%3]);
+  if(level===0)banner('YARD SALE',x+43,y-6,67);
+ }
+}
+function garageBuilding(){
+ house(350,164,214,82,'#efcc93','#9f7352','#b17a54');
+ [0,1,2,3].forEach((i)=>door(359+i*50,163,40,49,['#568779','#759b80','#b67c54','#558475'][i]));
+ banner('SUNNYVALE STORAGE',457,94,161);
+}
+function pickup(x,y){
+ ellipse(x+24,y+10,36,8,'#233e353d');
+ ellipse(x+8,y+6,7,7,'#223632');ellipse(x+46,y+6,7,7,'#223632');
+ shape([[x-1,y],[x-1,y-12],[x+27,y-12],[x+30,y-23],[x+44,y-23],[x+52,y-11],[x+59,y-10],[x+59,y+3],[x-1,y+3]],state.truckLevel?'#438872':'#a55f40');
+ shape([[x+32,y-20],[x+42,y-20],[x+48,y-12],[x+30,y-12]],'#a7d1bd');
+ box(x+3,y-11,21,4,'#e0a872');box(x+52,y-7,7,4,'#ffe0a0');
+}
+function pirate(x,y,lift){
+ ellipse(x,y+13,18,6,'#203b365b');
+ y-=lift;
+ box(x-8,y+1,6,12,'#203633');box(x+3,y+1,6,12,'#203633');
+ shape([[x-12,y+4],[x-8,y-11],[x+8,y-11],[x+13,y+4]],'#287d71','#153d3a');
+ box(x-10,y,20,3,'#e8b464');box(x-2,y-1,5,5,'#ffe3a2');
+ ellipse(x,y-16,10,10,'#edb582');
+ ellipse(x+5,y-17,2.5,2.5,'#283635');
+ shape([[x-15,y-21],[x-13,y-30],[x-5,y-28],[x,y-34],[x+7,y-27],[x+14,y-29],[x+16,y-21]],'#223432','#0d292a');
+ label('◆',x,y-25,9,'#ffce79');
+}
+const wide=matchMedia('(min-width: 760px)');
+let paintSignature='';
+function drawYard(now){
+ requestAnimationFrame(drawYard);
+ const signature=[state.position,state.flea,state.truckLevel,wide.matches,devicePixelRatio].join('|');
+ if(!hop&&signature===paintSignature)return;
+ paintSignature=signature;
+ const density=Math.min(2,devicePixelRatio||1), tall=wide.matches?408:500;
+ if(canvas.width!==800*density||canvas.height!==tall*density){canvas.width=800*density;canvas.height=tall*density;}
+ ctx.setTransform(density,0,0,density*tall/500,0,0);
+ const sky=ctx.createLinearGradient(0,0,0,500);sky.addColorStop(0,'#b2d6b7');sky.addColorStop(1,'#e8d6a7');
+ box(0,0,800,500,sky);
+ ellipse(692,52,32,32,'#ffde8d');
+ shape([[0,115],[94,49],[159,99],[217,74],[306,124],[378,101],[450,129],[562,72],[664,131],[736,92],[800,130],[800,250],[0,250]],'#92ad83');
+ shape([[0,153],[129,107],[243,143],[364,119],[509,151],[640,120],[800,147],[800,245],[0,245]],'#a8b48a');
+ shape([[0,240],[410,105],[800,175],[800,500],[0,500]],'#c7b47f');
+ shape([[0,265],[403,129],[800,198],[800,500],[0,500]],'#d9c391');
+ const trail=[[431,245],[504,246],[548,272],[506,293],[113,291],[61,321],[47,369],[111,420]];
+ line(trail,'#8f9461',22);line(trail,'#eddbad',14);
+ line(points,'#958c58',38);line(points,'#ebd8a7',29);
+ for(let n=0;n<75;n++){
+  const x=(n*137+23)%800,y=210+(n*61+11)%280;
+  ellipse(x,y,n%3+1,1,n%2?'#ac99706b':'#fcdfab99');
+ }
+ [[34,227,1.1],[252,189,.9],[304,174,.7],[583,182,.9],[761,205,1.13],[772,336,.8],[31,388,.8],[714,442,.72]].forEach(args=>tree(...args));
+ garageBuilding();pawnBuilding();fleaBuilding();pickup(521,206);
+ banner('SUNNYVALE',252,214,102,'#407060');
+ for(const i of [...Array(16).keys()].sort((a,b)=>points[a][1]-points[b][1])){
+  const [x,y]=points[i], space=spaces[i], selectedSpace=i===state.position&&!hop;
+  const tile=[[x-44,y-19],[x+37,y-19],[x+45,y+13],[x-36,y+13]];
+  shape(tile.map(([tx,ty])=>[tx,ty+9]),'#86764c');
+  shape(tile,selectedSpace?'#ffe296':boardColors[space],selectedSpace?'#fff3b8':'#6c7856');
+  label(spaceIcons[space],x-25,y-3,18);
+  const boardLabel=space==='Case Match'?'Cases':space==='Big Earl'?'Earl':space;
+  label(boardLabel,x+8,y-3,12);
+ }
+ let [x,y]=points[state.position],lift=0;
+ if(hop){
+  const progress=Math.min(hop.steps,(now-hop.start)/hop.duration);
+  const step=Math.floor(progress), fraction=progress-step;
+  const index=(hop.from+step)%16,next=(index+1)%16;
+  const from=points[index],to=points[next];
+  if(index===15){
+   const section=Math.min(trail.length-2,Math.floor(fraction*(trail.length-1)));
+   const part=fraction*(trail.length-1)-section;
+   const [a,b]=trail.slice(section,section+2);
+   x=a[0]+(b[0]-a[0])*part;y=a[1]+(b[1]-a[1])*part;
+  }else{
+   x=from[0]+(to[0]-from[0])*fraction;y=from[1]+(to[1]-from[1])*fraction;
+  }
+  lift=Math.sin(fraction*Math.PI)*34;
+  if(progress<hop.steps)paintSignature='';
+ }
+ pirate(x,y-16,lift);
+}
+wide.addEventListener('change',()=>{paintSignature='';});
+if(state.locker?.grid.every(cell=>cell===null))finishLocker(true);
+commit();
+scheduleCase();
+requestAnimationFrame(drawYard);
+</script>
+</body>
+</html>

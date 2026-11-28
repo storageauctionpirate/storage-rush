@@ -30,13 +30,13 @@ function tween(dur,fn){return new Promise(res=>anims.push({t0:performance.now(),
 export function init(cv,opts={}){
   canvas=cv;const dpr=Math.min(window.devicePixelRatio||1,opts.maxDpr||2);
   renderer=new THREE.WebGLRenderer({canvas,antialias:dpr<2,powerPreference:'high-performance'});
-  renderer.setPixelRatio(dpr);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+  renderer.setPixelRatio(dpr);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   scene=new THREE.Scene();
   scene.background=canvasTex(8,256,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'#2c6f78');g.addColorStop(.45,'#7fb3a6');g.addColorStop(.7,'#f3c98d');g.addColorStop(1,'#e59a62');x.fillStyle=g;x.fillRect(0,0,w,h);});
   scene.fog=new THREE.Fog(0xd8b98d,42,95);
   camera=new THREE.PerspectiveCamera(42,1,.1,260);clock=new THREE.Clock();
-  scene.add(new THREE.HemisphereLight(0xfff0d6,0x5d4632,1.15));
+  scene.add(new THREE.HemisphereLight(0xfff3dc,0x7a6248,1.45));
   const sun=new THREE.DirectionalLight(0xffdcae,2.4);sun.position.set(-14,26,12);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
   Object.assign(sun.shadow.camera,{left:-22,right:22,top:22,bottom:-22,near:5,far:70});sun.shadow.bias=-.0005;sun.shadow.normalBias=.02;scene.add(sun);
   const fill=new THREE.DirectionalLight(0x87c7d0,.55);fill.position.set(16,9,-18);scene.add(fill);
@@ -56,7 +56,7 @@ export function resize(){W=innerWidth;H=innerHeight;renderer.setSize(W,H,false);
 function buildGround(){
   const g=new THREE.Mesh(new THREE.PlaneGeometry(200,200),mat(0xc9a06c,{map:noiseTex('#c9a06c',['#a9784a','#e3c08a','#8f6a48'],1600)}));
   g.material.map.wrapS=g.material.map.wrapT=THREE.RepeatWrapping;g.material.map.repeat.set(10,10);g.rotation.x=-Math.PI/2;g.receiveShadow=true;scene.add(g);
-  const lot=new THREE.Mesh(new THREE.PlaneGeometry(46,40),mat(0x77716a,{map:noiseTex('#77716a',['#5d5853','#8e8880','#4b4743'],2200)}));lot.rotation.x=-Math.PI/2;lot.position.y=.01;lot.receiveShadow=true;scene.add(lot);
+  const lot=new THREE.Mesh(new THREE.PlaneGeometry(46,40),mat(0xb0a594,{map:noiseTex('#b0a594',['#968b7c','#c4baa9','#8a8072'],2200)}));lot.rotation.x=-Math.PI/2;lot.position.y=.01;lot.receiveShadow=true;scene.add(lot);
   // distant mesas for depth
   const mm=mat(0xc77a4e,{flatShading:true});for(let i=0;i<14;i++){const a=i/14*TAU,r=70+(i%3)*9;const m=cyl(4+Math.random()*7,9+Math.random()*8,5+Math.random()*9,mm,Math.cos(a)*r,2,Math.sin(a)*r,scene,7);m.castShadow=false;}
 }
@@ -270,7 +270,8 @@ async function loadModels(){
   MOD.inst(KN+'chars/character-male-d.glb',{skinned:true,tint:0xc9a0ff}).then(r=>{if(!r)return;const o=skinIn(earl,r,2.0,earl);putHat(o,hatMesh('earl'),.12);playAnim(earl,'idle');modelState.earl=true;});
   Promise.all(TRUCKS.map(t=>MOD.inst(KN+'cars/'+t.f+'.glb',{tint:t.tint}))).then(rs=>{rs.forEach((r,i)=>{if(r){const o=r.obj;o.rotation.y=Math.PI/2;o.scale.setScalar(1.25);truckTpl[i]=MOD.grounded(o);modelState.trucks++;}});setTruckLevel(truckLv,false);});
   const F=['loungeSofa','televisionVintage','lampRoundFloor','chair','bookcaseClosed','dryer','kitchenFridge','pottedPlant','speaker','tableCoffee','bench','cardboardBoxClosed','cardboardBoxOpen'];
-  Promise.all(F.map(f=>MOD.inst(KN+'furniture/'+f+'.glb'))).then(rs=>{rs.forEach((r,i)=>{if(r){const g=MOD.grounded(r.obj),sz=g.userData.size,k=Math.min(2.6,1.05/Math.max(sz.x,sz.z));r.obj.parent.scale.setScalar(k);g.userData.h=sz.y*k;furnTpl[F[i]]=g;modelState.furniture++;}});});
+  const FT={loungeSofa:0x4fa39b,televisionVintage:0xb07a4a,lampRoundFloor:0xe8c46a,chair:0xc08a52,bookcaseClosed:0xa8703e,dryer:0xe9edf0,kitchenFridge:0xd9e6ea,pottedPlant:0xffffff,speaker:0x5a5f66,tableCoffee:0x9a6438,bench:0x8f5f3a,cardboardBoxClosed:0xd6a466,cardboardBoxOpen:0xc99858};
+  Promise.all(F.map(f=>MOD.inst(KN+'furniture/'+f+'.glb',{tint:FT[f]}))).then(rs=>{rs.forEach((r,i)=>{if(r){const g=MOD.grounded(r.obj),sz=g.userData.size,k=Math.min(2.6,1.05/Math.max(sz.x,sz.z));r.obj.parent.scale.setScalar(k);g.userData.h=sz.y*k;furnTpl[F[i]]=g;modelState.furniture++;}});});
   MOD.inst(KN+'cars/box.glb').then(r=>{if(r){const g=MOD.grounded(r.obj);g.scale.setScalar(1.25);furnTpl.box=g;g.userData.h=.89;}});
   buildTown();}
 export function setTruckLevel(lv,animate=true){truckLv=lv;const tpl=truckTpl[lv];if(!tpl)return Promise.resolve();

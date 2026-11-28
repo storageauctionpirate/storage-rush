@@ -159,12 +159,12 @@ async function cases(){label('BONUS GAME','Case Match','Flip two cases. A pair w
   // six DIFFERENT prizes; each pair shares the exact same icon and label, so what looks the same always matches
   const prizes=[{k:'cash',v:cXS,e:'🪙',l:fmt(cXS)},{k:'cash',v:cS,e:'💵',l:fmt(cS)},{k:'cash',v:cM,e:'💰',l:fmt(cM)},{k:'item',id:item,e:itemOf(item).emoji,l:itemOf(item).name.split(' ')[0]},{k:'roll',e:'🎲',l:'+1 roll'},{k:'ticket',e:'🎟️',l:'slot spin'}];
   let deck=[];prizes.forEach((p,i)=>{deck.push({...p,pair:i},{...p,pair:i});});for(let i=deck.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
-  caseDeck=deck;  let tries=6,open=[],won=[],busyC=false,total=0;
-  const draw=()=>{$('modalBody').innerHTML=`<div class="eyebrow">BONUS · CASE MATCH · ${tries} TRIES LEFT</div><h2>Find the pairs</h2><div class="cases">${deck.map((c,i)=>`<button class="case ${c.open||c.won?'open':''} ${c.won?'won':''}" data-act="case" data-i="${i}" ${c.won||c.open?'disabled':''} aria-label="case ${i+1}">${c.open||c.won?c.e+'<small class="case-l">'+c.l+'</small>':'🧳'}</button>`).join('')}</div><p class="note">Won so far: ${won.length?won.join(', '):'nothing yet'}. Earned only, never sold.</p>${tries<=0?'<button class="primary" data-act="closeModal">COLLECT</button>':''}`;};
-  handlers.case=async d=>{if(busyC||tries<=0)return;const c=deck[+d.i];if(c.open||c.won)return;c.open=true;open.push(c);sfx('flip');draw();
+  caseDeck=deck;  let tries=6,open=[],won=[],busyC=false,total=0,lastFlip=-1,lastWin=-1;
+  const draw=()=>{$('modalBody').innerHTML=`<div class="eyebrow">BONUS · CASE MATCH · ${tries} TRIES LEFT</div><h2>Find the pairs</h2><div class="cases">${deck.map((c,i)=>`<button class="case ${c.open||c.won?'open':''} ${c.won?'won':''} ${i===lastFlip?'flip':''} ${c.won&&c.pair===lastWin?'pop':''}" data-act="case" data-i="${i}" ${c.won||c.open?'disabled':''} aria-label="case ${i+1}">${c.open||c.won?c.e+'<small class="case-l">'+c.l+'</small>':'🧳'}</button>`).join('')}</div><p class="note">Won so far: ${won.length?won.join(', '):'nothing yet'}. Earned only, never sold.</p>${tries<=0?'<button class="primary" data-act="closeModal">COLLECT</button>':''}`;};
+  handlers.case=async d=>{if(busyC||tries<=0)return;const c=deck[+d.i];if(c.open||c.won)return;c.open=true;open.push(c);lastFlip=+d.i;lastWin=-1;sfx('flip');draw();
     if(open.length<2)return;busyC=true;tries--;await wait(650);const [a,b]=open;open=[];
-    if(a.e===b.e&&a.l===b.l){a.won=b.won=true;a.open=b.open=false;sfx('win');let t='';if(a.k==='cash'){G.cash+=a.v;G.earned+=a.v;total+=a.v;t=fmt(a.v);}else if(a.k==='item'){addToTruck(a.id);t=itemOf(a.id).name;}else if(a.k==='ticket'){G.tickets++;t='+1 Lucky Slot spin';}else{if(G.rolls<MAX_ROLLS)G.rolls++;t='+1 roll';}won.push(a.e+' '+t);hud();}
-    else{a.open=b.open=false;}busyC=false;draw();};
+    lastFlip=-1;if(a.e===b.e&&a.l===b.l){a.won=b.won=true;a.open=b.open=false;lastWin=a.pair;sfx('win');S3.pirateBurst();let t='';if(a.k==='cash'){G.cash+=a.v;G.earned+=a.v;total+=a.v;t=fmt(a.v);}else if(a.k==='item'){addToTruck(a.id);t=itemOf(a.id).name;}else if(a.k==='ticket'){G.tickets++;t='+1 Lucky Slot spin';}else{if(G.rolls<MAX_ROLLS)G.rolls++;t='+1 roll';}won.push(a.e+' '+t);hud();}
+    else{a.open=b.open=false;sfx('bad');}busyC=false;draw();};
   const pr=modal('',false);draw();await pr;}
 
 // ---------- Lucky Locker slot: entries are EARNED only (slot space, case pairs, sealed/rival lockers). Never sold. ----------
@@ -263,9 +263,9 @@ $('hint').onclick=()=>{if(!E||busy)return;const m=E.bestMove();if(m){CO.hint={..
 let swapAnim=null;
 async function trySwap(a,b){if(busy)return;busy=true;const r=E.swap(a,b);if(!r.ok){swapAnim={a,b,t:performance.now(),bad:true};sfx('bad');await wait(220);busy=false;return;}
   swapAnim={a,b,t:performance.now()};await resolve();saveActive();lowWarn();busy=false;await checkEnd();}
-async function resolve(){let chain=0;for(let guard=0;guard<40;guard++){const ev=E.step();
+async function resolve(){let chain=0;for(let guard=0;guard<40;guard++){if(!E||!CO)return;const ev=E.step();
     if(!ev){const f=E.findsOnBoard();if(f.length){for(const x of f){E.collect(x.r,x.c);CO.collected.push(x.key);findFly(x.key,x.r,x.c);}E.gravity();await wait(200);continue;}break;}
-    chain++;ev.cleared.forEach(c=>{pops.push({r:c.r,c:c.c,t:performance.now(),ty:c.tile.t});disp.delete(c.tile.id);});CO.cleared+=ev.cleared.length;
+    chain++;if(!CO)return;ev.cleared.forEach(c=>{pops.push({r:c.r,c:c.c,t:performance.now(),ty:c.tile.t});disp.delete(c.tile.id);});CO.cleared+=ev.cleared.length;
     ev.hits.forEach(h=>{pops.push({r:h.r,c:h.c,t:performance.now(),tarp:1});});sfx(chain>1?'chain':'pop');if(chain>2)toast('CHAIN x'+chain+'!',700);updateClean();await wait(150);E.gravity();await wait(170);}
   await fairFinish();updateClean();}
 // Fair finish (rule lives in clearout.js): no move left -> free shove; only stragglers that can't make 3 (or bare tarps) -> crew hauls them.
@@ -273,13 +273,13 @@ async function fairFinish(){for(let k=0;k<4;k++){const f=E.fairness();if(f==='ok
     if(f==='haul'){await haulRest();return;}
     sfx('roll');disp.clear();if(!G.seen.shove){G.seen.shove=1;save();tip('<b>FREE SHOVE:</b> no match was left, so we pushed the leftovers together. It costs no move.',4200);toast('🫸 FREE SHOVE! No matches left, so we packed the rest together.',2600);}else toast('🫸 Free shove',900);
     if(!E.shove()){await haulRest();return;}await wait(450);}}
-async function haulRest(){const items=E.remaining();const out=E.haul();const now=performance.now();out.forEach((o,i)=>{pops.push({r:o.r,c:o.c,t:now+i*40});if(o.tile.k==='item')CO.cleared++;disp.delete(o.tile.id);if(o.tile.find){CO.collected.push(o.tile.find);findFly(o.tile.find,o.r,o.c);}});
+async function haulRest(){if(!E||!CO)return;const items=E.remaining();const out=E.haul();const now=performance.now();out.forEach((o,i)=>{pops.push({r:o.r,c:o.c,t:now+i*40});if(o.tile.k==='item')CO.cleared++;disp.delete(o.tile.id);if(o.tile.find){CO.collected.push(o.tile.find);findFly(o.tile.find,o.r,o.c);}});
   sfx('chain');if(!G.seen.haul){G.seen.haul=1;save();tip(`<b>CREW HAUL:</b> ${items?'the last '+items+' pieces can\'t make 3 anymore':'only tarps were left'}, so the crew carried them out for you.`,4200);toast('🧑‍🔧 CREW HAUL! Leftovers that can\'t make 3 get carried out.',2600);}else toast('🧑‍🔧 Crew hauled the last '+out.length,1100);
   updateClean();await wait(450);}
 function findFly(id,r,c){const it=itemOf(id);sfx('win');const full=G.truck.length+CO.collected.length>G.cap;
   toast(full?`${it.emoji} <b>${it.name}</b> found! Truck is full (${G.truck.length}/${G.cap}): it sells at the curb for ${fmt(curbPrice(id))}`:`${it.emoji} <b>${it.name}</b> found! worth about ${fmt(valueOf(id))}`,2200);pops.push({r,c,t:performance.now(),find:it.emoji});}
 function lootRows(items){return items.map(id=>{const r=addToTruck(id,true);return `<div class="loot"><span class="emoji">${itemOf(id).emoji}</span><span class="desc">${itemOf(id).name} ${rarityTag(id)}<small>${r.truck?'into the truck':'truck full: sold at curb price'}</small></span><b>${r.truck?fmt(valueOf(id)):'+'+fmt(r.curb)}</b></div>`;}).join('');}
-async function checkEnd(){const st=E.status();if(st==='play')return;
+async function checkEnd(){if(!E||!CO)return;const st=E.status();if(st==='play')return;if(CO.ending)return;CO.ending=true;
   if(st==='win'){busy=true;CO.celebrate=performance.now();S3.lockerDone();sfx('win');setTimeout(()=>sfx('up'),350);toast('🎉 LOCKER EMPTY! Every last thing hauled out.',1800);$('unloadBar').style.width='100%';await wait(1500);
     const salvage=Math.max(1,EC.nice(PE.salvage*CO.cleared*raw()));G.cash+=salvage;G.earned+=salvage;G.active=null;
     const rows=lootRows(CO.collected.slice());G.clean++;if(CO.kind!=='curb')G.L++;const tix=CO.kind==='big'||CO.kind==='rival'?1:0;G.tickets+=tix;let rollsGot=0;if(G.rolls<MAX_ROLLS){G.rolls++;rollsGot++;}hud();
@@ -293,7 +293,7 @@ async function checkEnd(){const st=E.status();if(st==='play')return;
   const a=await modal(`<div class="eyebrow">OUT OF MOVES · ${left} LEFT IN THE LOCKER</div><h2>Not fully cleared.</h2><p>Only a fully empty locker earns a board roll.</p>
     <div class="loot"><span class="emoji">📦</span><span class="desc">Keep what you got<small>${CO.collected.length?CO.collected.length+' find'+(CO.collected.length>1?'s':'')+' + ':''}half salvage ${fmt(partial)} · <b>no roll</b></small></span><button class="secondary" data-act="retry" data-a="keep">Keep</button></div>
     <div class="loot"><span class="emoji">🔁</span><span class="desc">Retry free<small>same locker, fresh layout. Your bid is never charged again.</small></span><button class="primary" data-act="retry" data-a="retry">Retry</button></div>`,false);
-  if(a==='retry'){CO.attempt=(CO.attempt||0)+1;E=new ClearOut(CO.def,CO.def.seed*7+G.clean+CO.attempt*101);CO.collected=[];CO.layers=0;CO.cleared=0;CO.warned={};disp.clear();S3.fillLocker(CO.def.seed);await S3.enterLocker();updateClean();saveActive();busy=false;return;}
+  if(a==='retry'){CO.ending=false;CO.attempt=(CO.attempt||0)+1;E=new ClearOut(CO.def,CO.def.seed*7+G.clean+CO.attempt*101);CO.collected=[];CO.layers=0;CO.cleared=0;CO.warned={};disp.clear();S3.fillLocker(CO.def.seed);await S3.enterLocker();updateClean();saveActive();busy=false;return;}
   G.cash+=partial;G.earned+=partial;G.active=null;const rows=lootRows(CO.collected.slice());G.clean++;hud();$('cleanout').classList.add('hidden');
   await modal(`<div class="eyebrow">PARTLY UNLOADED · NO ROLL</div><h2>${CO.title}</h2>${rows}<div class="loot"><span class="emoji">🧹</span><span class="desc">Half salvage<small>${CO.cleared} pieces hauled out</small></span><b>+${fmt(partial)}</b></div><p class="note">${G.rolls?'You still have '+G.rolls+' roll'+(G.rolls>1?'s':'')+'.':'Out of rolls? The free Curb Pile always pays a roll when you empty it.'}</p><button class="primary" data-act="closeModal">BACK TO THE BOARD</button>`,false);
   await endClean();}

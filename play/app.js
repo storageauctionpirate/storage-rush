@@ -13,7 +13,7 @@ const PAWN_SETS=['tools','radio','music','jewelry','garage','games','designer','
 const FLEA_SETS=['kitchen','toys','reading','sports','shelf',null];
 const MAX_ROLLS=5;
 // ---- play-test economy (tuned with test/play-econ-sim.js; all in multiples of the current locker price) ----
-const PE={payday:1.5,salvage:.015,pawn:.62,pawnGood:.75,flea:.85,fleaStep:.08,curb:.25,big:3,flUp:[30,70],trUp:[35,80],slot:{coin:1,cash:3,bag:8,pair:.4}};
+const PE={itemK:.3,payday:.5,salvage:.006,pawn:.62,pawnGood:.75,flea:.85,fleaStep:.08,curb:.25,big:3,flUp:[4,8],trUp:[5,9],cases:[.5,1,2],slot:{coin:.5,cash:1.5,bag:3,pair:.2}};
 // which shop buys what: every item has exactly ONE right shop. The other shop will not take it.
 const PAWN_SETS2=['tools','radio','music','jewelry','garage','games','history','shelf'];
 const shopFor=id=>PAWN_SETS2.includes(itemOf(id).set)?'pawn':'flea';
@@ -50,7 +50,7 @@ const handlers={};function act(a,d){if(handlers[a])handlers[a](d);}
 
 // ---------- items ----------
 const itemOf=id=>IT.get(id)||{name:id,emoji:'📦',set:null,rarity:'common'};
-const valueOf=id=>Math.max(1,IT.value(id,G.L,EC));
+const valueOf=id=>Math.max(1,Math.round(IT.value(id,G.L,EC)*PE.itemK));
 function pawnRate(id){return ['jewelry','shelf','history'].includes(itemOf(id).set)?PE.pawnGood:PE.pawn;}
 function fleaRate(id){return PE.flea*(1+PE.fleaStep*G.flea);}
 const fleaSlots=()=>3+G.flea;
@@ -132,7 +132,7 @@ function sellItem(i,price,where){const id=G.truck.splice(i,1)[0];G.cash+=price;G
 // ---------- flea market ----------
 async function fleaMarket(){if(!G.truck.length){bubble('Flea market: nothing to sell yet.',1600);await wait(900);return;}
   if(!G.truck.some(id=>shopFor(id)==='flea')){await modal(`<div class="eyebrow">FLEA MARKET</div><h2>"We don't sell that here."</h2><p>Flea shoppers want everyday stuff. ${G.truck.map(id=>itemOf(id).emoji).join(' ')} goes to a <b>Pawn Shop</b>.</p><button class="primary" data-act="closeModal">OK</button>`,false);return;}
-  S3.focus(S3.fleaPos(),{dist:8.5,h:5.5});label('FLEA MARKET','Full price for everyday stuff.',`Sells up to ${fleaSlots()} items per visit. Your stall adds ${G.flea*10}%.`);
+  S3.focus(S3.fleaPos(),{dist:8.5,h:5.5});label('FLEA MARKET','Full price for everyday stuff.',`Sells up to ${fleaSlots()} items per visit. Your stall adds ${G.flea*8}%.`);
   let left=fleaSlots();for(;;){const list=G.truck.map((id,i)=>({id,i,p:Math.max(1,Math.round(valueOf(id)*fleaRate(id)))})).filter(o=>shopFor(o.id)==='flea').sort((a,b)=>b.p-a.p);const no=G.truck.filter(id=>shopFor(id)!=='flea');
     if(!list.length||!left)break;
     const a=await modal(`<div class="eyebrow">FLEA MARKET · ${left} SALES LEFT</div><h2>Sell from your truck</h2>${list.map(o=>`<div class="loot"><span class="emoji">${itemOf(o.id).emoji}</span><span class="desc">${itemOf(o.id).name} ${rarityTag(o.id)}<small>${Math.round(fleaRate(o.id)*100)}% of ${fmt(valueOf(o.id))}</small></span><button class="secondary" data-act="fleaSell" data-i="${o.i}">${fmt(o.p)}</button></div>`).join('')}${no.length?`<p class="note">Not sold here: ${no.map(id=>itemOf(id).emoji).join(' ')} (Pawn Shop only).</p>`:''}<button class="primary" data-act="fleaSell" data-i="best">SELL THE BEST ${Math.min(left,list.length)}</button>`);
@@ -145,7 +145,7 @@ handlers.fleaSell=d=>closeModal(d.i);
 async function upgrade(){const fp=S3.fleaPos();fp.y+=1.4;const port=innerWidth<innerHeight;S3.focus(fp,{dist:port?15:11,h:port?8:6.5});label('BUSINESS UPGRADE','Build your empire.','Upgrades change what you can do.');
   const f=cost.flea(),t=cost.truck();const names=['Yard sale table','Market stall','Pirate Flea shop'];
   const a=await modal(`<div class="eyebrow">BUSINESS UPGRADE · YOU HAVE ${fmt(G.cash)}</div><h2>Grow the business</h2>
-    <div class="loot"><span class="emoji">🏪</span><span class="desc">${f?names[G.flea+1]:'Pirate Flea shop'}<small>${f?(G.flea===0?'+1 flea sale, +10% prices · regulars tip you what hides under the tarps':'+1 flea sale per visit, +10% flea prices'):'fully built'}</small></span>${f?`<button class="secondary" data-act="upPick" data-k="flea" ${G.cash>=f?'':'disabled'}>${fmt(f)}</button>`:'<b>✓</b>'}</div>
+    <div class="loot"><span class="emoji">🏪</span><span class="desc">${f?names[G.flea+1]:'Pirate Flea shop'}<small>${f?(G.flea===0?'+1 flea sale, +8% prices · regulars tip you what hides under the tarps':'+1 flea sale per visit, +8% flea prices'):'fully built'}</small></span>${f?`<button class="secondary" data-act="upPick" data-k="flea" ${G.cash>=f?'':'disabled'}>${fmt(f)}</button>`:'<b>✓</b>'}</div>
     <div class="loot"><span class="emoji">🛻</span><span class="desc">${t?S3.truckName(G.truckLv+1):'Truck maxed'}<small>${t?'carry '+(G.cap+4)+' items · +1 move in every locker':'carries '+G.cap+' · +'+G.truckLv+' moves per locker'}</small></span>${t?`<button class="secondary" data-act="upPick" data-k="truck" ${G.cash>=t?'':'disabled'}>${fmt(t)}</button>`:'<b>✓</b>'}</div><p class="note">Prices grow with your locker level, on the same money curve as the main game.</p>`);
   if(a==='flea'){G.cash-=f;G.flea++;hud();sfx('up');await S3.upgradeFlea(G.flea);toast('🏪 '+names[G.flea]+' built!',2200);await wait(1800);}
   S3.followPirate();
@@ -155,7 +155,7 @@ handlers.upPick=d=>closeModal(d.k);
 // ---------- 12-case match bonus (earned by landing) ----------
 let caseDeck=null;
 async function cases(){label('BONUS GAME','Case Match','Flip two cases. A pair wins what is inside. 6 tries.');
-  const cXS=Math.max(1,EC.nice(2*raw())),cS=EC.nice(4*raw()),cM=EC.nice(10*raw()),item=IT.pick('u',G.L,rnd,{});
+  const cXS=Math.max(1,EC.nice(PE.cases[0]*raw())),cS=Math.max(2,EC.nice(PE.cases[1]*raw())),cM=Math.max(3,EC.nice(PE.cases[2]*raw())),item=IT.pick('u',G.L,rnd,{});
   // six DIFFERENT prizes; each pair shares the exact same icon and label, so what looks the same always matches
   const prizes=[{k:'cash',v:cXS,e:'🪙',l:fmt(cXS)},{k:'cash',v:cS,e:'💵',l:fmt(cS)},{k:'cash',v:cM,e:'💰',l:fmt(cM)},{k:'item',id:item,e:itemOf(item).emoji,l:itemOf(item).name.split(' ')[0]},{k:'roll',e:'🎲',l:'+1 roll'},{k:'ticket',e:'🎟️',l:'slot spin'}];
   let deck=[];prizes.forEach((p,i)=>{deck.push({...p,pair:i},{...p,pair:i});});for(let i=deck.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}

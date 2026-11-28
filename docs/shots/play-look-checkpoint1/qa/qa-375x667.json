@@ -1,0 +1,189 @@
+{
+ "375x667": {
+  "size": "375x667",
+  "throttle": "4x CPU, mobile emulation, DPR 3",
+  "firstFrameWallMs": 2977,
+  "firstFrameMs": 994,
+  "nav": {
+   "dcl": 952,
+   "load": 2025
+  },
+  "models": {
+   "pirate": true,
+   "earl": true,
+   "trucks": 3,
+   "furniture": 13,
+   "buildings": 16
+  },
+  "idleBoard": {
+   "frames": 101,
+   "avgFps": 19.8,
+   "low1Fps": 4.3,
+   "avgMs": 50.6,
+   "cpuMedMs": 6.2,
+   "cpuP99Ms": 20.4
+  },
+  "quality": "low",
+  "renderer": {
+   "calls": 241,
+   "tris": 22068,
+   "geos": 228,
+   "tex": 43,
+   "quality": "low"
+  },
+  "reloadResume": {
+   "before": {
+    "moves": 14,
+    "left": 48
+   },
+   "beforeReload": {
+    "moves": 13,
+    "left": 45,
+    "cash": 9
+   },
+   "afterReload": {
+    "moves": 13,
+    "left": 45,
+    "cash": 9
+   },
+   "ok": true
+  },
+  "cleanout": {
+   "startLeft": 45,
+   "startMoves": 13,
+   "endMovesLeft": 2,
+   "shoves": 4,
+   "wonByPlay": true,
+   "tier": "Starter",
+   "result": "cleared"
+  },
+  "cleanoutPlay": {
+   "frames": 337,
+   "avgFps": 26.7,
+   "low1Fps": 6.5,
+   "avgMs": 37.4,
+   "cpuMedMs": 3.4,
+   "cpuP99Ms": 23.7
+  },
+  "tapLatencyMs": {
+   "n": 22,
+   "median": 93,
+   "p95": 168,
+   "max": 175
+  },
+  "summaryText": "LOCKER UNLOADED · 2 MOVES TO SPARE THE $1 LOCKER 🤖 Tin Robot RARE truck full: sold at curb price +$1 🧹 Junk salvage 45 pieces hauled out +$1 🎲 Board roll earned +1 BACK TO THE BOARD",
+  "rollsAfterFirstCleanout": 1,
+  "afterRoll": {
+   "pos": 2,
+   "modal": false,
+   "rolled": 2,
+   "movedBy": 2,
+   "dice": {
+    "throws": 1,
+    "nudges": 0,
+    "forced": 0,
+    "lastSteps": 0,
+    "lastMs": 84.60000003874302,
+    "last": {
+     "value": 2,
+     "dot": 1,
+     "t": 2.18,
+     "steps": 261,
+     "nudges": 0,
+     "forced": false
+    },
+    "busy": false
+   }
+  },
+  "rollMatchesMove": true,
+  "shops": {
+   "pawnLists": [
+    "tinrobot",
+    "hammer",
+    "radio"
+   ],
+   "shopOf": [
+    "tinrobot:pawn",
+    "mug:flea",
+    "hammer:pawn",
+    "teddy:flea",
+    "books:flea",
+    "radio:pawn"
+   ],
+   "pawnOnlyPawnItems": true,
+   "fleaLists": [
+    "mug",
+    "teddy",
+    "books"
+   ],
+   "fleaOnlyFleaItems": true,
+   "leftAfterFlea": [
+    "hammer",
+    "radio"
+   ],
+   "pawnRefuses": "\"Not my kind of stuff.\""
+  },
+  "pawn": "🤖 Tin Robot | $4",
+  "flea": 2,
+  "truck": {
+   "lv": 2,
+   "cap": 18
+  },
+  "slot": {
+   "ticketsOnOpen": 3,
+   "after": {
+    "plays": 2,
+    "won": 0
+   },
+   "ticketsLeft": 1,
+   "headline": "No luck this time."
+  },
+  "regen": {
+   "before": 1,
+   "afterSkip": 2,
+   "cfg": {
+    "on": true,
+    "every": 180000,
+    "cap": 5,
+    "last": 1795889803574
+   },
+   "label": "+1 IN 1:33",
+   "every": 60000
+  },
+  "caseVisualsOk": true,
+  "casePairWon": true,
+  "caseTicketPrize": true,
+  "dayOff": {
+   "unchanged": true,
+   "diff": []
+  },
+  "earl": "Big Earl folds!",
+  "earlLocker": {
+   "tier": "Tough",
+   "moves": 15,
+   "label": "Empty the whole locker in 15 moves (+2 bigger truck). Matched stuff leaves for good."
+  },
+  "curb": true,
+  "heapMB": 31,
+  "rendererEnd": {
+   "calls": 129,
+   "tris": 7989,
+   "geos": 299,
+   "tex": 82,
+   "quality": "low"
+  },
+  "session": {
+   "frames": 600,
+   "avgFps": 23.8,
+   "low1Fps": 7.2,
+   "avgMs": 42.1,
+   "cpuMedMs": 2.6,
+   "cpuP99Ms": 15
+  },
+  "saveKeys": [
+   "storageRush.playlook.v1"
+  ],
+  "errors": [],
+  "http4xx": []
+ }
+}

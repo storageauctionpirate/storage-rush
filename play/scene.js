@@ -1,11 +1,14 @@
 // Storage Auction Rush — Board Adventure 3D scene (isolated prototype). Original procedural art, Three.js (MIT, vendored).
 import * as THREE from './vendor/three.module.min.js';
+import * as DICE from './dice.js';
+import * as MOD from './models.js';
+const KN='assets/kenney/';
 
 const TAU=Math.PI*2, ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, back=t=>{const c=1.70158;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2);};
 const COL={sand:0xd9b77d,dust:0xc89a62,asphalt:0x5a5450,teal:0x1f6a66,deepTeal:0x14474a,coral:0xe0674a,cream:0xfff1d2,brass:0xd9a441,
   rust:0xa4532f,orange:0xe9792f,purple:0x6a3c8c,skin:0xd99a74,beard:0x3b2a20,black:0x23201f,red:0xb8332c,white:0xf4ead6};
 export const SPACE_STYLE={payday:{c:0xf1b740,label:'PAYDAY',icon:'$'},auction:{c:0xe9792f,label:'AUCTION',icon:'🔨'},pawn:{c:0x3f9a8a,label:'PAWN',icon:'💰'},
-  flea:{c:0xd9584a,label:'FLEA',icon:'🏷️'},upgrade:{c:0x5c7fd1,label:'UPGRADE',icon:'⬆'},rival:{c:0x7a4aa0,label:'RIVAL',icon:'🤠'},bonus:{c:0xe0b23a,label:'BONUS',icon:'🎁'},off:{c:0x8fa58f,label:'DAY OFF',icon:'☕'}};
+  flea:{c:0xd9584a,label:'FLEA',icon:'🏷️'},upgrade:{c:0x5c7fd1,label:'UPGRADE',icon:'⬆'},rival:{c:0x7a4aa0,label:'RIVAL',icon:'🤠'},bonus:{c:0xe0b23a,label:'CASES',icon:'🧳'},slot:{c:0xc2417a,label:'LUCKY',icon:'🎰'},off:{c:0x8fa58f,label:'DAY OFF',icon:'☕'}};
 
 let renderer,scene,camera,clock,canvas,W=1,H=1,quality='high';
 const anims=[];               // {t0,dur,fn,res}
@@ -13,7 +16,7 @@ const parts=[];               // particles
 let pirate,earl,truck,dice,flea,fleaLevel=0,locker,spaces=[],curve,ring;
 const camState={pos:new THREE.Vector3(0,30,26),look:new THREE.Vector3(0,0,0),tPos:new THREE.Vector3(0,30,26),tLook:new THREE.Vector3(),mode:'overview',k:2.2};
 export const perf={frames:new Float32Array(600),cpu:new Float32Array(600),fi:0,n:0,last:0};
-let onFrame=null;
+let onFrame=null,onHit=null;const mixers=[];export function setHitHook(f){onHit=f;}
 
 function mat(c,o={}){return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.78,metalness:0},o));}
 function box(w,h,d,m,x=0,y=0,z=0,p){const g=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);g.position.set(x,y,z);g.castShadow=g.receiveShadow=true;if(p)p.add(g);return g;}
@@ -21,7 +24,7 @@ function cyl(rt,rb,h,m,x=0,y=0,z=0,p,seg=14){const g=new THREE.Mesh(new THREE.Cy
 function sph(r,m,x=0,y=0,z=0,p,s=16){const g=new THREE.Mesh(new THREE.SphereGeometry(r,s,Math.max(8,s*.6|0)),m);g.position.set(x,y,z);g.castShadow=true;if(p)p.add(g);return g;}
 function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');draw(x,w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t;}
 function noiseTex(base,spots,n=900,size=256){return canvasTex(size,size,(x,w,h)=>{x.fillStyle=base;x.fillRect(0,0,w,h);for(let i=0;i<n;i++){x.fillStyle=spots[i%spots.length];x.globalAlpha=.05+Math.random()*.12;const r=1+Math.random()*5;x.beginPath();x.arc(Math.random()*w,Math.random()*h,r,0,TAU);x.fill();}x.globalAlpha=1;});}
-function drop(parent,o){parent.remove(o);o.traverse(x=>{if(x.geometry&&x.geometry!==coinGeo&&x.geometry!==dustGeo)x.geometry.dispose();});}
+function drop(parent,o){parent.remove(o);o.traverse(x=>{if(x.geometry&&x.geometry!==coinGeo&&x.geometry!==dustGeo&&!x.geometry.userData.keep)x.geometry.dispose();});}
 function tween(dur,fn){return new Promise(res=>anims.push({t0:performance.now(),dur,fn,res}));}
 
 export function init(cv,opts={}){
@@ -38,7 +41,9 @@ export function init(cv,opts={}){
   Object.assign(sun.shadow.camera,{left:-22,right:22,top:22,bottom:-22,near:5,far:70});sun.shadow.bias=-.0005;sun.shadow.normalBias=.02;scene.add(sun);
   const fill=new THREE.DirectionalLight(0x87c7d0,.55);fill.position.set(16,9,-18);scene.add(fill);
   buildGround();buildBoard(opts.spaces||[]);buildFacility();buildFlea();pirate=buildPirate();earl=buildEarl();truck=buildTruck();dice=buildDice();buildLocker();
-  scene.add(pirate,earl,truck,dice);dice.visible=false;
+  scene.add(pirate,earl,truck,dice);dice.userData.m.visible=false;
+  DICE.initDice(dice.userData.m,(k,p)=>{if(onHit)onHit(k);if(k>.35)dust(new THREE.Vector3(p.x,.1,p.z),3,.4);});spaces.forEach(sp=>DICE.addTile(sp.p.x,sp.p.z,1.42,.35));
+  loadModels();
   resize();addEventListener('resize',resize);
   perf.last=performance.now();renderer.setAnimationLoop(loop);
   return {THREE,scene,camera,renderer};
@@ -154,12 +159,13 @@ export function setTruckLoad(n,cap){const c=truck.userData.cargo;if(c.userData.k
   for(let i=0;i<n;i++){const x=(i%3)*.5-.5,z=(Math.floor(i/3)%2)*.6-.3,y=Math.floor(i/6)*.42;box(.42,.38,.48,mat(cols[i%5]),x,y+.19,z,c);} }
 function buildDice(){const g=new THREE.Group();const faces=[1,6,2,5,3,4].map(v=>new THREE.MeshStandardMaterial({roughness:.35,map:canvasTex(128,128,(x,w,h)=>{x.fillStyle='#fff6dc';x.fillRect(0,0,w,h);x.strokeStyle='#e9b85a';x.lineWidth=10;x.strokeRect(5,5,w-10,h-10);x.fillStyle='#2a4b45';
     const P={1:[[64,64]],2:[[34,34],[94,94]],3:[[30,30],[64,64],[98,98]],4:[[34,34],[94,34],[34,94],[94,94]],5:[[32,32],[96,32],[64,64],[32,96],[96,96]],6:[[34,28],[94,28],[34,64],[94,64],[34,100],[94,100]]}[v];P.forEach(([a,b])=>{x.beginPath();x.arc(a,b,v===1?15:11,0,TAU);x.fill();});})}));
-  const m=new THREE.Mesh(new THREE.BoxGeometry(.9,.9,.9),faces);m.castShadow=true;g.add(m);g.userData.m=m;return g;}
-const FACE_ROT={1:[0,0,Math.PI/2],6:[0,0,-Math.PI/2],2:[0,0,0],5:[Math.PI,0,0],3:[-Math.PI/2,0,0],4:[Math.PI/2,0,0]};
-export function rollDice(v){const m=dice.userData.m,start=pirate.position.clone().add(new THREE.Vector3(0,3.5,1.2));dice.visible=true;dice.position.copy(start);
-  const sp=new THREE.Vector3(6+Math.random()*4,7+Math.random()*3,5);const f=FACE_ROT[v];
-  return tween(950,t=>{const e=ease(t);dice.position.set(start.x,start.y+Math.sin(t*Math.PI)*1.4,start.z);m.rotation.set(sp.x*(1-e)+f[0]*e,sp.y*(1-e)+f[1]*e,sp.z*(1-e)+f[2]*e);dice.scale.setScalar(.9+Math.sin(t*Math.PI)*.4);})
-    .then(()=>{coinBurst(dice.position.clone(),10,0xfff3c1);return tween(350,()=>{});}).then(()=>{dice.visible=false;});}
+  const m=new THREE.Mesh(new THREE.BoxGeometry(1.1,1.1,1.1,1,1,1),faces);m.castShadow=true;g.add(m);g.userData.m=m;return g;}
+// the roll: a real rigid-body throw (dice.js). The number is whatever face lands on top.
+export async function rollDice(rand=Math.random){const p=pirate.position,port=W<H;
+  const from=new THREE.Vector3(p.x-1.6,3.6,p.z-.4),to=new THREE.Vector3(p.x+.6+(rand()-.5)*.8,0,p.z+(port?2.8:2.4));
+  const v=await DICE.throwDie(from,to,rand);const m=dice.userData.m;coinBurst(m.position.clone().add(new THREE.Vector3(0,.6,0)),10,0xfff3c1);
+  await tween(650,()=>{});const s0=m.scale.x;await tween(220,t=>{m.scale.setScalar(s0*(1-t*.9));});m.visible=false;m.scale.setScalar(1);return v;}
+export function diceInfo(){return {...DICE.stats,busy:DICE.diceBusy()};}
 
 // pirate travel: hop one space at a time
 export function movePirate(from,steps,onStep){let i=0;const n=spaces.length;
@@ -167,7 +173,7 @@ export function movePirate(from,steps,onStep){let i=0;const n=spaces.length;
     const dir=pb.clone().sub(pa);pirate.rotation.y=Math.atan2(dir.x,dir.z);
     return tween(230,t=>{const e=ease(t);pirate.position.lerpVectors(pa,pb,e);pirate.position.y=Math.sin(t*Math.PI)*.7;const b=pirate.userData.body;b.scale.set(1+Math.sin(t*Math.PI)*-.08,1+Math.sin(t*Math.PI)*.12,1);})
       .then(()=>{dust(pb,6,.6);pirate.userData.body.scale.set(1.08,.9,1);if(onStep)onStep(b%n);return tween(60,t=>{pirate.userData.body.scale.set(1.08-.08*t,.9+.1*t,1);});}).then(hop);};
-  camState.mode='follow';return hop();}
+  camState.mode='follow';playAnim(pirate,'walk',.1);return hop().then(()=>playAnim(pirate,'idle'));}
 export function placePirate(i){pirate.position.copy(spacePos(i));}
 
 // ---------- the locker interior (empties as you match) ----------
@@ -198,7 +204,7 @@ function buildLocker(){locker=new THREE.Group();locker.position.copy(LP);scene.a
 export function fillLocker(seed=1){lockerProps.forEach(p=>{if(p.parent)drop(p.parent,p);});lockerProps=[];lockerRemoved=0;let s=seed>>>0||1;const r=()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};
   const kinds=['box','box','crate','tote','box','lamp','chair','tv','rug','bike','box','tote'],cols=[0xc79a62,0xb68350,0xd8b37a,0x5e8fbf,0x7fae6a,0xc5523e];
   const out=[];for(let row=0;row<4;row++){const z=-2.3+row*1.15;for(let col=0;col<5;col++){const x=-2.2+col*1.1+(r()-.5)*.2;const stack=row===3?1:1+Math.floor(r()*2.4);
-    for(let k=0;k<stack;k++){const kind=k>0?(r()<.6?'box':'tote'):kinds[Math.floor(r()*kinds.length)];const m=propMesh(kind,cols[Math.floor(r()*cols.length)]);m.position.set(x,k*.78,z+(r()-.5)*.2);m.rotation.y=(r()-.5)*.5;locker.add(m);out.push({m,z,k});}}}
+    let y=0;for(let k=0;k<stack;k++){const kind=k>0?(r()<.6?'box':'tote'):kinds[Math.floor(r()*kinds.length)];const P=lockerProp(kind,cols[Math.floor(r()*cols.length)]),m=P.m;m.position.set(x,y,z+(r()-.5)*.2);m.rotation.y=(r()-.5)*.5;locker.add(m);out.push({m,z,k});y+=P.h;if(y>2.2)break;}}}
   // remove from the front first, top of each stack first
   lockerProps=out.sort((a,b)=>(b.z-a.z)||(b.k-a.k)).map(o=>o.m);lockerDoor.position.y=2;return lockerProps.length;}
 export function enterLocker(){camState.mode='locker';const portrait=W<H;camState.tPos.copy(LP).add(new THREE.Vector3(0,portrait?2.7:2.8,portrait?10.5:8.4));camState.tLook.copy(LP).add(new THREE.Vector3(0,portrait?.1:1.5,-1));camState.k=4.5;
@@ -230,7 +236,7 @@ function updateCam(dt){if(camState.mode==='follow'){const p=pirate.position,port
   const k=1-Math.exp(-camState.k*dt);camState.pos.lerp(camState.tPos,k);camState.look.lerp(camState.tLook,k);camera.position.copy(camState.pos);camera.lookAt(camState.look);}
 export function snapCam(){camState.pos.copy(camState.tPos);camState.look.copy(camState.tLook);}
 
-function loop(){const now=performance.now(),dtMs=now-perf.last;perf.last=now;perf.frames[perf.fi]=dtMs;perf.fi=(perf.fi+1)%perf.frames.length;perf.n++;const dt=Math.min(.05,dtMs/1000),time=clock.getElapsedTime();
+function loop(){const now=performance.now(),dtMs=now-perf.last;perf.last=now;perf.frames[perf.fi]=dtMs;perf.fi=(perf.fi+1)%perf.frames.length;perf.n++;const dt=Math.min(.05,dtMs/1000),time=clock.getElapsedTime();DICE.stepDice(dt);for(const mx of mixers)mx.update(dt);
   for(let i=anims.length-1;i>=0;i--){const a=anims[i],t=Math.min(1,(now-a.t0)/a.dur);a.fn(t);if(t>=1){anims.splice(i,1);a.res();}}
   for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.life-=dt;p.v.y-=p.g*dt;p.m.position.addScaledVector(p.v,dt);if(p.r){p.m.rotation.x+=p.r.x*dt;p.m.rotation.y+=p.r.y*dt;}
     if(p.dust){p.m.scale.multiplyScalar(1+dt*1.4);p.m.material.opacity=Math.max(0,p.life*.6);}if(p.m.position.y<.05&&!p.dust){p.m.position.y=.05;p.v.multiplyScalar(.4);}
@@ -238,5 +244,56 @@ function loop(){const now=performance.now(),dtMs=now-perf.last;perf.last=now;per
   spaces.forEach((s,i)=>{s.glow.material.opacity=s.hl?.55+.35*Math.sin(time*6):Math.max(0,s.glow.material.opacity-dt*2);});
   if(!anims.length||camState.mode!=='follow'){const b=pirate.userData.body;if(Math.abs(b.scale.y-1)<.01)b.position.y=Math.sin(time*3)*.03;}
   earl.rotation.z=Math.sin(time*1.7)*.03;lockerBeam.material.opacity=.06+.03*Math.sin(time*2);
-  updateCam(dt);if(onFrame)onFrame(dt);if(renderer.shadowMap.enabled&&(perf.n%3===0||anims.length))renderer.shadowMap.needsUpdate=true;renderer.render(scene,camera);perf.cpu[(perf.fi+599)%600]=performance.now()-now;}
+  updateCam(dt);if(onFrame)onFrame(dt);if(renderer.shadowMap.enabled&&(perf.n%3===0||anims.length||DICE.diceBusy()))renderer.shadowMap.needsUpdate=true;renderer.render(scene,camera);perf.cpu[(perf.fi+599)%600]=performance.now()-now;}
 export function info(){return {calls:renderer.info.render.calls,tris:renderer.info.render.triangles,geos:renderer.info.memory.geometries,tex:renderer.info.memory.textures,quality};}
+
+// ---------- CC0 visual lift (Kenney kits, see ASSETS-LICENSES.md) ----------
+// Procedural art stays as the fallback, so a failed download never breaks the board.
+const TRUCKS=[{f:'truck',name:'Rusty pickup',cargo:[-.95,.66,0],tint:0xc9774a},{f:'truck-flat',name:'Flatbed hauler',cargo:[-.75,.66,0],tint:0x7fb6c9},{f:'delivery',name:'Box truck',cargo:[-2.75,.02,0]}];
+let truckLv=0,truckHolder=null;const truckTpl=[];const furnTpl={};export const modelState={pirate:false,earl:false,trucks:0,furniture:0,buildings:0};
+function playAnim(who,name,fade=.18){const A=who.userData.A;if(!A||!A[name])return;const cur=who.userData.cur;if(cur===A[name])return;A[name].reset().fadeIn(fade).play();if(cur)cur.fadeOut(fade);who.userData.cur=A[name];}
+export function pirateAnim(n){playAnim(pirate,n);}
+function hatMesh(kind){const g=new THREE.Group(),hm=mat(kind==='pirate'?0x1c1718:0xe9d7ad,{roughness:.55}),trim=mat(COL.brass,{metalness:.6,roughness:.3});
+  if(kind==='pirate'){const brim=cyl(.5,.52,.05,hm,0,0,0,g,24);brim.scale.set(1,1,.82);cyl(.27,.32,.3,hm,0,.17,0,g,18);
+    [-1,1].forEach(sd=>{const w=box(.5,.22,.05,hm,sd*.26,.12,-.08,g);w.rotation.y=sd*.9;w.rotation.x=-.3;});const f=box(.62,.2,.05,hm,0,.12,.4,g);f.rotation.x=-.35;
+    box(.64,.035,.06,trim,0,.04,.42,g);const sk=sph(.07,mat(COL.white),0,.15,.44,g,10);sk.scale.set(1,1,.4);const fe=box(.05,.55,.03,mat(0xe0674a),.28,.38,-.12,g);fe.rotation.z=-.55;}
+  else{const brim=cyl(.56,.56,.04,hm,0,0,0,g,22);brim.scale.set(1.15,1,.85);cyl(.26,.31,.3,hm,0,.16,0,g,16);cyl(.315,.315,.06,mat(0x4a2f22),0,.05,0,g,16);}
+  return g;}
+// attach a hat to the model's head bone; offset is in world units, converted to bone space
+function putHat(model,hat,lift){model.updateMatrixWorld(true);const head=model.getObjectByName('head')||model;const ws=new THREE.Vector3();head.getWorldScale(ws);
+  hat.scale.setScalar(1/ws.x);const box3=new THREE.Box3().setFromObject(model);const top=new THREE.Vector3(0,box3.max.y,0);
+  const hp=new THREE.Vector3();head.getWorldPosition(hp);hat.position.set(0,(box3.max.y-hp.y-lift)/ws.y,0);head.add(hat);}
+function skinIn(group,r,scale,hide){if(hide)hide.children.forEach(c=>c.visible=false);const o=r.obj;o.scale.setScalar(scale);(hide||group).add(o);
+  const mx=new THREE.AnimationMixer(o);mixers.push(mx);const A={};r.anims.forEach(a=>A[a.name]=mx.clipAction(a));group.userData.A=A;group.userData.model=o;return o;}
+async function loadModels(){
+  MOD.inst(KN+'chars/character-raider.glb',{skinned:true}).then(r=>{if(!r)return;const o=skinIn(pirate,r,2.15,pirate.userData.body);putHat(o,hatMesh('pirate'),.14);playAnim(pirate,'idle');modelState.pirate=true;});
+  MOD.inst(KN+'chars/character-male-d.glb',{skinned:true,tint:0xc9a0ff}).then(r=>{if(!r)return;const o=skinIn(earl,r,2.0,earl);putHat(o,hatMesh('earl'),.12);playAnim(earl,'idle');modelState.earl=true;});
+  Promise.all(TRUCKS.map(t=>MOD.inst(KN+'cars/'+t.f+'.glb',{tint:t.tint}))).then(rs=>{rs.forEach((r,i)=>{if(r){const o=r.obj;o.rotation.y=Math.PI/2;o.scale.setScalar(1.25);truckTpl[i]=MOD.grounded(o);modelState.trucks++;}});setTruckLevel(truckLv,false);});
+  const F=['loungeSofa','televisionVintage','lampRoundFloor','chair','bookcaseClosed','dryer','kitchenFridge','pottedPlant','speaker','tableCoffee','bench','cardboardBoxClosed','cardboardBoxOpen'];
+  Promise.all(F.map(f=>MOD.inst(KN+'furniture/'+f+'.glb'))).then(rs=>{rs.forEach((r,i)=>{if(r){const g=MOD.grounded(r.obj),sz=g.userData.size,k=Math.min(2.6,1.05/Math.max(sz.x,sz.z));r.obj.parent.scale.setScalar(k);g.userData.h=sz.y*k;furnTpl[F[i]]=g;modelState.furniture++;}});});
+  MOD.inst(KN+'cars/box.glb').then(r=>{if(r){const g=MOD.grounded(r.obj);g.scale.setScalar(1.25);furnTpl.box=g;g.userData.h=.89;}});
+  buildTown();}
+export function setTruckLevel(lv,animate=true){truckLv=lv;const tpl=truckTpl[lv];if(!tpl)return Promise.resolve();
+  truck.children.forEach(c=>{if(c!==truck.userData.cargo&&c!==truckHolder)c.visible=false;});
+  const old=truckHolder,ng=tpl.clone(true);truckHolder=ng;truck.add(ng);const T=TRUCKS[lv];truck.userData.cargo.position.set(...T.cargo);
+  const doorN=ng.getObjectByName('door');if(doorN)doorN.rotation.y=-1.9;
+  if(!animate){if(old)truck.remove(old);return Promise.resolve();}
+  const wp=truck.getWorldPosition(new THREE.Vector3());const port=W<H;focus(wp,{dist:port?12:9,h:port?7:5.5});ng.scale.setScalar(.01);
+  return tween(700,()=>{}).then(()=>{dust(wp,26,2.2);return tween(380,t=>{if(old)old.scale.setScalar(1-ease(t));});}).then(()=>{if(old)truck.remove(old);coinBurst(wp.clone().add(new THREE.Vector3(0,2.4,0)),26);
+    return tween(760,t=>{ng.scale.setScalar(Math.max(.01,back(t)));ng.position.y=Math.sin(t*Math.PI)*.5;});}).then(()=>tween(700,()=>{}));}
+export function truckName(lv){return TRUCKS[lv].name;}
+export function truckPos(){return truck.getWorldPosition(new THREE.Vector3());}
+function signTex(text,bg,fg){return canvasTex(512,128,(x,w,h)=>{x.fillStyle=bg;x.fillRect(0,0,w,h);x.strokeStyle=fg;x.lineWidth=8;x.strokeRect(8,8,w-16,h-16);x.fillStyle=fg;x.font='900 74px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText(text,w/2,h/2+4);});}
+function buildTown(){
+  // pawn shops sit right behind the two PAWN spaces so the right shop is obvious
+  spaces.forEach((sp,i)=>{if(sp.type!=='pawn')return;const u=i/spaces.length,t=curve.getTangentAt(u),n=new THREE.Vector3(-t.z,0,t.x).normalize();
+    MOD.inst(KN+'city/building-e.glb').then(r=>{if(!r)return;const g=MOD.grounded(r.obj);g.scale.setScalar(2.6);const out=sp.p.clone().addScaledVector(n,-4.6);if(out.length()<sp.p.length())out.copy(sp.p).addScaledVector(n,4.6);out.addScaledVector(t,i>8?-2.2:0);
+      g.position.copy(out);g.lookAt(sp.p.x,0,sp.p.z);scene.add(g);const sg=new THREE.Mesh(new THREE.PlaneGeometry(.9,.22),new THREE.MeshStandardMaterial({map:signTex('PAWN','#173f3e','#ffd36b'),emissive:0x333333}));
+      sg.position.set(0,.62,.53);g.add(sg);g.traverse(m=>{if(m.isMesh)m.castShadow=true;});modelState.buildings++;});});
+  // a little Sunnyvale skyline past the fence
+  const B=['building-a','building-c','building-g','building-k','low-detail-building-a','low-detail-building-d','low-detail-building-g'];
+  [[-30,-20,0],[-26,-27,1],[-12,-31,2],[2,-33,3],[16,-31,0],[28,-24,2],[33,-10,1],[-34,-6,3],[34,6,4],[-36,8,5],[-20,-36,6],[22,-38,4],[8,-42,5],[-4,-44,6]].forEach(([x,z,k],i)=>{
+    MOD.inst(KN+'city/'+B[k]+'.glb').then(r=>{if(!r)return;const g=MOD.grounded(r.obj);g.scale.setScalar(k>=4?5:4.2);g.position.set(x,0,z);g.lookAt(0,0,0);scene.add(g);if(renderer)renderer.shadowMap.needsUpdate=true;modelState.buildings++;});});}
+export function furnitureFor(kind){const map={box:['cardboardBoxClosed','box','cardboardBoxOpen'],crate:['box'],tote:['cardboardBoxOpen','cardboardBoxClosed'],lamp:['lampRoundFloor','pottedPlant'],chair:['chair','loungeSofa','bench'],tv:['televisionVintage','speaker','dryer'],rug:['tableCoffee','bookcaseClosed'],bike:['kitchenFridge','bookcaseClosed']}[kind]||['box'];
+  const got=map.filter(k=>furnTpl[k]);return got.length?furnTpl[got[Math.floor(Math.random()*got.length)]]:null;}
+function lockerProp(kind,c){const t=furnitureFor(kind);if(!t)return {m:propMesh(kind,c),h:.78};const m=new THREE.Group();m.add(t.clone(true));return {m,h:t.userData.h||.7};}

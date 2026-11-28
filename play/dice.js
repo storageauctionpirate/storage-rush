@@ -15,7 +15,7 @@ export function initDice(dieMesh,hit){mesh=dieMesh;onHit=hit;
   world.addContactMaterial(new CANNON.ContactMaterial(gm,dm,{friction:.32,restitution:.42}));
   const ground=new CANNON.Body({mass:0,material:gm,shape:new CANNON.Plane()});ground.quaternion.setFromEuler(-Math.PI/2,0,0);ground.position.y=.01;world.addBody(ground);
   // a low invisible corral, moved to wherever the die is thrown, keeps it on screen
-  walls=new CANNON.Body({mass:0,material:gm});const R=3.1,T=.3,WH=1.6;
+  walls=new CANNON.Body({mass:0,material:gm});const R=3.6,T=.3,WH=1.6;
   [[R,0,T,WH,R+T],[-R,0,T,WH,R+T],[0,R,R+T,WH,T],[0,-R,R+T,WH,T]].forEach(([x,z,hx,hy,hz])=>walls.addShape(new CANNON.Box(new CANNON.Vec3(hx,hy,hz)),new CANNON.Vec3(x,hy,z)));
   world.addBody(walls);
   body=new CANNON.Body({mass:1,material:dm,shape:new CANNON.Box(new CANNON.Vec3(H,H,H)),linearDamping:.08,angularDamping:.12,allowSleep:true,sleepSpeedLimit:.12,sleepTimeLimit:.35});

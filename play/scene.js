@@ -162,7 +162,7 @@ function buildDice(){const g=new THREE.Group();const faces=[1,6,2,5,3,4].map(v=>
   const m=new THREE.Mesh(new THREE.BoxGeometry(1.1,1.1,1.1,1,1,1),faces);m.castShadow=true;g.add(m);g.userData.m=m;return g;}
 // the roll: a real rigid-body throw (dice.js). The number is whatever face lands on top.
 export async function rollDice(rand=Math.random){const p=pirate.position,port=W<H;
-  const from=new THREE.Vector3(p.x-1.6,3.6,p.z-.4),to=new THREE.Vector3(p.x+.6+(rand()-.5)*.8,0,p.z+(port?2.8:2.4));
+  const from=new THREE.Vector3(p.x-2.3,3.4,p.z+1.1),to=new THREE.Vector3(p.x+.7+(rand()-.5)*.8,0,p.z+(port?2.3:2.1));
   const v=await DICE.throwDie(from,to,rand);const m=dice.userData.m;coinBurst(m.position.clone().add(new THREE.Vector3(0,.6,0)),10,0xfff3c1);
   await tween(650,()=>{});const s0=m.scale.x;await tween(220,t=>{m.scale.setScalar(s0*(1-t*.9));});m.visible=false;m.scale.setScalar(1);return v;}
 export function diceInfo(){return {...DICE.stats,busy:DICE.diceBusy()};}
@@ -232,7 +232,7 @@ export function overview(){camState.mode='overview';camState.tPos.set(0,W<H?36:2
 export function earlFocus(){focus(earl.position,{dist:6.5,h:3.8});}
 export function worldToScreen(v){const p=v.clone().project(camera);return {x:(p.x+1)/2*W,y:(1-p.y)/2*H};}
 export function pirateScreen(){return worldToScreen(pirate.position.clone().add(new THREE.Vector3(0,2.6,0)));}
-function updateCam(dt){if(camState.mode==='follow'){const p=pirate.position,portrait=W<H;camState.tLook.set(p.x,0,p.z+(portrait?1.8:0));camState.tPos.set(p.x,portrait?13.5:10,p.z+(portrait?13.5:12));}
+function updateCam(dt){if(camState.mode==='follow'){const p=pirate.position,portrait=W<H;camState.tLook.set(p.x,0,p.z+(portrait?.7:0));camState.tPos.set(p.x,portrait?13.5:10,p.z+(portrait?13.5:12));}
   const k=1-Math.exp(-camState.k*dt);camState.pos.lerp(camState.tPos,k);camState.look.lerp(camState.tLook,k);camera.position.copy(camState.pos);camera.lookAt(camState.look);}
 export function snapCam(){camState.pos.copy(camState.tPos);camState.look.copy(camState.tLook);}
 
